@@ -60,7 +60,8 @@ int main()
 
 	// Initialization
 	// Initialize the player's on-screen location
-	int nPlayerX = 40, nPlayerY = 12;
+	int nPlayerX = 0, nPlayerY = 0;
+	int nDeltaX, nDeltaY;
 
 	// Main program loop
 	while (true)
@@ -81,22 +82,26 @@ int main()
 		{
 			// move down
 		case CONSOLE_KEY_DOWN:
-			nPlayerY++;
+			nDeltaX = 0;
+			nDeltaY = 1;
 			break;
 
 			// move left
 		case CONSOLE_KEY_LEFT:
-			nPlayerX--;
+			nDeltaX = -1;
+			nDeltaY = 0;
 			break;
 
 			// move right
 		case CONSOLE_KEY_RIGHT:
-			nPlayerX++;
+			nDeltaX = 1;
+			nDeltaY = 0;
 			break;
 
 			// move up
 		case CONSOLE_KEY_UP:
-			nPlayerY--;
+			nDeltaX = 0;
+			nDeltaY = -1;
 			break;
 
 			// quit
@@ -106,6 +111,14 @@ int main()
 			// Ignore any other key
 		default:
 			break;
+		}
+
+		// Check if the player can move in specified direction
+		if (isPassable(nPlayerX + nDeltaX, nPlayerY + nDeltaY))
+		{
+			// If allowed, move in specified direction
+			nPlayerX += nDeltaX;
+			nPlayerY += nDeltaY;
 		}
 
 	}
@@ -136,7 +149,7 @@ bool isPassable(int nMapX, int nMapY)
 	if (nMapX < 0 || nMapX >= schooled::MAP_WIDTH || nMapY < 0 || nMapY >= schooled::MAP_HEIGHT)
 		return false;
 	
-	int nTileValue = nMapArray[nMapX][nMapY];
+	int nTileValue = nMapArray[nMapY][nMapX];
 	if (sTileIndex[nTileValue].isPassable)
 		return true;
 	return false;
