@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cassert>
 #include <conio.h>
+#include <Windows.h>
 #include "Console Library/Console.h"
 using namespace std;
 
@@ -47,7 +48,7 @@ struct Tile
 
 Tile tileIndex[] = {
 	{ ' ', 7, true },	// (0) MAP_FLOOR
-	{ '_', 7, false },	// (1) MAP_WALL_TOP
+	{ '_', FOREGROUND_BLUE, false },	// (1) MAP_WALL_TOP
 	{ 'D', 7, true },	// (2) MAP_DOOR
 	{ '|', 7, false }	// (3) MAP_WALL_SIDE
 };
@@ -125,6 +126,9 @@ int main()
 			nPlayerY += nDeltaY;
 		}
 
+		nDeltaX = 0;
+		nDeltaY = 0;
+
 	}
 	return 0;
 }
@@ -139,9 +143,12 @@ void displayMap(){
 
 void drawTile(int x, int y)
 {
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
 	console.Position(x, y);
 	int tile = roomOneArray[y][x];
 	//console.Color(tileIndex[tile].colourCode);
+	if (tile == 0)
+		SetConsoleTextAttribute(hConsole, tileIndex[tile].colourCode);
 	console << tileIndex[tile].character;
 }
 
