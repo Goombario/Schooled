@@ -42,7 +42,10 @@ private:
 	char character;
 	int colorCode;
 };
+
 void displayMap();
+void interactable();
+bool isPassable(int mapX, int mapY);
 
 int main()
 {
@@ -58,6 +61,7 @@ int main()
 		// Wipe console clear
 		console.Clear();
 		displayMap();
+		interactable();
 		// Output phase
 		console.Position(nPlayerX, nPlayerY);
 		console << '8';
@@ -120,4 +124,19 @@ void displayMap(){
 		}
 	}
 }
+void interactable(){
+	console.Position(18, 16);
+	console << 'X';
+}
+bool isPassable(int mapX, int mapY){
+	if (mapX < 0 || mapX >= MAP_WIDTH || mapY < 0 || mapY >= MAP_HEIGHT)
+		return false;
 
+	int tileValue = roomOneArray[mapY][mapX];
+	if (tileValue == 0)
+		return true;
+	else if (tileValue == 2)
+		return true;
+	else
+		return false;
+}
