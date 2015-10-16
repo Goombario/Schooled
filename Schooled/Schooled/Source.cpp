@@ -1,16 +1,21 @@
 #include <iostream>
+#include <cassert>
 #include <conio.h>
 #include "Console Library/Console.h"
 using namespace std;
 
 //declaring the map and it's dimensions
-int const MAP_WIDTH = 60;
-int const MAP_HEIGHT = 20;
-int const MAP_FLOOR = 0;
-int const MAP_WALL_TOP = 1;
-int const MAP_DOOR = 2;
-int const MAP_WALL_SIDE = 3;
-int roomOneArray[MAP_HEIGHT][MAP_WIDTH]{
+namespace schooled{
+	int const MAP_WIDTH = 60;
+	int const MAP_HEIGHT = 20;
+	int const MAP_FLOOR = 0;
+	int const MAP_WALL_TOP = 1;
+	int const MAP_DOOR = 2;
+	int const MAP_WALL_SIDE = 3;
+}
+#define NDEBUG
+
+int roomOneArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
 	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
@@ -33,64 +38,67 @@ int roomOneArray[MAP_HEIGHT][MAP_WIDTH]{
 	{ 3, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 }
 };
 
-class Tile
+struct Tile
 {
-public:
-	char getChar() { return character; };
-	int getColorCode() { return colorCode; }
-private:
 	char character;
-	int colorCode;
+	int colourCode;
+	bool isPassable;
 };
 
 void displayMap();
+void drawTile(int x, int y);
 void interactable();
 bool isPassable(int mapX, int mapY);
+
 
 int main()
 {
 	console.SetTitle("Schooled V0.1");
+
 	// Initialization
 	// Initialize the player's on-screen location
-	int nPlayerX = 40, nPlayerY = 12;
-	//int nMapArray[MAP_WIDTH][MAP_HEIGHT];
+	int nPlayerX = 2, nPlayerY = 19;
+	int nDeltaX, nDeltaY;
 
 	// Main program loop
 	while (true)
 	{
 		// Wipe console clear
 		console.Clear();
-		displayMap();
-		interactable();
+
 		// Output phase
+		displayMap();
 		console.Position(nPlayerX, nPlayerY);
 		console << '8';
 
 		// Input phase
 		KEYPRESS sKeyPress = console.WaitForKeypress();
 
-
 		// Processing phase
 		switch (sKeyPress.eCode)
 		{
 			// move down
 		case CONSOLE_KEY_DOWN:
-			nPlayerY++;
+			nDeltaX = 0;
+			nDeltaY = 1;
 			break;
 
 			// move left
 		case CONSOLE_KEY_LEFT:
-			nPlayerX--;
+			nDeltaX = -1;
+			nDeltaY = 0;
 			break;
 
 			// move right
 		case CONSOLE_KEY_RIGHT:
-			nPlayerX++;
+			nDeltaX = 1;
+			nDeltaY = 0;
 			break;
 
 			// move up
 		case CONSOLE_KEY_UP:
-			nPlayerY--;
+			nDeltaX = 0;
+			nDeltaY = -1;
 			break;
 
 			// quit
@@ -101,14 +109,22 @@ int main()
 		default:
 			break;
 		}
-		
+
+		// Check if the player can move in specified direction
+		if (isPassable(nPlayerX + nDeltaX, nPlayerY + nDeltaY))
+		{
+			// If allowed, move in specified direction
+			nPlayerX += nDeltaX;
+			nPlayerY += nDeltaY;
+		}
+
 	}
 	return 0;
 }
 void displayMap(){
-	for (int a = 0; a < MAP_HEIGHT; a++){
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		console.Position(0,a);
-		for (int b = 0; b < MAP_WIDTH; b++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
 			if (roomOneArray[a][b] == 0){
 				console << ' ';
 			}
@@ -129,7 +145,7 @@ void interactable(){
 	console << 'X';
 }
 bool isPassable(int mapX, int mapY){
-	if (mapX < 0 || mapX >= MAP_WIDTH || mapY < 0 || mapY >= MAP_HEIGHT)
+	if (mapX < 0 || mapX >= schooled::MAP_WIDTH || mapY < 0 || mapY >= schooled::MAP_HEIGHT)
 		return false;
 
 	int tileValue = roomOneArray[mapY][mapX];
