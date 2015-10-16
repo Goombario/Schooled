@@ -45,6 +45,13 @@ struct Tile
 	bool isPassable;
 };
 
+Tile tileIndex[] = {
+	{ ' ', 7, true },	// (0) MAP_FLOOR
+	{ '_', 7, false },	// (1) MAP_WALL_TOP
+	{ 'D', 7, true },	// (2) MAP_DOOR
+	{ '|', 7, false }	// (3) MAP_WALL_SIDE
+};
+
 void displayMap();
 void drawTile(int x, int y);
 void interactable();
@@ -125,21 +132,19 @@ void displayMap(){
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		console.Position(0,a);
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
-			if (roomOneArray[a][b] == 0){
-				console << ' ';
-			}
-			else if (roomOneArray[a][b] == 1){
-				console << '_';
-			}
-			else if (roomOneArray[a][b] == 2){
-				console << 'D';
-			}
-			else if (roomOneArray[a][b] == 3){
-				console << '|';
-			}
+			drawTile(b, a);
 		}
 	}
 }
+
+void drawTile(int x, int y)
+{
+	console.Position(x, y);
+	int tile = roomOneArray[y][x];
+	//console.Color(tileIndex[tile].colourCode);
+	console << tileIndex[tile].character;
+}
+
 void interactable(){
 	console.Position(18, 16);
 	console << 'X';
