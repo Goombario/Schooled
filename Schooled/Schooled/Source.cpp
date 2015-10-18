@@ -58,7 +58,7 @@ Tile tileIndex[] = {
 };
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
 
-void displayMap();
+void displayMap();	// Display the map
 void drawTile(int x, int y);
 void interactable();
 bool isPassable(int mapX, int mapY);
