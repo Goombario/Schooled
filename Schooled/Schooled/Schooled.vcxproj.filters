@@ -23,5 +23,8 @@
     <ClInclude Include="Console Library\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Console Color\Console_color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
