@@ -88,6 +88,11 @@ int main()
 		console.Position(nPlayerX, nPlayerY);
 		console << '8';
 
+		if (message == 1){
+			console.Position(21, 21);
+			console << "Random: What do you want?";
+		}
+
 		// Input phase
 		KEYPRESS sKeyPress = console.WaitForKeypress();
 
@@ -131,10 +136,7 @@ int main()
 		{
 			message = 1;
 		}
-		if (message == 1){
-			console.Position(21, 21);
-			console << "Random: What do you want?";
-		}
+		
 		// Check if the player can move in specified direction
 		if (isPassable(nPlayerX + nDeltaX, nPlayerY + nDeltaY))
 		{
