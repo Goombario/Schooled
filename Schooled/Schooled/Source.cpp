@@ -12,6 +12,9 @@ namespace schooled{
 	int const MAP_WALL_TOP = 1;
 	int const MAP_DOOR = 2;
 	int const MAP_WALL_SIDE = 3;
+	int const ENEMY = 4;
+	int enemy1X = 18;
+	int enemy1Y = 16;
 }
 #define NDEBUG
 
@@ -31,7 +34,7 @@ int roomOneArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 3, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 1, 2, 1, 3 },
-	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
+	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
@@ -49,13 +52,20 @@ Tile tileIndex[] = {
 	{ ' ', 7, true },	// (0) MAP_FLOOR
 	{ '_', 7, false },	// (1) MAP_WALL_TOP
 	{ 'D', 7, true },	// (2) MAP_DOOR
-	{ '|', 7, false }	// (3) MAP_WALL_SIDE
+	{ '|', 7, false },	// (3) MAP_WALL_SIDE
+	{ 'X', 7, false }   // (4) ENEMY
 };
+
+int message = 0;
+
+
 
 void displayMap();
 void drawTile(int x, int y);
-void interactable();
+void enemy1();
+void flavourText();
 bool isPassable(int mapX, int mapY);
+bool isInteractable(int mapX, int mapY);
 
 
 int main()
@@ -116,7 +126,15 @@ int main()
 		default:
 			break;
 		}
-
+		//checks to see if anything is interactable
+		if (isInteractable(nPlayerX + nDeltaX, nPlayerY + nDeltaY))
+		{
+			message = 1;
+		}
+		if (message == 1){
+			console.Position(21, 21);
+			console << "Random: What do you want?";
+		}
 		// Check if the player can move in specified direction
 		if (isPassable(nPlayerX + nDeltaX, nPlayerY + nDeltaY))
 		{
@@ -136,7 +154,6 @@ void displayMap(){
 		}
 	}
 }
-
 void drawTile(int x, int y)
 {
 	console.Position(x, y);
@@ -145,10 +162,6 @@ void drawTile(int x, int y)
 	console << tileIndex[tile].character;
 }
 
-void interactable(){
-	console.Position(18, 16);
-	console << 'X';
-}
 bool isPassable(int mapX, int mapY){
 	if (mapX < 0 || mapX >= schooled::MAP_WIDTH || mapY < 0 || mapY >= schooled::MAP_HEIGHT)
 		return false;
@@ -157,6 +170,13 @@ bool isPassable(int mapX, int mapY){
 	if (tileValue == 0)
 		return true;
 	else if (tileValue == 2)
+		return true;
+	else
+		return false;
+}
+bool isInteractable(int mapX, int mapY){
+	int tileValue = roomOneArray[mapY][mapX];
+	if (tileValue == 4)
 		return true;
 	else
 		return false;
