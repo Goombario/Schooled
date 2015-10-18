@@ -1,8 +1,11 @@
 #include <iostream>
 #include <cassert>
 #include <conio.h>
+#include <Windows.h>
 #include "Console Library/Console.h"
+#include "Console Color/Console_color.h"
 using namespace std;
+namespace con = JadedHoboConsole;
 
 //declaring the map and it's dimensions
 namespace schooled{
@@ -44,20 +47,23 @@ int roomOneArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
 struct Tile
 {
 	char character;
-	int colourCode;
+	int colorCode;
 	bool isPassable;
 };
 
+// Global variables
 Tile tileIndex[] = {
-	{ ' ', 7, true },	// (0) MAP_FLOOR
-	{ '_', 7, false },	// (1) MAP_WALL_TOP
-	{ 'D', 7, true },	// (2) MAP_DOOR
-	{ '|', 7, false },	// (3) MAP_WALL_SIDE
-	{ 'X', 7, false }   // (4) ENEMY
+	{ ' ', con::fgBlack, true },	// (0) MAP_FLOOR
+	{ '_', con::fgHiGreen, false },	// (1) MAP_WALL_TOP
+	{ 'D', con::fgHiBlue, true },	// (2) MAP_DOOR
+	{ '|', con::fgHiGreen, false }	// (3) MAP_WALL_SIDE
+	{ 'X', con::fgHiWhite, false }  // (4) ENEMY
 };
 
-int message = 0;
 
+void displayMap();	// Display the map
+int message = 0;
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
 
 
 void displayMap();
@@ -75,7 +81,8 @@ int main()
 	// Initialization
 	// Initialize the player's on-screen location
 	int nPlayerX = 2, nPlayerY = 19;
-	int nDeltaX, nDeltaY;
+	int nHighlightX = 2, nHighlightY = 18;
+	int nDeltaX = 0, nDeltaY = 0;
 
 	// Main program loop
 	while (true)
@@ -83,44 +90,75 @@ int main()
 		// Wipe console clear
 		console.Clear();
 
+		///////////////////////////////////////////////////////////////////////
 		// Output phase
+
 		displayMap();
+
+		// Display the character
 		console.Position(nPlayerX, nPlayerY);
+		SetConsoleTextAttribute(hConsole, con::fgHiWhite);
 		console << '8';
 
+		// Display the highlight
+		console.Position(nHighlightX, nHighlightY);
+		SetConsoleTextAttribute(hConsole, con::bgHiWhite);
+		console << tileIndex[roomOneArray[nHighlightY][nHighlightX]].character;
+		
 		if (message == 1){
 			console.Position(21, 21);
 			console << "Random: What do you want?";
 		}
 
+		///////////////////////////////////////////////////////////////////////
 		// Input phase
+
 		KEYPRESS sKeyPress = console.WaitForKeypress();
 
+		///////////////////////////////////////////////////////////////////////
 		// Processing phase
+
+		nDeltaX = 0;
+		nDeltaY = 0;
+
 		switch (sKeyPress.eCode)
 		{
-			// move down
+			// down selected
 		case CONSOLE_KEY_DOWN:
 			nDeltaX = 0;
 			nDeltaY = 1;
 			break;
 
-			// move left
+			// left selected
 		case CONSOLE_KEY_LEFT:
 			nDeltaX = -1;
 			nDeltaY = 0;
 			break;
 
-			// move right
+			// right selected
 		case CONSOLE_KEY_RIGHT:
 			nDeltaX = 1;
 			nDeltaY = 0;
 			break;
 
-			// move up
+			// up selected
 		case CONSOLE_KEY_UP:
 			nDeltaX = 0;
 			nDeltaY = -1;
+			break;
+
+			// move key pressed
+		case CONSOLE_KEY_M:
+			nDeltaX = (nHighlightX - nPlayerX);
+			nDeltaY = (nHighlightY - nPlayerY);
+
+			// Check if the player can move in specified direction
+			if (isPassable(nHighlightX, nHighlightY))
+			{
+				// If allowed, move in specified direction
+				nPlayerX = nHighlightX;
+				nPlayerY = nHighlightY;
+			}
 			break;
 
 			// quit
@@ -137,13 +175,13 @@ int main()
 			message = 1;
 		}
 		
-		// Check if the player can move in specified direction
-		if (isPassable(nPlayerX + nDeltaX, nPlayerY + nDeltaY))
+		// Check if a move action has been performed, and adjusts highlight
+		if (nDeltaX != 0 || nDeltaY != 0)
 		{
-			// If allowed, move in specified direction
-			nPlayerX += nDeltaX;
-			nPlayerY += nDeltaY;
+			nHighlightX = nPlayerX + nDeltaX;
+			nHighlightY = nPlayerY + nDeltaY;
 		}
+
 
 	}
 	return 0;
@@ -160,7 +198,7 @@ void drawTile(int x, int y)
 {
 	console.Position(x, y);
 	int tile = roomOneArray[y][x];
-	//console.Color(tileIndex[tile].colourCode);
+	SetConsoleTextAttribute(hConsole, tileIndex[tile].colorCode);
 	console << tileIndex[tile].character;
 }
 
