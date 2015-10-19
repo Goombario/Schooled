@@ -5,12 +5,14 @@
 #include "Console Library/Console.h"
 #include "Console Color/Console_color.h"
 using namespace std;
-namespace con = JadedHoboConsole;
+namespace con = JadedHoboConsole;	// Used for the color
 
 //declaring the map and it's dimensions
 namespace schooled{
 	int const MAP_WIDTH = 60;
 	int const MAP_HEIGHT = 20;
+	int const SCREEN_WIDTH = 80;
+	int const SCREEN_HEIGHT = 25;
 	int const MAP_FLOOR = 0;
 	int const MAP_WALL_TOP = 1;
 	int const MAP_DOOR = 2;
@@ -18,8 +20,13 @@ namespace schooled{
 	int const ENEMY = 4;
 	int enemy1X = 18;
 	int enemy1Y = 16;
+
+	CHAR_INFO buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
+	COORD dwBufferSize = { SCREEN_WIDTH, SCREEN_HEIGHT };
+	COORD dwBufferCoord = { 0, 0 };
 }
 #define NDEBUG
+#define WIN32_LEAN_AND_MEAN
 
 int roomOneArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
 	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
@@ -54,9 +61,9 @@ struct Tile
 // Global variables
 Tile tileIndex[] = {
 	{ ' ', con::fgBlack, true },	// (0) MAP_FLOOR
-	{ '_', con::fgHiGreen, false },	// (1) MAP_WALL_TOP
+	{ '=', con::fgHiGreen, false },	// (1) MAP_WALL_TOP
 	{ 'D', con::fgHiBlue, true },	// (2) MAP_DOOR
-	{ '|', con::fgHiGreen, false }	// (3) MAP_WALL_SIDE
+	{ '|', con::fgHiGreen, false },	// (3) MAP_WALL_SIDE
 	{ 'X', con::fgHiWhite, false }  // (4) ENEMY
 };
 
@@ -65,24 +72,35 @@ void displayMap();	// Display the map
 int message = 0;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
 
+///////////////////////////////////////////////////////////////////////////////
+// Function declarations
 
+// Draws the map to the screen
 void displayMap();
-void drawTile(int x, int y);
+
+// Checks if a tile is passable
+bool isPassable(int mapX, int mapY);
+
+// Checks if a tile is interactable
+bool isInteractable(int mapX, int mapY);
+
 void enemy1();
 void flavourText();
-bool isPassable(int mapX, int mapY);
-bool isInteractable(int mapX, int mapY);
 
 
 int main()
 {
+	///////////////////////////////////////////////////////////////////////////
+	// Initialization
 	console.SetTitle("Schooled V0.1");
 
-	// Initialization
 	// Initialize the player's on-screen location
-	int nPlayerX = 2, nPlayerY = 19;
-	int nHighlightX = 2, nHighlightY = 18;
-	int nDeltaX = 0, nDeltaY = 0;
+	COORD player{ 2, 19 };
+	COORD highlight{ 2, 18 };
+	COORD delta{ 0, 0 };
+
+	SMALL_RECT rcRegion = { 0, 0, schooled::SCREEN_WIDTH - 1,
+		schooled::SCREEN_HEIGHT - 1 };
 
 	// Main program loop
 	while (true)
@@ -93,22 +111,27 @@ int main()
 		///////////////////////////////////////////////////////////////////////
 		// Output phase
 
+		ReadConsoleOutput(hConsole, (CHAR_INFO *)schooled::buffer,
+			schooled::dwBufferSize, schooled::dwBufferCoord, &rcRegion);
+
+		// Draw the map
 		displayMap();
 
 		// Display the character
-		console.Position(nPlayerX, nPlayerY);
-		SetConsoleTextAttribute(hConsole, con::fgHiWhite);
-		console << '8';
+		schooled::buffer[player.Y][player.X].Attributes = con::fgHiWhite;
+		schooled::buffer[player.Y][player.X].Char.AsciiChar = '8';
 
 		// Display the highlight
-		console.Position(nHighlightX, nHighlightY);
-		SetConsoleTextAttribute(hConsole, con::bgHiWhite);
-		console << tileIndex[roomOneArray[nHighlightY][nHighlightX]].character;
+		schooled::buffer[highlight.Y][highlight.X].Attributes = con::bgHiWhite;
 		
+		WriteConsoleOutput(hConsole, (CHAR_INFO *)schooled::buffer,
+			schooled::dwBufferSize, schooled::dwBufferCoord, &rcRegion);
+
 		if (message == 1){
 			console.Position(21, 21);
 			console << "Random: What do you want?";
 		}
+
 
 		///////////////////////////////////////////////////////////////////////
 		// Input phase
@@ -118,46 +141,46 @@ int main()
 		///////////////////////////////////////////////////////////////////////
 		// Processing phase
 
-		nDeltaX = 0;
-		nDeltaY = 0;
+		delta.X = 0;
+		delta.Y = 0;
 
 		switch (sKeyPress.eCode)
 		{
 			// down selected
 		case CONSOLE_KEY_DOWN:
-			nDeltaX = 0;
-			nDeltaY = 1;
+			delta.X = 0;
+			delta.Y = 1;
 			break;
 
 			// left selected
 		case CONSOLE_KEY_LEFT:
-			nDeltaX = -1;
-			nDeltaY = 0;
+			delta.X = -1;
+			delta.Y = 0;
 			break;
 
 			// right selected
 		case CONSOLE_KEY_RIGHT:
-			nDeltaX = 1;
-			nDeltaY = 0;
+			delta.X = 1;
+			delta.Y = 0;
 			break;
 
 			// up selected
 		case CONSOLE_KEY_UP:
-			nDeltaX = 0;
-			nDeltaY = -1;
+			delta.X = 0;
+			delta.Y = -1;
 			break;
 
 			// move key pressed
 		case CONSOLE_KEY_M:
-			nDeltaX = (nHighlightX - nPlayerX);
-			nDeltaY = (nHighlightY - nPlayerY);
+			delta.X = (highlight.X - player.X);
+			delta.Y = (highlight.Y - player.Y);
 
 			// Check if the player can move in specified direction
-			if (isPassable(nHighlightX, nHighlightY))
+			if (isPassable(highlight.X, highlight.Y))
 			{
 				// If allowed, move in specified direction
-				nPlayerX = nHighlightX;
-				nPlayerY = nHighlightY;
+				player.X = highlight.X;
+				player.Y = highlight.Y;
 			}
 			break;
 
@@ -170,36 +193,30 @@ int main()
 			break;
 		}
 		//checks to see if anything is interactable
-		if (isInteractable(nPlayerX + nDeltaX, nPlayerY + nDeltaY))
+		if (isInteractable(player.X + delta.X, player.Y + delta.Y))
 		{
 			message = 1;
 		}
 		
 		// Check if a move action has been performed, and adjusts highlight
-		if (nDeltaX != 0 || nDeltaY != 0)
+		if (delta.X != 0 || delta.Y != 0)
 		{
-			nHighlightX = nPlayerX + nDeltaX;
-			nHighlightY = nPlayerY + nDeltaY;
+			highlight.X = player.X + delta.X;
+			highlight.Y = player.Y + delta.Y;
 		}
-
-
 	}
 	return 0;
 }
 void displayMap(){
+	int tile;
+
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
-		console.Position(0,a);
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
-			drawTile(b, a);
+			tile = roomOneArray[a][b];
+			schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
+			schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
 		}
 	}
-}
-void drawTile(int x, int y)
-{
-	console.Position(x, y);
-	int tile = roomOneArray[y][x];
-	SetConsoleTextAttribute(hConsole, tileIndex[tile].colorCode);
-	console << tileIndex[tile].character;
 }
 
 bool isPassable(int mapX, int mapY){
