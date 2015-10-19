@@ -207,7 +207,7 @@ int main()
 			break;
 			//checks interactable
 		case CONSOLE_KEY_N:
-			object = isInteractable(nHighlightX, nHighlightY);
+			object = isInteractable(highlight.X, highlight.Y);
 			if (object != 0)
 			{
 				if (object == 4){
@@ -216,13 +216,13 @@ int main()
 				else if (object == 5){
 					message = 2;
 					keyCount++;
-					roomOneArray[nHighlightY][nHighlightX] = 0;
+					roomOneArray[highlight.Y][highlight.X] = 0;
 				}
 				else if (object == 6){
 					if (useKey == true && keyCount > 0){
 						message = 4;
 						keyCount--;
-						roomOneArray[nHighlightY][nHighlightX] = 2;
+						roomOneArray[highlight.Y][highlight.X] = 2;
 						useKey = false;
 					}
 					else if (useKey == false && keyCount > 0){
