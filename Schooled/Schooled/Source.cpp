@@ -16,6 +16,7 @@ namespace schooled{
 	int const MAP_DOOR = 2;
 	int const MAP_WALL_SIDE = 3;
 	int const ENEMY = 4;
+	int const KEY = 5;
 	int enemy1X = 18;
 	int enemy1Y = 16;
 }
@@ -39,7 +40,7 @@ int roomOneArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
 	{ 3, 0, 0, 0, 0, 3, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 1, 2, 1, 3 },
 	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
+	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
 	{ 3, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 }
 };
@@ -56,13 +57,15 @@ Tile tileIndex[] = {
 	{ ' ', con::fgBlack, true },	// (0) MAP_FLOOR
 	{ '_', con::fgHiGreen, false },	// (1) MAP_WALL_TOP
 	{ 'D', con::fgHiBlue, true },	// (2) MAP_DOOR
-	{ '|', con::fgHiGreen, false }	// (3) MAP_WALL_SIDE
-	{ 'X', con::fgHiWhite, false }  // (4) ENEMY
+	{ '|', con::fgHiGreen, false },	// (3) MAP_WALL_SIDE
+	{ 'X', con::fgHiWhite, false }, // (4) ENEMY
+	{ '~', con::fgHiWhite, true }   // (5) KEY
 };
 
 
 void displayMap();	// Display the map
 int message = 0;
+int keyCount = 0;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
 
 
@@ -71,8 +74,8 @@ void drawTile(int x, int y);
 void enemy1();
 void flavourText();
 bool isPassable(int mapX, int mapY);
-bool isInteractable(int mapX, int mapY);
-
+int isInteractable(int mapX, int mapY);
+int object = 0;
 
 int main()
 {
@@ -105,9 +108,18 @@ int main()
 		SetConsoleTextAttribute(hConsole, con::bgHiWhite);
 		console << tileIndex[roomOneArray[nHighlightY][nHighlightX]].character;
 		
+		// Display keycount
+		console.Position(5, 21);
+		console << keyCount;
+
+		// Display the messages
 		if (message == 1){
 			console.Position(21, 21);
 			console << "Random: What do you want?";
+		}
+		else if (message == 2){
+			console.Position(21, 21);
+			console << "It's a key! You picked it up.";
 		}
 
 		///////////////////////////////////////////////////////////////////////
@@ -146,6 +158,21 @@ int main()
 			nDeltaX = 0;
 			nDeltaY = -1;
 			break;
+			//checks interactable
+		case CONSOLE_KEY_N:
+			object = isInteractable(nHighlightX, nHighlightY);
+			if (object != 0)
+			{
+				if (object == 4){
+					message = 1;
+				}
+				else if (object == 5){
+					message = 2;
+					keyCount++;
+					roomOneArray[nHighlightY][nHighlightX] = 0;
+				}
+			}
+			break;
 
 			// move key pressed
 		case CONSOLE_KEY_M:
@@ -169,11 +196,7 @@ int main()
 		default:
 			break;
 		}
-		//checks to see if anything is interactable
-		if (isInteractable(nPlayerX + nDeltaX, nPlayerY + nDeltaY))
-		{
-			message = 1;
-		}
+		
 		
 		// Check if a move action has been performed, and adjusts highlight
 		if (nDeltaX != 0 || nDeltaY != 0)
@@ -211,13 +234,17 @@ bool isPassable(int mapX, int mapY){
 		return true;
 	else if (tileValue == 2)
 		return true;
-	else
-		return false;
-}
-bool isInteractable(int mapX, int mapY){
-	int tileValue = roomOneArray[mapY][mapX];
-	if (tileValue == 4)
+	else if (tileValue == 5)
 		return true;
 	else
 		return false;
+}
+int isInteractable(int mapX, int mapY){
+	int tileValue = roomOneArray[mapY][mapX];
+	if (tileValue == 4)
+		return 4;
+	else if (tileValue == 5)
+		return 5;
+	else
+		return 0;
 }
