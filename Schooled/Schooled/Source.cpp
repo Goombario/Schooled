@@ -4,30 +4,32 @@
 #include <Windows.h>
 #include "Console Library/Console.h"
 #include "Console Color/Console_color.h"
+
 using namespace std;
 namespace con = JadedHoboConsole;	// Used for the color
-
-//declaring the map and it's dimensions
 namespace schooled{
 	int const MAP_WIDTH = 60;
 	int const MAP_HEIGHT = 20;
 	int const SCREEN_WIDTH = 80;
 	int const SCREEN_HEIGHT = 25;
+
 	int const MAP_FLOOR = 0;
 	int const MAP_WALL_TOP = 1;
 	int const MAP_DOOR = 2;
 	int const MAP_WALL_SIDE = 3;
 	int const ENEMY = 4;
-	int enemy1X = 18;
-	int enemy1Y = 16;
+
+	COORD enemy1{ 18, 16 };
 
 	CHAR_INFO buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
 	COORD dwBufferSize = { SCREEN_WIDTH, SCREEN_HEIGHT };
 	COORD dwBufferCoord = { 0, 0 };
 }
+
 #define NDEBUG
 #define WIN32_LEAN_AND_MEAN
 
+//declaring the map and it's dimensions
 int roomOneArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
 	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
@@ -59,14 +61,13 @@ struct Tile
 };
 
 // Global variables
-Tile tileIndex[] = {
+const Tile tileIndex[] = {
 	{ ' ', con::fgBlack, true },	// (0) MAP_FLOOR
 	{ '=', con::fgHiGreen, false },	// (1) MAP_WALL_TOP
 	{ 'D', con::fgHiBlue, true },	// (2) MAP_DOOR
 	{ '|', con::fgHiGreen, false },	// (3) MAP_WALL_SIDE
 	{ 'X', con::fgHiWhite, false }  // (4) ENEMY
 };
-
 
 void displayMap();	// Display the map
 int message = 0;
@@ -111,6 +112,7 @@ int main()
 		///////////////////////////////////////////////////////////////////////
 		// Output phase
 
+		// Begins reading to the buffer.
 		ReadConsoleOutput(hConsole, (CHAR_INFO *)schooled::buffer,
 			schooled::dwBufferSize, schooled::dwBufferCoord, &rcRegion);
 
@@ -124,14 +126,16 @@ int main()
 		// Display the highlight
 		schooled::buffer[highlight.Y][highlight.X].Attributes = con::bgHiWhite;
 		
+		// Writes the buffer to the screen
 		WriteConsoleOutput(hConsole, (CHAR_INFO *)schooled::buffer,
 			schooled::dwBufferSize, schooled::dwBufferCoord, &rcRegion);
 
+		// Writes a message to the screen
 		if (message == 1){
 			console.Position(21, 21);
+			SetConsoleTextAttribute(hConsole, con::fgHiWhite);
 			console << "Random: What do you want?";
 		}
-
 
 		///////////////////////////////////////////////////////////////////////
 		// Input phase
@@ -224,9 +228,7 @@ bool isPassable(int mapX, int mapY){
 		return false;
 
 	int tileValue = roomOneArray[mapY][mapX];
-	if (tileValue == 0)
-		return true;
-	else if (tileValue == 2)
+	if (tileIndex[tileValue].isPassable)
 		return true;
 	else
 		return false;
