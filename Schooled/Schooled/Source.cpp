@@ -1,5 +1,8 @@
 #include <iostream>
 #include <cassert>
+#include <string>
+#include <map>
+#include <vector>
 #include <conio.h>
 #include <Windows.h>
 #include "Console Library/Console.h"
@@ -64,6 +67,8 @@ struct Tile
 	bool isPassable;
 };
 
+
+
 // Global variables
 const Tile tileIndex[] = {
 	{ ' ', con::fgBlack, true },	// (0) MAP_FLOOR
@@ -72,11 +77,20 @@ const Tile tileIndex[] = {
 	{ '|', con::fgHiGreen, false },	// (3) MAP_WALL_SIDE
 	{ 'X', con::fgHiWhite, false }, // (4) ENEMY
 	{ '~', con::fgHiWhite, true },  // (5) KEY
-	{ 'D', con::fgHiRed, false }  // (6) MAP_DOOR_LOCKED
+	{ 'D', con::fgHiRed, false }	// (6) MAP_DOOR_LOCKED
+};
+
+map<string, char *> messages =
+{
+	{ "Q_RANDOM",		"Random: What do you want ?" },
+	{ "GET_KEY",		"It's a key! You picked it up." },
+	{ "DOOR_LOCKED",	"The door is locked, you need a key." },
+	{ "USE_KEY",		"You used a key!" },
+	{ "Q_USE_KEY",		"The door is locked, use a key?"}
 };
 
 void displayMap();	// Display the map
-int message = 0;
+string message = "Q_RANDOM";
 int keyCount = 0;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
 
@@ -145,29 +159,12 @@ int main()
 		// Display keycount
 		console.Position(5, 21);
 		console << keyCount;
-
+		
 		// Display the messages
-		if (message == 1){
-			console.Position(21, 21);
-			SetConsoleTextAttribute(hConsole, con::fgHiWhite);
-			console << "Random: What do you want?";
-		}
-		else if (message == 2){
-			console.Position(21, 21);
-			console << "It's a key! You picked it up.";
-		}
-		else if (message == 3){
-			console.Position(21, 21);
-			console << "The door is locked, you need a key.";
-		}
-		else if (message == 4){
-			console.Position(21, 21);
-			console << "You used a key!";
-		}
-		else if (message == 5){
-			console.Position(21, 21);
-			console << "The door is locked, use a key?";
-		}
+		console.Position(21, 21);
+		SetConsoleTextAttribute(hConsole, con::fgHiWhite);
+		console << messages[message];
+
 
 		///////////////////////////////////////////////////////////////////////
 		// Input phase
@@ -205,34 +202,44 @@ int main()
 			delta.X = 0;
 			delta.Y = -1;
 			break;
+
 			//checks interactable
 		case CONSOLE_KEY_N:
 			object = isInteractable(highlight.X, highlight.Y);
-			if (object != 0)
+			switch (object)
 			{
-				if (object == 4){
-					message = 1;
+				// ENEMY
+			case 4:
+				message = "Q_RANDOM";
+				break;
+
+				// KEY
+			case 5:
+				message = "GET_KEY";
+				keyCount++;
+				roomOneArray[highlight.Y][highlight.X] = 0;
+				break;
+
+				// MAP_DOOR_LOCKED
+			case 6:
+				if (useKey == true && keyCount > 0)
+				{
+					message = "USE_KEY";
+					keyCount--;
+					roomOneArray[highlight.Y][highlight.X] = 2;
+					useKey = false;
 				}
-				else if (object == 5){
-					message = 2;
-					keyCount++;
-					roomOneArray[highlight.Y][highlight.X] = 0;
+				else if (useKey == false && keyCount > 0)
+				{
+					message = "Q_USE_KEY";
+					useKey = true;
 				}
-				else if (object == 6){
-					if (useKey == true && keyCount > 0){
-						message = 4;
-						keyCount--;
-						roomOneArray[highlight.Y][highlight.X] = 2;
-						useKey = false;
-					}
-					else if (useKey == false && keyCount > 0){
-						message = 5;
-						useKey = true;
-					}
-					else{
-						message = 3;
-					}
-				}
+				else
+					message = "DOOR_LOCKED";
+				break;
+
+			default:
+				break;
 			}
 			break;
 
