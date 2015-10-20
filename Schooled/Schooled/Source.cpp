@@ -116,13 +116,11 @@ struct Stats{
 	int HP;
 	int EN;
 	int STR;
-	int INT;
-	int RES;
-	int DEF;
 };
 
-const Stats enemies[] = {
-	{10, 2, 3, 1, 2, 1} // Weak bully? Cyber bully maybe?
+Stats people[] = {
+	{10, 2, 2}, // our player
+	{10, 2, 1}  // Weak bully? Cyber bully maybe?
 };
 
 // Global variables
@@ -145,7 +143,10 @@ map<string, char *> messages =
 	{ "USE_KEY",		"You used a key!" },
 	{ "Q_USE_KEY",		"The door is locked, use a key?"},
 	{ "Q_NEXT_ROOM", "Go to next room?" },
-	{ "NEW_ROOM", "New room." }
+	{ "NEW_ROOM", "New room." },
+	{ "ENEMY_DEATH", "It died..." },
+	{ "UNATTACKABLE", "You can't kill that, you silly!" },
+	{ "ATTACKABLE", "You hit that thing with " /*+ people[0].STR + " damage! Wow!"*/ }
 };
 
 void displayMap();	// Display the map
@@ -169,11 +170,13 @@ bool isPassable(int mapX, int mapY);
 // Checks if a tile is interactable
 int isInteractable(int mapX, int mapY);
 int object = 0;
+int attackable = 0;
 bool useKey = false;
 bool goToRoom = false;
 
 void enemy1();
 void flavourText();
+int attack(int mapX, int mapY);
 
 int main()
 {
@@ -280,8 +283,31 @@ int main()
 			delta.Y = -1;
 			break;
 
-			//checks interactable
+			//attack things B)
 		case CONSOLE_KEY_N:
+			attackable = attack(highlight.X, highlight.Y);
+			if (attackable == 1){
+				log.push_back(messages["ATTACKABLE"]);
+				if (people[1].HP == 0){
+					if (currentRoom == 1){
+						roomOneArray[highlight.Y][highlight.X] = 0;
+					}
+					else if (currentRoom == 2){
+						roomTwoArray[highlight.Y][highlight.X] = 0;
+					}
+					else if (currentRoom == 3){
+						roomThreeArray[highlight.Y][highlight.X] = 0;
+					}
+					log.push_back(messages["ENEMY_DEATH"]);
+				}
+			}
+			else{
+				log.push_back(messages["UNATTACKABLE"]);
+			}
+			break;
+
+			//checks interactable
+		case CONSOLE_KEY_SPACE:
 			object = isInteractable(highlight.X, highlight.Y);
 			switch (object)
 			//basically if the object is interactable
@@ -483,4 +509,23 @@ int isInteractable(int mapX, int mapY){
 		return 7;
 	else
 		return 0;
+}
+int attack(int mapX, int mapY){
+	int tileValue = 0;
+	if (currentRoom == 1){
+		tileValue = roomOneArray[mapY][mapX];
+	}
+	else if (currentRoom == 2){
+		tileValue = roomTwoArray[mapY][mapX];
+	}
+	else if (currentRoom == 3){
+		tileValue = roomThreeArray[mapY][mapX];
+	}
+	if (tileValue == 4){
+		people[1].HP = people[1].HP - people[0].STR;
+		return 1;
+	}
+	else{
+		return 0;
+	}
 }
