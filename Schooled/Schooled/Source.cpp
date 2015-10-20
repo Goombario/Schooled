@@ -130,7 +130,9 @@ map<string, char *> messages =
 	{ "GET_KEY",		"It's a key! You picked it up." },
 	{ "DOOR_LOCKED",	"The door is locked, you need a key." },
 	{ "USE_KEY",		"You used a key!" },
-	{ "Q_USE_KEY",		"The door is locked, use a key?"}
+	{ "Q_USE_KEY",		"The door is locked, use a key?"},
+	{ "Q_NEXT_ROOM", "Go to next room?" },
+	{ "NEW_ROOM", "New room." }
 };
 
 void displayMap();	// Display the map
@@ -227,14 +229,6 @@ int main()
 		else
 			console << log[log.size() - 1];
 
-		else if (message == 6){
-			console.Position(21, 21);
-			console << "Go to next room?";
-		}
-		else if (message == 7){
-			console.Position(21, 21);
-			console << "New room.";
-		}
 
 		///////////////////////////////////////////////////////////////////////
 		// Input phase
@@ -309,61 +303,65 @@ int main()
 					log.push_back(messages["DOOR_LOCKED"]);
 				break;
 
-				case 7:
-						//room transition
-					if (currentRoom == 1 && player.Y < 10){
-						if (goToRoom == true){
-							message = 7;
-							currentRoom = 2;
-							player.Y = 18;
-							highlight.Y = 17;
-							goToRoom = false;
-						}
-						else{
-							message = 6;
-							goToRoom = true;
-						}
+			case 7:
+					//room transition
+				if (currentRoom == 1 && player.Y < 10){
+					if (goToRoom == true){
+						log.push_back(messages["NEW_ROOM"]);
+						currentRoom = 2;
+						player.Y = 18;
+						highlight.Y = 17;
+						goToRoom = false;
 					}
-					else if (currentRoom == 1 && player.Y > 10){
-						if (goToRoom == true){
-							message = 7;
-							currentRoom = 3;
-							player.Y = 1;
-							highlight.Y = 2;
-							goToRoom = false;
-						}
-						else{
-							message = 6;
-							goToRoom = true;
-						}
-					}
-					else if (currentRoom == 2){
-						if (goToRoom == true){
-							message = 7;
-							currentRoom = 1;
-							player.Y = 1;
-							highlight.Y = 2;
-							goToRoom = false;
-						}
-						else{
-							message = 6;
-							goToRoom = true;
-						}
-					}
-					else if (currentRoom == 3){
-						if (goToRoom == true){
-							message = 7;
-							currentRoom = 1;
-							player.Y = 18;
-							highlight.Y = 17;
-							goToRoom = false;
-						}
-						else{
-							message = 6;
-							goToRoom = true;
-						}
+					else{
+						log.push_back(messages["Q_NEXT_ROOM"]);
+						goToRoom = true;
 					}
 				}
+				else if (currentRoom == 1 && player.Y > 10){
+					if (goToRoom == true){
+						log.push_back(messages["NEW_ROOM"]);
+						currentRoom = 3;
+						player.Y = 1;
+						highlight.Y = 2;
+						goToRoom = false;
+					}
+					else{
+						log.push_back(messages["Q_NEXT_ROOM"]);
+						goToRoom = true;
+					}
+				}
+				else if (currentRoom == 2){
+					if (goToRoom == true){
+						log.push_back(messages["NEW_ROOM"]);
+						currentRoom = 1;
+						player.Y = 1;
+						highlight.Y = 2;
+						goToRoom = false;
+					}
+					else{
+						log.push_back(messages["Q_NEXT_ROOM"]);
+						goToRoom = true;
+					}
+				}
+				else if (currentRoom == 3){
+					if (goToRoom == true){
+						log.push_back(messages["NEW_ROOM"]);
+						currentRoom = 1;
+						player.Y = 18;
+						highlight.Y = 17;
+						goToRoom = false;
+					}
+					else{
+						log.push_back(messages["Q_NEXT_ROOM"]);
+						goToRoom = true;
+					}
+				}
+				break;
+
+			default:
+				break;
+				
 			}
 			break;
 
