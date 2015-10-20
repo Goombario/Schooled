@@ -121,9 +121,15 @@ const Tile tileIndex[] = {
 	{ 'X', con::fgHiWhite, false }, // (4) ENEMY
 	{ '~', con::fgHiWhite, true },  // (5) KEY
 	{ 'D', con::fgHiRed, false },   // (6) MAP_DOOR_LOCKED
-	{ 'D', con::fgHiBlue, false }   // (7) DOOR_TO_NEW_ROOM
+	{ 'D', con::fgLoBlue, false }   // (7) DOOR_TO_NEW_ROOM
 };
-int currentRoom = 1;
+
+int currentArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
+int roomArray[3][3] = {
+	{ 0, 3, 0 },
+	{ 0, 1, 0 },
+}
+
 map<string, char *> messages =
 {
 	{ "Q_RANDOM",		"Random: What do you want ?" },
@@ -145,6 +151,9 @@ HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard ou
 
 // Draws the map to the screen
 void displayMap();
+
+// Changes the current room to the number of the one given.
+void changeRoom(int);
 
 void drawTile(int x, int y);
 void enemy1();
@@ -178,6 +187,9 @@ int main()
 
 	vector<char *> log;
 	log.push_back("");
+
+	int currentRoom = 1;
+
 	// Main program loop
 	while (true)
 	{
@@ -335,6 +347,7 @@ int main()
 					if (goToRoom == true){
 						log.push_back(messages["NEW_ROOM"]);
 						currentRoom = 1;
+						changeRoom(currentRoom);
 						player.Y = 1;
 						highlight.Y = 2;
 						goToRoom = false;
@@ -347,7 +360,8 @@ int main()
 				else if (currentRoom == 3){
 					if (goToRoom == true){
 						log.push_back(messages["NEW_ROOM"]);
-						currentRoom = 1;
+						currentRoom = 2;
+						changeRoom(currentRoom);
 						player.Y = 18;
 						highlight.Y = 17;
 						goToRoom = false;
@@ -400,48 +414,25 @@ int main()
 }
 void displayMap(){
 	int tile;
-	if (currentRoom == 1){
-		for (int a = 0; a < schooled::MAP_HEIGHT; a++){
-			for (int b = 0; b < schooled::MAP_WIDTH; b++){
-				tile = roomOneArray[a][b];
-				schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
-				schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
-			}
+
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			tile = currentArray[a][b];
+			schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
+			schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
 		}
 	}
-	else if (currentRoom == 2){
-		for (int a = 0; a < schooled::MAP_HEIGHT; a++){
-			for (int b = 0; b < schooled::MAP_WIDTH; b++){
-				tile = roomTwoArray[a][b];
-				schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
-				schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
-			}
-		}
-	}
-	else if (currentRoom == 3){
-		for (int a = 0; a < schooled::MAP_HEIGHT; a++){
-			for (int b = 0; b < schooled::MAP_WIDTH; b++){
-				tile = roomThreeArray[a][b];
-				schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
-				schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
-			}
-		}
-	}
+	
+
 }
 
 bool isPassable(int mapX, int mapY){
 	if (mapX < 0 || mapX >= schooled::MAP_WIDTH || mapY < 0 || mapY >= schooled::MAP_HEIGHT)
 		return false;
+
 	int tileValue = 0;
-	if (currentRoom == 1){
-		tileValue = roomOneArray[mapY][mapX];
-	}
-	else if (currentRoom == 2){
-		tileValue = roomTwoArray[mapY][mapX];
-	}
-	else if (currentRoom == 3){
-		tileValue = roomThreeArray[mapY][mapX];
-	}
+	tileValue = currentArray[mapY][mapX];
+
 	if (tileIndex[tileValue].isPassable)
 		return true;
 
@@ -450,15 +441,8 @@ bool isPassable(int mapX, int mapY){
 }
 int isInteractable(int mapX, int mapY){
 	int tileValue = 0;
-	if (currentRoom == 1){
-		tileValue = roomOneArray[mapY][mapX];
-	}
-	else if (currentRoom == 2){
-		tileValue = roomTwoArray[mapY][mapX];
-	}
-	else if (currentRoom == 3){
-		tileValue = roomThreeArray[mapY][mapX];
-	}
+	tileValue = currentArray[mapY][mapX];
+	
 		
 	if (tileValue == 4)
 		return 4;
@@ -470,4 +454,26 @@ int isInteractable(int mapX, int mapY){
 		return 7;
 	else
 		return 0;
+}
+
+void changeRoom(int currentRoom)
+{
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			switch (currentRoom)
+			{
+			case 1:
+				currentArray[a][b] = roomOneArray[a][b];
+				break;
+
+			case 2:
+				currentArray[a][b] = roomTwoArray[a][b];
+				break;
+
+			case 3:
+				currentArray[a][b] = roomThreeArray[a][b];
+				break;
+			}
+		}
+	}
 }
