@@ -112,6 +112,19 @@ struct Tile
 	bool isPassable;
 };
 
+struct Stats{
+	int HP;
+	int EN;
+	int STR;
+	int INT;
+	int RES;
+	int DEF;
+};
+
+const Stats enemies[] = {
+	{10, 2, 3, 1, 2, 1} // Weak bully? Cyber bully maybe?
+};
+
 // Global variables
 const Tile tileIndex[] = {
 	{ ' ', con::fgBlack, true },	// (0) MAP_FLOOR
