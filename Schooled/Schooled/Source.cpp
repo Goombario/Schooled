@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <cassert>
 #include <string>
 #include <map>
@@ -67,8 +67,6 @@ struct Tile
 	bool isPassable;
 };
 
-
-
 // Global variables
 const Tile tileIndex[] = {
 	{ ' ', con::fgBlack, true },	// (0) MAP_FLOOR
@@ -125,10 +123,11 @@ int main()
 	COORD player{ 2, 19 };
 	COORD highlight{ 2, 18 };
 	COORD delta{ 0, 0 };
-
 	SMALL_RECT rcRegion = { 0, 0, schooled::SCREEN_WIDTH - 1,
 		schooled::SCREEN_HEIGHT - 1 };
 
+	vector<char *> log;
+	log.push_back("");
 	// Main program loop
 	while (true)
 	{
@@ -161,9 +160,24 @@ int main()
 		console << keyCount;
 		
 		// Display the messages
-		console.Position(21, 21);
+		console.Position(21, 23);
 		SetConsoleTextAttribute(hConsole, con::fgHiWhite);
-		console << messages[message];
+		if (log.size() > 2)
+		{
+			console << log[log.size() - 1];
+			console.Position(21, 22);
+			console << log[log.size() - 2];
+			console.Position(21, 21);
+			console << log[log.size() - 3];
+		}
+		else if (log.size() > 1)
+		{
+			console << log[log.size() - 1];
+			console.Position(21, 22);
+			console << log[log.size() - 2];
+		}
+		else
+			console << log[log.size() - 1];
 
 
 		///////////////////////////////////////////////////////////////////////
@@ -210,12 +224,12 @@ int main()
 			{
 				// ENEMY
 			case 4:
-				message = "Q_RANDOM";
+				log.push_back(messages["Q_RANDOM"]);
 				break;
 
 				// KEY
 			case 5:
-				message = "GET_KEY";
+				log.push_back(messages["GET_KEY"]);
 				keyCount++;
 				roomOneArray[highlight.Y][highlight.X] = 0;
 				break;
@@ -224,18 +238,18 @@ int main()
 			case 6:
 				if (useKey == true && keyCount > 0)
 				{
-					message = "USE_KEY";
+					log.push_back(messages["USE_KEY"]);
 					keyCount--;
 					roomOneArray[highlight.Y][highlight.X] = 2;
 					useKey = false;
 				}
 				else if (useKey == false && keyCount > 0)
 				{
-					message = "Q_USE_KEY";
+					log.push_back(messages["Q_USE_KEY"]);
 					useKey = true;
 				}
-				else
-					message = "DOOR_LOCKED";
+				else 
+					log.push_back(messages["DOOR_LOCKED"]);
 				break;
 
 			default:
