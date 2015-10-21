@@ -15,13 +15,15 @@ namespace schooled{
 	int const MAP_HEIGHT = 20;
 	int const SCREEN_WIDTH = 80;
 	int const SCREEN_HEIGHT = 25;
+	int const FLOOR_WIDTH = 3;
+	int const FLOOR_HEIGHT = 3;
 
 	int const MAP_FLOOR = 0;
 	int const MAP_WALL_TOP = 1;
 	int const MAP_DOOR = 2;
 	int const MAP_WALL_SIDE = 3;
 	int const ENEMY = 4;
-        int const KEY = 5;
+    int const KEY = 5;
 	int const MAP_DOOR_LOCKED = 6;
 	int const DOOR_TO_NEW_ROOM = 7;
 
@@ -42,6 +44,13 @@ struct Room
 	COORD location;
 	int roomArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
 	char *message;
+};
+
+struct Tile
+{
+	char character;
+	int colorCode;
+	bool isPassable;
 };
 
 //declaring the map and it's dimensions
@@ -91,9 +100,10 @@ Room roomTwo{ { 1, 2 },
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
 	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 }
-} , "room 2" };
+}, "room 2" };
 
-int roomThreeArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
+Room roomThree{ { 1, 0 },
+{
 	{ 3, 1, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
@@ -114,14 +124,8 @@ int roomThreeArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
 	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 }
-};
+}, "Room 3" };
 
-struct Tile
-{
-	char character;
-	int colorCode;
-	bool isPassable;
-};
 
 // Global variables
 const Tile tileIndex[] = {
@@ -135,12 +139,6 @@ const Tile tileIndex[] = {
 	{ 'D', con::fgLoBlue, false }   // (7) DOOR_TO_NEW_ROOM
 };
 
-int currentArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
-int roomArray[3][3] = {
-	{ 0, 3, 0 },
-	{ 0, 1, 0 },
-};
-
 map<string, char *> messages =
 {
 	{ "Q_RANDOM",		"Random: What do you want ?" },
@@ -152,7 +150,6 @@ map<string, char *> messages =
 	{ "NEW_ROOM", "New room." }
 };
 
-void displayMap();	// Display the map
 string message = "Q_RANDOM";
 int keyCount = 0;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
@@ -161,23 +158,24 @@ HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard ou
 // Function declarations
 
 // Draws the map to the screen
-void displayMap();
+void displayMap(Room);
 
 // Changes the current room to the number of the one given.
-void changeRoom(int);
+void changeRoom(Room&, COORD);
 
 void drawTile(int x, int y);
 void enemy1();
 void flavourText();
 
 // Checks if a tile is passable
-bool isPassable(int mapX, int mapY);
+bool isPassable(int mapX, int mapY, Room);
 
 // Checks if a tile is interactable
-int isInteractable(int mapX, int mapY);
+int isInteractable(int mapX, int mapY, Room);
 int object = 0;
 bool useKey = false;
 bool goToRoom = false;
+Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 
 void enemy1();
 void flavourText();
@@ -196,10 +194,13 @@ int main()
 	SMALL_RECT rcRegion = { 0, 0, schooled::SCREEN_WIDTH - 1,
 		schooled::SCREEN_HEIGHT - 1 };
 
+	Room currentRoom = roomOne;
+	roomArray[roomOne.location.X][roomOne.location.Y] = roomOne;
+	roomArray[roomTwo.location.X][roomTwo.location.Y] = roomTwo;
+	roomArray[roomThree.location.X][roomThree.location.Y] = roomThree;
+
 	vector<char *> log;
 	log.push_back("");
-
-	int currentRoom = 1;
 
 	// Main program loop
 	while (true)
@@ -215,7 +216,7 @@ int main()
 			schooled::dwBufferSize, schooled::dwBufferCoord, &rcRegion);
 
 		// Draw the map
-		displayMap();
+		displayMap(currentRoom);
 
 		// Display the character
 		schooled::buffer[player.Y][player.X].Attributes = con::fgHiWhite;
@@ -292,7 +293,7 @@ int main()
 
 			//checks interactable
 		case CONSOLE_KEY_N:
-			object = isInteractable(highlight.X, highlight.Y);
+			object = isInteractable(highlight.X, highlight.Y, currentRoom);
 			switch (object)
 			//basically if the object is interactable
 			{
@@ -305,7 +306,7 @@ int main()
 			case 5:
 				log.push_back(messages["GET_KEY"]);
 				keyCount++;
-				roomOneArray[highlight.Y][highlight.X] = 0;
+				currentRoom.roomArray[highlight.Y][highlight.X] = 0;
 				break;
 
 				// MAP_DOOR_LOCKED
@@ -314,7 +315,7 @@ int main()
 				{
 					log.push_back(messages["USE_KEY"]);
 					keyCount--;
-					roomOneArray[highlight.Y][highlight.X] = 2;
+					currentRoom.roomArray[highlight.Y][highlight.X] = 2;
 					useKey = false;
 				}
 				else if (useKey == false && keyCount > 0)
@@ -328,59 +329,28 @@ int main()
 
 			case 7:
 					//room transition
-				if (currentRoom == 1 && player.Y < 10){
-					if (goToRoom == true){
-						log.push_back(messages["NEW_ROOM"]);
-						currentRoom = 2;
+				if (goToRoom == true)
+				{
+					if (player.Y < 10)
+					{
+						changeRoom(currentRoom, { 0, 1 });
 						player.Y = 18;
 						highlight.Y = 17;
-						goToRoom = false;
 					}
-					else{
-						log.push_back(messages["Q_NEXT_ROOM"]);
-						goToRoom = true;
-					}
-				}
-				else if (currentRoom == 1 && player.Y > 10){
-					if (goToRoom == true){
-						log.push_back(messages["NEW_ROOM"]);
-						currentRoom = 3;
+					else if (player.Y > 10)
+					{
+						changeRoom(currentRoom, { 0, -1 });
 						player.Y = 1;
 						highlight.Y = 2;
-						goToRoom = false;
 					}
-					else{
-						log.push_back(messages["Q_NEXT_ROOM"]);
-						goToRoom = true;
-					}
+
+					log.push_back(currentRoom.message);
+					goToRoom = false;
 				}
-				else if (currentRoom == 2){
-					if (goToRoom == true){
-						log.push_back(messages["NEW_ROOM"]);
-						currentRoom = 1;
-						changeRoom(currentRoom);
-						player.Y = 1;
-						highlight.Y = 2;
-						goToRoom = false;
-					}
-					else{
-						log.push_back(messages["Q_NEXT_ROOM"]);
-						goToRoom = true;
-					}
-				}
-				else if (currentRoom == 3){
-					if (goToRoom == true){
-						log.push_back(messages["NEW_ROOM"]);
-						currentRoom = 2;
-						changeRoom(currentRoom);
-						player.Y = 18;
-						highlight.Y = 17;
-						goToRoom = false;
-					}
-					else{
-						log.push_back(messages["Q_NEXT_ROOM"]);
-						goToRoom = true;
-					}
+				else if (goToRoom == false)
+				{
+					log.push_back(messages["Q_NEXT_ROOM"]);
+					goToRoom = true;
 				}
 				break;
 
@@ -396,7 +366,7 @@ int main()
 			delta.Y = (highlight.Y - player.Y);
 
 			// Check if the player can move in specified direction
-			if (isPassable(highlight.X, highlight.Y))
+			if (isPassable(highlight.X, highlight.Y, currentRoom))
 			{
 				// If allowed, move in specified direction
 				player.X = highlight.X;
@@ -423,12 +393,12 @@ int main()
 	}
 	return 0;
 }
-void displayMap(){
+void displayMap(Room currentRoom){
 	int tile;
 
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
-			tile = currentArray[a][b];
+			tile = currentRoom.roomArray[a][b];
 			schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
 			schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
 		}
@@ -437,12 +407,12 @@ void displayMap(){
 
 }
 
-bool isPassable(int mapX, int mapY){
+bool isPassable(int mapX, int mapY, Room currentRoom){
 	if (mapX < 0 || mapX >= schooled::MAP_WIDTH || mapY < 0 || mapY >= schooled::MAP_HEIGHT)
 		return false;
 
 	int tileValue = 0;
-	tileValue = currentArray[mapY][mapX];
+	tileValue = currentRoom.roomArray[mapY][mapX];
 
 	if (tileIndex[tileValue].isPassable)
 		return true;
@@ -450,9 +420,9 @@ bool isPassable(int mapX, int mapY){
 	else
 		return false;
 }
-int isInteractable(int mapX, int mapY){
+int isInteractable(int mapX, int mapY, Room currentRoom){
 	int tileValue = 0;
-	tileValue = currentArray[mapY][mapX];
+	tileValue = currentRoom.roomArray[mapY][mapX];
 	
 		
 	if (tileValue == 4)
@@ -467,24 +437,10 @@ int isInteractable(int mapX, int mapY){
 		return 0;
 }
 
-void changeRoom(int currentRoom)
+void changeRoom(Room& currentRoom, COORD change)
 {
-	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
-		for (int b = 0; b < schooled::MAP_WIDTH; b++){
-			switch (currentRoom)
-			{
-			case 1:
-				currentArray[a][b] = roomOneArray[a][b];
-				break;
-
-			case 2:
-				currentArray[a][b] = roomTwoArray[a][b];
-				break;
-
-			case 3:
-				currentArray[a][b] = roomThreeArray[a][b];
-				break;
-			}
-		}
-	}
+	roomArray[currentRoom.location.X][currentRoom.location.Y] = currentRoom;
+	currentRoom = roomArray
+		[currentRoom.location.X + change.X]
+		[currentRoom.location.Y + change.Y];
 }
