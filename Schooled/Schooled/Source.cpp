@@ -194,7 +194,7 @@ Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 
 void enemy1();
 void flavourText();
-int attack(int mapX, int mapY);
+int attack(int mapX, int mapY, Room currentRoom);
 
 int main()
 {
@@ -309,19 +309,11 @@ int main()
 
 			//attack things B)
 		case CONSOLE_KEY_N:
-			attackable = attack(highlight.X, highlight.Y);
+			attackable = attack(highlight.X, highlight.Y, currentRoom);
 			if (attackable == 1){
 				log.push_back(messages["ATTACKABLE"]);
 				if (people[1].HP == 0){
-					if (currentRoom == 1){
-						roomOneArray[highlight.Y][highlight.X] = 0;
-					}
-					else if (currentRoom == 2){
-						roomTwoArray[highlight.Y][highlight.X] = 0;
-					}
-					else if (currentRoom == 3){
-						roomThreeArray[highlight.Y][highlight.X] = 0;
-					}
+					currentRoom.roomArray[highlight.Y][highlight.X] = 0;
 					log.push_back(messages["ENEMY_DEATH"]);
 				}
 			}
@@ -332,6 +324,7 @@ int main()
 
 			//checks interactable
 		case CONSOLE_KEY_SPACE:
+			object = isInteractable(highlight.X, highlight.Y, currentRoom);
 			switch (object)
 			//basically if the object is interactable
 			{
@@ -462,7 +455,6 @@ int isInteractable(int mapX, int mapY, Room currentRoom){
 	int tileValue = 0;
 	tileValue = currentRoom.roomArray[mapY][mapX];
 	
-		
 	if (tileValue == 4)
 		return 4;
 	else if (tileValue == 5)
@@ -474,17 +466,9 @@ int isInteractable(int mapX, int mapY, Room currentRoom){
 	else
 		return 0;
 }
-int attack(int mapX, int mapY){
+int attack(int mapX, int mapY, Room currentRoom){
 	int tileValue = 0;
-	if (currentRoom == 1){
-		tileValue = roomOneArray[mapY][mapX];
-	}
-	else if (currentRoom == 2){
-		tileValue = roomTwoArray[mapY][mapX];
-	}
-	else if (currentRoom == 3){
-		tileValue = roomThreeArray[mapY][mapX];
-	}
+	tileValue = currentRoom.roomArray[mapY][mapX];
 	if (tileValue == 4){
 		people[1].HP = people[1].HP - people[0].STR;
 		return 1;
