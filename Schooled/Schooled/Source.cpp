@@ -52,7 +52,7 @@ int roomOneArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
 	{ 3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
+	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 3, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 1, 6, 1, 3 },
 	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
 	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 0, 0, 0, 3 },
@@ -135,6 +135,7 @@ const Tile tileIndex[] = {
 	{ 'D', con::fgHiBlue, false }   // (7) DOOR_TO_NEW_ROOM
 };
 int currentRoom = 1;
+
 map<string, char *> messages =
 {
 	{ "Q_RANDOM",		"Random: What do you want ?" },
@@ -146,7 +147,9 @@ map<string, char *> messages =
 	{ "NEW_ROOM", "New room." },
 	{ "ENEMY_DEATH", "It died..." },
 	{ "UNATTACKABLE", "You can't kill that, you silly!" },
-	{ "ATTACKABLE", "You hit that thing with " /*+ people[0].STR + " damage! Wow!"*/ }
+	{ "ATTACKABLE", "You hit that thing with "/* + people[0].STR + " damage! Wow!"*/ },
+	{ "ENEMY_ATTACK", "You got hit with "/* + people[0].STR + " damage! Ouch!"*/ },
+	{ "PLAYER_DEATH", "You died..." }
 };
 
 void displayMap();	// Display the map
@@ -171,12 +174,14 @@ bool isPassable(int mapX, int mapY);
 int isInteractable(int mapX, int mapY);
 int object = 0;
 int attackable = 0;
+int eAttack = 0;
 bool useKey = false;
 bool goToRoom = false;
 
 void enemy1();
 void flavourText();
 int attack(int mapX, int mapY);
+int enemyAttack(int mapX, int mapY);
 
 int main()
 {
@@ -224,6 +229,8 @@ int main()
 		// Display keycount
 		console.Position(5, 21);
 		console << keyCount;
+		console.Position(5, 25);
+		console << "HP: " << people[0].HP;
 		
 		// Display the messages
 		console.Position(21, 23);
@@ -299,6 +306,15 @@ int main()
 						roomThreeArray[highlight.Y][highlight.X] = 0;
 					}
 					log.push_back(messages["ENEMY_DEATH"]);
+				}
+				else{
+					eAttack = enemyAttack(highlight.X, highlight.Y);
+					log.push_back(messages["ENEMY_ATTACK"]);
+				}
+				if (people[0].HP == 0){
+					log.push_back(messages["PLAYER_DEATH"]);
+					KEYPRESS aKeyPress = console.WaitForKeypress();
+					//reset game
 				}
 			}
 			else{
@@ -523,6 +539,25 @@ int attack(int mapX, int mapY){
 	}
 	if (tileValue == 4){
 		people[1].HP = people[1].HP - people[0].STR;
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+int enemyAttack(int mapX, int mapY){
+	int tileValue = 0;
+	if (currentRoom == 1){
+		tileValue = roomOneArray[mapY][mapX];
+	}
+	else if (currentRoom == 2){
+		tileValue = roomTwoArray[mapY][mapX];
+	}
+	else if (currentRoom == 3){
+		tileValue = roomThreeArray[mapY][mapX];
+	}
+	if (tileValue == 4){
+		people[0].HP = people[0].HP - people[1].STR;
 		return 1;
 	}
 	else{
