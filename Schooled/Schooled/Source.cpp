@@ -251,6 +251,8 @@ int main()
 		}
 		else
 			console << log[log.size() - 1];
+		if (people[0].HP == 0)
+			return 0;
 
 
 		///////////////////////////////////////////////////////////////////////
@@ -314,7 +316,6 @@ int main()
 				if (people[0].HP == 0){
 					log.push_back(messages["PLAYER_DEATH"]);
 					KEYPRESS aKeyPress = console.WaitForKeypress();
-					//reset game
 				}
 			}
 			else{
