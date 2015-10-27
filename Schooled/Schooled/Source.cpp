@@ -46,11 +46,16 @@ public:
 	const char *getMessage();
 	friend istream& operator >>(ifstream& stream, Room& r);
 	friend ostream& operator <<(ofstream& stream, const Room& r);
+	COORD getNorth() { return entrances[0]; }
+	COORD getSouth() { return entrances[1]; }
+	COORD getEast() { return entrances[2]; }
+	COORD getWest() { return entrances[3]; }
 
 	int roomArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
 	COORD location;
 private:
 	string message;
+	COORD entrances[4];
 };
 
 struct Tile
@@ -158,13 +163,13 @@ int main()
 	Room currentRoom = roomArray[1][1];*/
 
 	// Load the rooms from the file
-	Room roomOne = loadRoom("Rooms/Room1.txt");
+	Room roomOne = loadRoom("Rooms/Room1_1.txt");
 	roomOne.location = { 1, 1 };
 
-	Room roomTwo = loadRoom("Rooms/Room2.txt");
+	Room roomTwo = loadRoom("Rooms/Room2_1.txt");
 	roomTwo.location = { 1, 2 };
 
-	Room roomThree = loadRoom("Rooms/Room3.txt");
+	Room roomThree = loadRoom("Rooms/Room3_1.txt");
 	roomThree.location = { 1, 0 };
 
 	// Puts the rooms into the floor array
@@ -208,6 +213,10 @@ int main()
 		// Display keycount
 		console.Position(5, 21);
 		console << keyCount;
+
+		console.Position(5, 22);
+		console << player.X << "," << player.Y;
+		console << currentRoom.getNorth().X << currentRoom.getNorth().Y;
 		
 		// Display the messages
 		console.Position(21, 23);
@@ -322,17 +331,19 @@ int main()
 					//room transition
 				if (goToRoom == true)
 				{
-					if (player.Y < 10)
+					if (player.Y < 10)  // going up
 					{
 						changeRoom(currentRoom, { 0, 1 });
-						player.Y = 18;
-						highlight.Y = 17;
+						player = currentRoom.getSouth();
+						highlight.Y = currentRoom.getSouth().Y - 1;
+						highlight.X = currentRoom.getSouth().X;
 					}
-					else if (player.Y > 10)
+					else if (player.Y > 10)	// going down
 					{
 						changeRoom(currentRoom, { 0, -1 });
-						player.Y = 1;
-						highlight.Y = 2;
+						player = currentRoom.getNorth();
+						highlight.Y = currentRoom.getNorth().Y + 1;
+						highlight.X = currentRoom.getNorth().X;
 					}
 
 					log.clear();
@@ -454,16 +465,19 @@ istream& operator >>(ifstream& stream, Room& r)
 	string m;
 	getline(stream, m);
 	r.message = m;
-	
-	//stream >> r.location.X;
-	//stream >> r.location.Y;
-
+	getline(stream, m); // blank
 
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
 			stream >> r.roomArray[a][b];
 		}
 	}
+	getline(stream, m); // blank
+	for (COORD &c : r.entrances)
+	{
+		stream >> c.X >> c.Y;
+	}
+
 	return stream;
 }
 
