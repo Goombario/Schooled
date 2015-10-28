@@ -28,6 +28,9 @@ namespace schooled{
 	int const MAP_DOOR_LOCKED = 6;
 	int const DOOR_TO_NEW_ROOM = 7;
 
+	const int ITEM_INDEX_SIZE = 2;
+
+
 	COORD enemy1{ 18, 16 };
         int enemy1X = 18;
 	int enemy1Y = 16;
@@ -40,6 +43,23 @@ namespace schooled{
 #define NDEBUG
 #define WIN32_LEAN_AND_MEAN
 
+///////////////////////////////////////////////////////////////////////////////
+// Classes and structures
+
+struct Tile
+{
+	char character;
+	int colorCode;
+	bool isPassable;
+	bool isInteractable;
+};
+
+struct Stats{
+	int HP;
+	int EN;
+	int STR;
+};
+
 class Room
 {
 public:
@@ -51,42 +71,46 @@ public:
 	COORD getEast() { return entrances[2]; }
 	COORD getWest() { return entrances[3]; }
 
-	int roomArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
+	int tileArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
+	int itemArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
+	int actorArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
 	COORD location;
 private:
 	string message;
 	COORD entrances[4];
 };
 
-struct Tile
+class Item
 {
-	char character;
-	int colorCode;
-	bool isPassable;
+public:
+	Item();
+	Item(Tile, Stats);
+	Tile getTile() { return tile; }
+	Stats getStats() { return stats; }
+	Tile tile;
+	Stats stats;
+private:
+
 };
 
-struct Stats{
-	int HP;
-	int EN;
-	int STR;
-};
-
-Stats people[] = {
-	{10, 2, 2}, // our player
-	{10, 2, 1}  // Weak bully? Cyber bully maybe?
-};
-
+///////////////////////////////////////////////////////////////////////////////
 // Global variables
-const Tile tileIndex[] = {
-	{ ' ', con::fgBlack, true },	// (0) MAP_FLOOR
-	{ '=', con::fgHiGreen, false },	// (1) MAP_WALL_TOP
-	{ 'D', con::fgHiBlue, true },	// (2) MAP_DOOR
-	{ '|', con::fgHiGreen, false },	// (3) MAP_WALL_SIDE
-	{ 'X', con::fgHiWhite, false }, // (4) ENEMY
-	{ '~', con::fgHiWhite, true },  // (5) KEY
-	{ 'D', con::fgHiRed, false },   // (6) MAP_DOOR_LOCKED
-	{ 'D', con::fgLoBlue, false }   // (7) DOOR_TO_NEW_ROOM
+
+const Tile tileIndex[] = {	// symbol, colour, isPassable
+	{ ' ', con::fgBlack, true, false },		// (0) MAP_FLOOR
+	{ '=', con::fgHiGreen, false, false },	// (1) MAP_WALL_TOP
+	{ 'D', con::fgHiBlue, true, false },	// (2) MAP_DOOR
+	{ '|', con::fgHiGreen, false, false },	// (3) MAP_WALL_SIDE
+	{ 'X', con::fgHiWhite, false, true },	// (4) ENEMY
+	{ '~', con::fgHiWhite, true, true },	// (5) KEY (UNUSED)
+	{ 'D', con::fgHiRed, false, true },		// (6) MAP_DOOR_LOCKED
+	{ 'D', con::fgLoBlue, false, true }		// (7) DOOR_TO_NEW_ROOM
 };
+const Item itemIndex[] = {
+	Item(),		    										// (0) NULL
+	Item({ '~', con::fgHiWhite, true, true }, { 1, 1, 1 })	// (1) KEY
+};
+
 
 map<string, char *> messages =
 {
@@ -95,16 +119,19 @@ map<string, char *> messages =
 	{ "DOOR_LOCKED",	"The door is locked, you need a key." },
 	{ "USE_KEY",		"You used a key!" },
 	{ "Q_USE_KEY",		"The door is locked, use a key?"},
-	{ "Q_NEXT_ROOM", "Go to next room?" },
-	{ "NEW_ROOM", "New room." },
-	{ "ENEMY_DEATH", "It died..." },
-	{ "UNATTACKABLE", "You can't kill that, you silly!" },
-	{ "ATTACKABLE", "You hit that thing with " /*+ people[0].STR + " damage! Wow!"*/ }
+	{ "Q_NEXT_ROOM",	"Go to next room?" },
+	{ "NEW_ROOM",		"New room." },
+	{ "ENEMY_DEATH",	"It died..." },
+	{ "UNATTACKABLE",	"You can't kill that, you silly!" },
+	{ "ATTACKABLE",		"You hit that thing with " /*+ people[0].STR + " damage! Wow!"*/ }
 };
 
-string message = "Q_RANDOM";
-int keyCount = 0;
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
+Stats people[] = {
+	{ 10, 2, 2 }, // our player
+	{ 10, 2, 1 }  // Weak bully? Cyber bully maybe?
+};
+
+Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 
 ///////////////////////////////////////////////////////////////////////////////
 // Function declarations
@@ -121,6 +148,9 @@ Room loadRoom(string);
 // Saves a room to the given file (without the COORD)
 void saveRoom(string, Room);
 
+// Deletes all dynamic variables
+void exitGame();
+
 void drawTile(int x, int y);
 void enemy1();
 void flavourText();
@@ -129,22 +159,17 @@ void flavourText();
 bool isPassable(int mapX, int mapY, Room);
 
 // Checks if a tile is interactable
-int isInteractable(int mapX, int mapY, Room);
-int object = 0;
-int attackable = 0;
-bool useKey = false;
-bool goToRoom = false;
-Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
+bool isInteractable(int mapX, int mapY, Room);
 
-void enemy1();
-void flavourText();
-int attack(int mapX, int mapY, Room currentRoom);
+// attacks a space
+int attack(int mapX, int mapY, Room);
 
 int main()
 {
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization
 	console.SetTitle("Schooled V0.1");
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
 
 	// Initialize the player's on-screen location
 	COORD player{ 2, 19 };
@@ -152,6 +177,12 @@ int main()
 	COORD delta{ 0, 0 };
 	SMALL_RECT rcRegion = { 0, 0, schooled::SCREEN_WIDTH - 1,
 		schooled::SCREEN_HEIGHT - 1 };
+
+	int object = 0;
+	int keyCount = 0;
+	int attackable = 0;
+	bool useKey = false;
+	bool goToRoom = false;
 
 	/*Room tempRoom;
 	for (int i = 1; i <= 3; i++)
@@ -179,8 +210,8 @@ int main()
 
 	Room currentRoom = roomOne;
 
+	// Initialize the log
 	vector<const char *> log;
-	string attack_c;
 	log.push_back("");
 
 	// Main program loop
@@ -216,7 +247,6 @@ int main()
 
 		console.Position(5, 22);
 		console << player.X << "," << player.Y;
-		console << currentRoom.getNorth().X << currentRoom.getNorth().Y;
 		
 		// Display the messages
 		console.Position(21, 23);
@@ -282,7 +312,7 @@ int main()
 			if (attackable == 1){
 				log.push_back(messages["ATTACKABLE"]);
 				if (people[1].HP == 0){
-					currentRoom.roomArray[highlight.Y][highlight.X] = 0;
+					currentRoom.tileArray[highlight.Y][highlight.X] = 0;
 					log.push_back(messages["ENEMY_DEATH"]);
 				}
 			}
@@ -293,20 +323,19 @@ int main()
 
 			//checks interactable
 		case CONSOLE_KEY_SPACE:
-			object = isInteractable(highlight.X, highlight.Y, currentRoom);
-			switch (object)
+			switch (currentRoom.itemArray[highlight.Y][highlight.X])
 			//basically if the object is interactable
 			{
+				// KEY
+			case 1:
+				log.push_back(messages["GET_KEY"]);
+				keyCount++;
+				currentRoom.itemArray[highlight.Y][highlight.X] = 0;
+				break;
+
 				// ENEMY
 			case 4:
 				log.push_back(messages["Q_RANDOM"]);
-				break;
-
-				// KEY
-			case 5:
-				log.push_back(messages["GET_KEY"]);
-				keyCount++;
-				currentRoom.roomArray[highlight.Y][highlight.X] = 0;
 				break;
 
 				// MAP_DOOR_LOCKED
@@ -315,7 +344,7 @@ int main()
 				{
 					log.push_back(messages["USE_KEY"]);
 					keyCount--;
-					currentRoom.roomArray[highlight.Y][highlight.X] = 2;
+					currentRoom.itemArray[highlight.Y][highlight.X] = 2;
 					useKey = false;
 				}
 				else if (useKey == false && keyCount > 0)
@@ -379,6 +408,7 @@ int main()
 
 			// quit
 		case CONSOLE_KEY_ESCAPE:
+			exitGame();
 			return 0;
 
 			// Ignore any other key
@@ -396,18 +426,26 @@ int main()
 	}
 	return 0;
 }
+
 void displayMap(Room currentRoom){
 	int tile;
 
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
-			tile = currentRoom.roomArray[a][b];
-			schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
-			schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
+			if (currentRoom.itemArray[a][b] > 0)
+			{	
+				tile = currentRoom.itemArray[a][b];
+				schooled::buffer[a][b].Char.AsciiChar = itemIndex[tile].tile.character;
+				schooled::buffer[a][b].Attributes = itemIndex[tile].tile.colorCode;
+			}
+			else
+			{
+				tile = currentRoom.tileArray[a][b];
+				schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
+				schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
+			}
 		}
 	}
-	
-
 }
 
 bool isPassable(int mapX, int mapY, Room currentRoom){
@@ -415,32 +453,25 @@ bool isPassable(int mapX, int mapY, Room currentRoom){
 		return false;
 
 	int tileValue = 0;
-	tileValue = currentRoom.roomArray[mapY][mapX];
+	tileValue = currentRoom.tileArray[mapY][mapX];
 
 	if (tileIndex[tileValue].isPassable)
 		return true;
+	return false;
+}
 
-	else
-		return false;
-}
-int isInteractable(int mapX, int mapY, Room currentRoom){
-	int tileValue = 0;
-	tileValue = currentRoom.roomArray[mapY][mapX];
+bool isInteractable(int mapX, int mapY, Room currentRoom){
+	int tileValue;
+	tileValue = currentRoom.tileArray[mapY][mapX];
 	
-	if (tileValue == 4)
-		return 4;
-	else if (tileValue == 5)
-		return 5;
-	else if (tileValue == 6)
-		return 6;
-	else if (tileValue == 7)
-		return 7;
-	else
-		return 0;
+	if (tileIndex[tileValue].isInteractable)
+		return true;
+	return false;
 }
+
 int attack(int mapX, int mapY, Room currentRoom){
 	int tileValue = 0;
-	tileValue = currentRoom.roomArray[mapY][mapX];
+	tileValue = currentRoom.tileArray[mapY][mapX];
 	if (tileValue == 4){
 		people[1].HP = people[1].HP - people[0].STR;
 		return 1;
@@ -458,8 +489,6 @@ void changeRoom(Room& currentRoom, COORD change)
 		[currentRoom.location.Y + change.Y];
 }
 
-const char *Room::getMessage() { return message.c_str(); }
-
 istream& operator >>(ifstream& stream, Room& r)
 {
 	string m;
@@ -467,15 +496,26 @@ istream& operator >>(ifstream& stream, Room& r)
 	r.message = m;
 	getline(stream, m); // blank
 
+	// Get the tile array
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
-			stream >> r.roomArray[a][b];
+			stream >> r.tileArray[a][b];
 		}
 	}
 	getline(stream, m); // blank
+
+	// Get the entrance coordinates
 	for (COORD &c : r.entrances)
 	{
 		stream >> c.X >> c.Y;
+	}
+	getline(stream, m); // blank
+
+	// Get the item array
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			stream >> r.itemArray[a][b];
+		}
 	}
 
 	return stream;
@@ -488,12 +528,18 @@ ostream& operator <<(ofstream& stream, const Room& r)
 
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
-			stream << r.roomArray[a][b] << " ";
+			stream << r.tileArray[a][b] << " ";
 		}
 		stream << endl;
 	}
 	return stream;
 }
+
+const char *Room::getMessage() { return message.c_str(); }
+
+Item::Item(Tile t, Stats s) : tile(t), stats(s) {}
+
+Item::Item() {}
 
 Room loadRoom(string fileName)
 {
@@ -525,5 +571,11 @@ void saveRoom(string fileName, Room room)
 
 	stream << room;
 	stream.close();
+	return;
+}
+
+void exitGame()
+{
+	
 	return;
 }
