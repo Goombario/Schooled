@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <fstream>
 #include <cassert>
 #include <string>
 #include <map>
@@ -15,6 +16,8 @@ namespace schooled{
 	int const MAP_HEIGHT = 20;
 	int const SCREEN_WIDTH = 80;
 	int const SCREEN_HEIGHT = 25;
+	int const FLOOR_WIDTH = 3;
+	int const FLOOR_HEIGHT = 3;
 
 	int const MAP_FLOOR = 0;
 	int const MAP_WALL_TOP = 1;
@@ -24,6 +27,9 @@ namespace schooled{
         int const KEY = 5;
 	int const MAP_DOOR_LOCKED = 6;
 	int const DOOR_TO_NEW_ROOM = 7;
+
+	const int ITEM_INDEX_SIZE = 2;
+
 
 	COORD enemy1{ 18, 16 };
         int enemy1X = 18;
@@ -37,73 +43,8 @@ namespace schooled{
 #define NDEBUG
 #define WIN32_LEAN_AND_MEAN
 
-//declaring the map and it's dimensions
-int roomOneArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
-	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
-	{ 3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 3, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 1, 6, 1, 3 },
-	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3 },
-	{ 3, 1, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 }
-};
-int roomTwoArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
-	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 }
-};
-int roomThreeArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH]{
-	{ 3, 1, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 }
-};
+///////////////////////////////////////////////////////////////////////////////
+// Classes and structures
 
 struct Tile
 {
@@ -118,23 +59,101 @@ struct Stats{
 	int STR;
 };
 
-Stats people[] = {
-	{10, 2, 2}, // our player
-	{10, 2, 1}  // Weak bully? Cyber bully maybe?
+class Actor
+{
+public:
+	Actor();
+	Actor(Tile, Stats);
+	void attack(Actor&, vector<const char *>&);
+
+	COORD getLocation() { return location; }
+	int getX() { return location.X; }
+	int getY() { return location.Y; }
+	Stats getStats() { return stats; }
+	Tile getTile() { return tile; }
+
+	void setLocation(COORD c) { location = c; }
+
+private:
+	COORD location;
+	Stats stats;
+	Tile tile;
 };
 
+class Room
+{
+public:
+	Room();
+	Room(string);
+	const char *getMessage();
+	COORD getNorth() { return entrances[0]; }
+	COORD getSouth() { return entrances[1]; }
+	COORD getEast() { return entrances[2]; }
+	COORD getWest() { return entrances[3]; }
+	vector<Actor> getActor() { return actorList; }
+	bool isPassable(COORD);	// Checks if a tile is passable
+	void display();	// Display the room to the screen
+	void save(string); // Save room to a file
+
+	int getTileInt(COORD c) { return tileArray[c.Y][c.X]; }
+	int getItemInt(COORD c) { return itemArray[c.Y][c.X]; }
+	int getActorInt(COORD c) { return actorArray[c.Y][c.X]; }
+	COORD getLocation() { return location; }
+	int getX() { return location.X; }
+	int getY() { return location.Y; }
+
+	void setTileInt(COORD c, int i) { tileArray[c.Y][c.X] = i; }
+	void setItemInt(COORD c, int i) { itemArray[c.Y][c.X] = i; }
+	void setActorInt(COORD c, int i) { actorArray[c.Y][c.X] = i; }
+	void setLocation(COORD c) { location = c; }
+
+	vector<Actor> actorList;
+private:
+	COORD location;
+	string message;
+	COORD entrances[4];
+	int tileArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
+	int itemArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
+	int actorArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
+};
+
+class Item
+{
+public:
+	Item();
+	Item(Tile, Stats);
+	Tile getTile() { return tile; }
+	Stats getStats() { return stats; }
+
+	void setTile(Tile t) { tile = t; }
+private:
+	Tile tile;
+	Stats stats;
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
 // Global variables
-const Tile tileIndex[] = {
+
+const Tile tileIndex[] = {	// symbol, colour, isPassable
 	{ ' ', con::fgBlack, true },	// (0) MAP_FLOOR
 	{ '=', con::fgHiGreen, false },	// (1) MAP_WALL_TOP
 	{ 'D', con::fgHiBlue, true },	// (2) MAP_DOOR
 	{ '|', con::fgHiGreen, false },	// (3) MAP_WALL_SIDE
-	{ 'X', con::fgHiWhite, false }, // (4) ENEMY
-	{ '~', con::fgHiWhite, true },  // (5) KEY
-	{ 'D', con::fgHiRed, false },   // (6) MAP_DOOR_LOCKED
-	{ 'D', con::fgHiBlue, false }   // (7) DOOR_TO_NEW_ROOM
+
 };
-int currentRoom = 1;
+const Item itemIndex[] = {
+	Item({ ' ', con::fgBlack, true }, { 1, 1, 1 }),		// (0) NULL
+	Item({ '~', con::fgHiWhite, true }, { 1, 1, 1 }),	// (1) KEY
+	Item({ 'D', con::fgLoBlue, false }, { 1, 1, 1 }),	// (2) DOOR_TO_NEW_ROOM
+	Item({ 'D', con::fgHiRed, false }, { 1, 1, 1 })		// (3) MAP_DOOR_LOCKED
+
+};
+
+const Actor actorIndex[] = {
+	Actor(),					        // (0) NULL
+	Actor({ 'X', con::fgHiWhite, false }, { 10, 2, 1 })	// (1) BULLY_WEAK
+};
 
 map<string, char *> messages =
 {
@@ -143,44 +162,38 @@ map<string, char *> messages =
 	{ "DOOR_LOCKED",	"The door is locked, you need a key." },
 	{ "USE_KEY",		"You used a key!" },
 	{ "Q_USE_KEY",		"The door is locked, use a key?"},
-	{ "Q_NEXT_ROOM", "Go to next room?" },
-	{ "NEW_ROOM", "New room." },
-	{ "ENEMY_DEATH", "It died..." },
-	{ "UNATTACKABLE", "You can't kill that, you silly!" },
-	{ "ATTACKABLE", "You hit that thing with "/* + people[0].STR + " damage! Wow!"*/ },
+	{ "Q_NEXT_ROOM",	"Go to next room?" },
+	{ "NEW_ROOM",		"New room." },
+	{ "ENEMY_DEATH",	"It died..." },
+	{ "UNATTACKABLE",	"You can't kill that, you silly!" },
+	{ "ATTACKABLE",		"You hit that thing with " /*+ people[0].STR + " damage! Wow!"*/ }
 	{ "ENEMY_ATTACK", "You got hit with "/* + people[0].STR + " damage! Ouch!"*/ },
 	{ "PLAYER_DEATH", "You died..." }
 };
 
-void displayMap();	// Display the map
-string message = "Q_RANDOM";
-int keyCount = 0;
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
+Stats people[] = {
+	{ 10, 2, 2 }, // our player
+	{ 10, 2, 1 }  // Weak bully? Cyber bully maybe?
+};
+
+Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 
 ///////////////////////////////////////////////////////////////////////////////
 // Function declarations
 
-// Draws the map to the screen
-void displayMap();
+// Changes the current room to the number of the one given.
+void changeRoom(Room&, COORD, vector<Actor>);
+
+// Deletes all dynamic variables
+void exitGame();
+
+// Finds the actor in the current room
+int findActor(vector<Actor>, COORD);
+int eAttack = 0;
 
 void drawTile(int x, int y);
 void enemy1();
 void flavourText();
-
-// Checks if a tile is passable
-bool isPassable(int mapX, int mapY);
-
-// Checks if a tile is interactable
-int isInteractable(int mapX, int mapY);
-int object = 0;
-int attackable = 0;
-int eAttack = 0;
-bool useKey = false;
-bool goToRoom = false;
-
-void enemy1();
-void flavourText();
-int attack(int mapX, int mapY);
 int enemyAttack(int mapX, int mapY);
 
 int main()
@@ -188,17 +201,54 @@ int main()
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization
 	console.SetTitle("Schooled V0.1");
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
 
 	// Initialize the player's on-screen location
-	
-	COORD player{ 2, 19 };
-	COORD highlight{ 2, 18 };
+	Actor player({ '8', con::fgHiWhite }, { 10, 2, 2 });
+	player.setLocation({ 2, 18 });
+	COORD highlight{ 2, 17 };
 	COORD delta{ 0, 0 };
 	SMALL_RECT rcRegion = { 0, 0, schooled::SCREEN_WIDTH - 1,
 		schooled::SCREEN_HEIGHT - 1 };
 
-	vector<char *> log;
+	int object = 0;
+	int keyCount = 0;
+	int attackable = 0;
+	int temp = 0;
+	bool useKey = false;
+	bool goToRoom = false;
+
+	/*Room tempRoom;
+	for (int i = 1; i <= 3; i++)
+	{
+		tempRoom = loadRoom("Rooms/Room" + to_string(i) + ".txt");
+		roomArray[tempRoom.location.X][tempRoom.location.Y] = tempRoom;
+	}
+
+	Room currentRoom = roomArray[1][1];*/
+
+	// Load the rooms from the file
+	Room roomOne("Rooms/Room1_1.txt");
+	roomOne.setLocation({ 1, 1 });
+
+	Room roomTwo("Rooms/Room2_1.txt");
+	roomTwo.setLocation({ 1, 2 });
+
+	Room roomThree("Rooms/Room3_1.txt");
+	roomThree.setLocation({ 1, 0 });
+
+	// Puts the rooms into the floor array
+	roomArray[roomOne.getX()][roomOne.getY()] = roomOne;
+	roomArray[roomTwo.getX()][roomTwo.getY()] = roomTwo;
+	roomArray[roomThree.getX()][roomThree.getY()] = roomThree;
+
+	Room currentRoom = roomOne;
+	vector<Actor> actorList = currentRoom.actorList;
+
+	// Initialize the log
+	vector<const char *> log;
 	log.push_back("");
+
 	// Main program loop
 	while (true)
 	{
@@ -213,11 +263,11 @@ int main()
 			schooled::dwBufferSize, schooled::dwBufferCoord, &rcRegion);
 
 		// Draw the map
-		displayMap();
+		currentRoom.display();
 
 		// Display the character
-		schooled::buffer[player.Y][player.X].Attributes = con::fgHiWhite;
-		schooled::buffer[player.Y][player.X].Char.AsciiChar = '8';
+		schooled::buffer[player.getY()][player.getX()].Attributes = con::fgHiWhite;
+		schooled::buffer[player.getY()][player.getX()].Char.AsciiChar = '8';
 
 		// Display the highlight
 		schooled::buffer[highlight.Y][highlight.X].Attributes = con::bgHiWhite;
@@ -231,6 +281,12 @@ int main()
 		console << keyCount;
 		console.Position(5, 25);
 		console << "HP: " << people[0].HP;
+
+		console.Position(5, 22);
+		console << player.getLocation().X << "," << player.getLocation().Y;
+		
+		console.Position(5, 23);
+		//console << actorList[0].stats.HP;
 		
 		// Display the messages
 		console.Position(21, 23);
@@ -294,20 +350,16 @@ int main()
 
 			//attack things B)
 		case CONSOLE_KEY_N:
-			attackable = attack(highlight.X, highlight.Y);
-			if (attackable == 1){
-				log.push_back(messages["ATTACKABLE"]);
-				if (people[1].HP == 0){
-					if (currentRoom == 1){
-						roomOneArray[highlight.Y][highlight.X] = 0;
-					}
-					else if (currentRoom == 2){
-						roomTwoArray[highlight.Y][highlight.X] = 0;
-					}
-					else if (currentRoom == 3){
-						roomThreeArray[highlight.Y][highlight.X] = 0;
-					}
+			if (currentRoom.getActorInt(highlight) > 0){
+				Actor *a = &actorList[findActor(actorList, highlight)];
+				player.attack(*a, log);
+
+				// If the actor died
+				if (a->getStats().HP <= 0){
+					currentRoom.setActorInt(a->getLocation(), 0);
 					log.push_back(messages["ENEMY_DEATH"]);
+					actorList.erase(actorList.begin() + findActor(actorList, highlight));
+					
 				}
 				else{
 					eAttack = enemyAttack(highlight.X, highlight.Y);
@@ -325,29 +377,23 @@ int main()
 
 			//checks interactable
 		case CONSOLE_KEY_SPACE:
-			object = isInteractable(highlight.X, highlight.Y);
-			switch (object)
+			switch (currentRoom.getItemInt(highlight))
 			//basically if the object is interactable
 			{
-				// ENEMY
-			case 4:
-				log.push_back(messages["Q_RANDOM"]);
-				break;
-
 				// KEY
-			case 5:
+			case 1:
 				log.push_back(messages["GET_KEY"]);
 				keyCount++;
-				roomOneArray[highlight.Y][highlight.X] = 0;
+				currentRoom.setItemInt(highlight, 0);
 				break;
 
 				// MAP_DOOR_LOCKED
-			case 6:
+			case 3:
 				if (useKey == true && keyCount > 0)
 				{
 					log.push_back(messages["USE_KEY"]);
 					keyCount--;
-					roomOneArray[highlight.Y][highlight.X] = 2;
+					currentRoom.setItemInt(highlight, 0);
 					useKey = false;
 				}
 				else if (useKey == false && keyCount > 0)
@@ -359,60 +405,39 @@ int main()
 					log.push_back(messages["DOOR_LOCKED"]);
 				break;
 
-			case 7:
+			case 2:
 					//room transition
-				if (currentRoom == 1 && player.Y < 10){
-					if (goToRoom == true){
-						log.push_back(messages["NEW_ROOM"]);
-						currentRoom = 2;
-						player.Y = 18;
-						highlight.Y = 17;
-						goToRoom = false;
+				if (goToRoom == true)
+				{
+					if (player.getY() < 10)  // going up
+					{
+						changeRoom(currentRoom, { 0, 1 }, actorList);
+						player.setLocation(currentRoom.getSouth());
+						highlight.Y = currentRoom.getSouth().Y - 1;
+						highlight.X = currentRoom.getSouth().X;
 					}
-					else{
-						log.push_back(messages["Q_NEXT_ROOM"]);
-						goToRoom = true;
+					else if (player.getY() > 10)	// going down
+					{
+						changeRoom(currentRoom, { 0, -1 }, actorList);
+						player.setLocation(currentRoom.getNorth());
+						highlight.Y = currentRoom.getNorth().Y + 1;
+						highlight.X = currentRoom.getNorth().X;
 					}
+
+					log.clear();
+					log.push_back(currentRoom.getMessage());
+					goToRoom = false;
 				}
-				else if (currentRoom == 1 && player.Y > 10){
-					if (goToRoom == true){
-						log.push_back(messages["NEW_ROOM"]);
-						currentRoom = 3;
-						player.Y = 1;
-						highlight.Y = 2;
-						goToRoom = false;
-					}
-					else{
-						log.push_back(messages["Q_NEXT_ROOM"]);
-						goToRoom = true;
-					}
+				else if (goToRoom == false)
+				{
+					log.push_back(messages["Q_NEXT_ROOM"]);
+					goToRoom = true;
 				}
-				else if (currentRoom == 2){
-					if (goToRoom == true){
-						log.push_back(messages["NEW_ROOM"]);
-						currentRoom = 1;
-						player.Y = 1;
-						highlight.Y = 2;
-						goToRoom = false;
-					}
-					else{
-						log.push_back(messages["Q_NEXT_ROOM"]);
-						goToRoom = true;
-					}
-				}
-				else if (currentRoom == 3){
-					if (goToRoom == true){
-						log.push_back(messages["NEW_ROOM"]);
-						currentRoom = 1;
-						player.Y = 18;
-						highlight.Y = 17;
-						goToRoom = false;
-					}
-					else{
-						log.push_back(messages["Q_NEXT_ROOM"]);
-						goToRoom = true;
-					}
-				}
+				break;
+
+				// ENEMY
+			case 4:
+				log.push_back(messages["Q_RANDOM"]);
 				break;
 
 			default:
@@ -423,20 +448,21 @@ int main()
 
 			// move key pressed
 		case CONSOLE_KEY_M:
-			delta.X = (highlight.X - player.X);
-			delta.Y = (highlight.Y - player.Y);
+			delta.X = (highlight.X - player.getX());
+			delta.Y = (highlight.Y - player.getY());
 
 			// Check if the player can move in specified direction
-			if (isPassable(highlight.X, highlight.Y))
+			if (currentRoom.isPassable(highlight))
 			{
 				// If allowed, move in specified direction
-				player.X = highlight.X;
-				player.Y = highlight.Y;
+				player.setLocation(highlight);
 			}
 			break;
 
 			// quit
 		case CONSOLE_KEY_ESCAPE:
+			currentRoom.save("Room1.sav");
+			exitGame();
 			return 0;
 
 			// Ignore any other key
@@ -448,36 +474,62 @@ int main()
 		// Check if a move action has been performed, and adjusts highlight
 		if (delta.X != 0 || delta.Y != 0)
 		{
-			highlight.X = player.X + delta.X;
-			highlight.Y = player.Y + delta.Y;
+			highlight.X = player.getX() + delta.X;
+			highlight.Y = player.getY() + delta.Y;
 		}
 	}
 	return 0;
 }
-void displayMap(){
+
+///////////////////////////////////////////////////////////////////////////////
+// Operators
+
+bool operator ==(COORD a, COORD b)
+{
+	return (a.X == b.X && a.Y == b.Y);
+}
+
+Item::Item(Tile t, Stats s) : tile(t), stats(s) {}
+
+Item::Item() {}
+
+Actor::Actor(Tile t, Stats s) : tile(t), stats(s) {}
+
+Actor::Actor() {}
+
+int findActor(vector<Actor> a, COORD c)
+{
+	for (unsigned int i = 0; i < a.size(); i++)
+	{
+		if (a[i].getLocation() == c)
+			return i;
+	}
+	return -1;
+}
+
+void Room::display(){
 	int tile;
-	if (currentRoom == 1){
-		for (int a = 0; a < schooled::MAP_HEIGHT; a++){
-			for (int b = 0; b < schooled::MAP_WIDTH; b++){
-				tile = roomOneArray[a][b];
-				schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
-				schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
+	Actor tempA;
+	Item tempI;
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			if (actorArray[a][b] > 0)
+			{
+				tile = actorArray[a][b];
+				tempA = actorIndex[tile];
+				schooled::buffer[a][b].Char.AsciiChar = tempA.getTile().character;
+				schooled::buffer[a][b].Attributes = tempA.getTile().colorCode;
 			}
-		}
-	}
-	else if (currentRoom == 2){
-		for (int a = 0; a < schooled::MAP_HEIGHT; a++){
-			for (int b = 0; b < schooled::MAP_WIDTH; b++){
-				tile = roomTwoArray[a][b];
-				schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
-				schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
+			else if (itemArray[a][b] > 0)
+			{
+				tile = itemArray[a][b];
+				tempI = itemIndex[tile];
+				schooled::buffer[a][b].Char.AsciiChar = tempI.getTile().character;
+				schooled::buffer[a][b].Attributes = tempI.getTile().colorCode;
 			}
-		}
-	}
-	else if (currentRoom == 3){
-		for (int a = 0; a < schooled::MAP_HEIGHT; a++){
-			for (int b = 0; b < schooled::MAP_WIDTH; b++){
-				tile = roomThreeArray[a][b];
+			else
+			{
+				tile = tileArray[a][b];
 				schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
 				schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
 			}
@@ -485,66 +537,146 @@ void displayMap(){
 	}
 }
 
-bool isPassable(int mapX, int mapY){
+bool Room::isPassable(COORD tile){
+	int mapX = tile.X;
+	int mapY = tile.Y;
 	if (mapX < 0 || mapX >= schooled::MAP_WIDTH || mapY < 0 || mapY >= schooled::MAP_HEIGHT)
 		return false;
-	int tileValue = 0;
-	if (currentRoom == 1){
-		tileValue = roomOneArray[mapY][mapX];
-	}
-	else if (currentRoom == 2){
-		tileValue = roomTwoArray[mapY][mapX];
-	}
-	else if (currentRoom == 3){
-		tileValue = roomThreeArray[mapY][mapX];
-	}
-	if (tileIndex[tileValue].isPassable)
-		return true;
 
-	else
-		return false;
+	int tileValue = tileArray[mapY][mapX];
+	int itemValue = itemArray[mapY][mapX];
+	int actorValue = actorArray[mapY][mapX];
+	Item tempI = itemIndex[itemValue];
+	if (tileIndex[tileValue].isPassable && actorValue == 0 && tempI.getTile().isPassable)
+		return true;
+	return false;
 }
-int isInteractable(int mapX, int mapY){
-	int tileValue = 0;
-	if (currentRoom == 1){
-		tileValue = roomOneArray[mapY][mapX];
-	}
-	else if (currentRoom == 2){
-		tileValue = roomTwoArray[mapY][mapX];
-	}
-	else if (currentRoom == 3){
-		tileValue = roomThreeArray[mapY][mapX];
-	}
-		
-	if (tileValue == 4)
-		return 4;
-	else if (tileValue == 5)
-		return 5;
-	else if (tileValue == 6)
-		return 6;
-	else if (tileValue == 7)
-		return 7;
-	else
-		return 0;
+
+void Actor::attack(Actor& defender, vector<const char *>& log){
+	string message;
+	defender.stats.HP -= stats.STR;
+	message = messages["ATTACKABLE"] + to_string(stats.STR) + " damage! Wow!";
+	log.push_back(messages["ATTACKABLE"]);
 }
-int attack(int mapX, int mapY){
-	int tileValue = 0;
-	if (currentRoom == 1){
-		tileValue = roomOneArray[mapY][mapX];
+
+void changeRoom(Room& currentRoom, COORD change, vector<Actor> actorList)
+{
+	currentRoom.actorList = actorList;
+	roomArray[currentRoom.getX()][currentRoom.getY()] = currentRoom;
+	currentRoom = roomArray[currentRoom.getX() + change.X][currentRoom.getY() + change.Y];
+
+}
+
+Room::Room() {}
+
+Room::Room(string fileName)
+{
+	ifstream stream;
+	stream.open(fileName);
+
+	if (stream.fail())
+	{
+		cout << "File open failed.\n";	
+		exit(1); 
 	}
-	else if (currentRoom == 2){
-		tileValue = roomTwoArray[mapY][mapX];
+
+	string m;
+	getline(stream, m);
+	message = m;
+	getline(stream, m); // blank
+
+	// Get the tile array
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			stream >> tileArray[a][b];
+		}
 	}
-	else if (currentRoom == 3){
-		tileValue = roomThreeArray[mapY][mapX];
+	getline(stream, m); // blank
+
+	// Get the entrance coordinates
+	for (COORD &c : entrances)
+	{
+		stream >> c.X >> c.Y;
 	}
-	if (tileValue == 4){
-		people[1].HP = people[1].HP - people[0].STR;
-		return 1;
+	getline(stream, m); // blank
+
+	// Get the item array
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			stream >> itemArray[a][b];
+		}
 	}
-	else{
-		return 0;
+	getline(stream, m); // blank
+
+	// Get the actor array
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			stream >> actorArray[a][b];
+			if (actorArray[a][b] > 0)
+			{
+				actorList.push_back(actorIndex[actorArray[a][b]]);
+				actorList[actorList.size() - 1].setLocation({ b, a });
+			}
+		}
 	}
+	stream.close();
+}
+
+const char *Room::getMessage() { return message.c_str(); }
+
+void Room::save(string fileName)
+{
+	ofstream stream;
+	stream.open(fileName);
+
+	if (stream.fail())
+	{
+		cout << "File open failed.\n";
+		exit(1);
+	}
+	
+	stream << message << endl;
+
+	// Get the tile array
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			stream << tileArray[a][b] << " ";
+		}
+		stream << endl;
+	}
+	stream << endl;
+
+	// Get the entrance coordinates
+	for (COORD &c : entrances)
+	{
+		stream << c.X << " " << c.Y << endl;
+	}
+	stream << endl;
+
+	// Get the item array
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			stream << itemArray[a][b] << " ";
+		}
+		stream << endl;
+	}
+	stream << endl;
+
+	// Get the actor array
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			stream << actorArray[a][b] << " ";
+		}
+		stream << endl;
+	}
+	stream << flush;
+	stream.close();
+}
+
+void exitGame()
+{
+	
+	return;
 }
 int enemyAttack(int mapX, int mapY){
 	int tileValue = 0;
