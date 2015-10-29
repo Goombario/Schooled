@@ -60,6 +60,18 @@ struct Stats{
 	int STR;
 };
 
+class Actor
+{
+public:
+	Actor();
+	Actor(Tile, Stats);
+	Stats stats;
+	Tile tile;
+	COORD location;
+private:
+
+};
+
 class Room
 {
 public:
@@ -70,10 +82,13 @@ public:
 	COORD getSouth() { return entrances[1]; }
 	COORD getEast() { return entrances[2]; }
 	COORD getWest() { return entrances[3]; }
+	vector<Actor> getActor() { return actorList; }
 
 	int tileArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
 	int itemArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
 	int actorArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
+	vector<Actor> actorList;
+
 	COORD location;
 private:
 	string message;
@@ -93,6 +108,22 @@ private:
 
 };
 
+
+
+ostream& operator <<(ofstream& stream, const Room& r)
+{
+	stream << r.message << endl;
+	//stream << r.location.X << " " << r.location.Y << endl;
+
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			stream << r.tileArray[a][b] << " ";
+		}
+		stream << endl;
+	}
+	return stream;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Global variables
 
@@ -101,16 +132,21 @@ const Tile tileIndex[] = {	// symbol, colour, isPassable
 	{ '=', con::fgHiGreen, false, false },	// (1) MAP_WALL_TOP
 	{ 'D', con::fgHiBlue, true, false },	// (2) MAP_DOOR
 	{ '|', con::fgHiGreen, false, false },	// (3) MAP_WALL_SIDE
-	{ 'X', con::fgHiWhite, false, true },	// (4) ENEMY
+	{ 'X', con::fgHiWhite, false, true },	// (4) ENEMY (UNUSED)
 	{ '~', con::fgHiWhite, true, true },	// (5) KEY (UNUSED)
 	{ 'D', con::fgHiRed, false, true },		// (6) MAP_DOOR_LOCKED
 	{ 'D', con::fgLoBlue, false, true }		// (7) DOOR_TO_NEW_ROOM
 };
 const Item itemIndex[] = {
 	Item(),		    										// (0) NULL
-	Item({ '~', con::fgHiWhite, true, true }, { 1, 1, 1 })	// (1) KEY
+	Item({ '~', con::fgHiWhite, true, true }, { 1, 1, 1 }),	// (1) KEY
+	Item({ 'D', con::fgLoBlue, false, true }, { 1, 1, 1 })	// (2) DOOR_TO_NEW_ROOM
 };
 
+const Actor actorIndex[] = {
+	Actor(),													// (0) NULL
+	Actor({ 'X', con::fgHiWhite, false, true }, { 10, 2, 1 })	// (1) BULLY_WEAK
+};
 
 map<string, char *> messages =
 {
@@ -140,7 +176,7 @@ Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 void displayMap(Room);
 
 // Changes the current room to the number of the one given.
-void changeRoom(Room&, COORD);
+void changeRoom(Room&, COORD, vector<Actor>);
 
 // Returns a room from the given file (without the COORD)
 Room loadRoom(string);
@@ -150,6 +186,9 @@ void saveRoom(string, Room);
 
 // Deletes all dynamic variables
 void exitGame();
+
+// Finds the actor in the current room
+int findActor(vector<Actor>, COORD);
 
 void drawTile(int x, int y);
 void enemy1();
@@ -161,8 +200,8 @@ bool isPassable(int mapX, int mapY, Room);
 // Checks if a tile is interactable
 bool isInteractable(int mapX, int mapY, Room);
 
-// attacks a space
-int attack(int mapX, int mapY, Room);
+// attacks an actor
+void attack(Room&, Actor, Actor&, vector<const char *>&);
 
 int main()
 {
@@ -172,8 +211,9 @@ int main()
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
 
 	// Initialize the player's on-screen location
-	COORD player{ 2, 19 };
-	COORD highlight{ 2, 18 };
+	Actor player({ '8', con::fgHiWhite }, { 10, 2, 2 });
+	player.location = { 2, 18 };
+	COORD highlight{ 2, 17 };
 	COORD delta{ 0, 0 };
 	SMALL_RECT rcRegion = { 0, 0, schooled::SCREEN_WIDTH - 1,
 		schooled::SCREEN_HEIGHT - 1 };
@@ -181,6 +221,7 @@ int main()
 	int object = 0;
 	int keyCount = 0;
 	int attackable = 0;
+	int temp = 0;
 	bool useKey = false;
 	bool goToRoom = false;
 
@@ -209,6 +250,7 @@ int main()
 	roomArray[roomThree.location.X][roomThree.location.Y] = roomThree;
 
 	Room currentRoom = roomOne;
+	vector<Actor> actorList = currentRoom.actorList;
 
 	// Initialize the log
 	vector<const char *> log;
@@ -231,8 +273,8 @@ int main()
 		displayMap(currentRoom);
 
 		// Display the character
-		schooled::buffer[player.Y][player.X].Attributes = con::fgHiWhite;
-		schooled::buffer[player.Y][player.X].Char.AsciiChar = '8';
+		schooled::buffer[player.location.Y][player.location.X].Attributes = con::fgHiWhite;
+		schooled::buffer[player.location.Y][player.location.X].Char.AsciiChar = '8';
 
 		// Display the highlight
 		schooled::buffer[highlight.Y][highlight.X].Attributes = con::bgHiWhite;
@@ -246,7 +288,10 @@ int main()
 		console << keyCount;
 
 		console.Position(5, 22);
-		console << player.X << "," << player.Y;
+		console << player.location.X << "," << player.location.Y;
+		
+		console.Position(5, 23);
+		//console << actorList[0].stats.HP;
 		
 		// Display the messages
 		console.Position(21, 23);
@@ -308,12 +353,16 @@ int main()
 
 			//attack things B)
 		case CONSOLE_KEY_N:
-			attackable = attack(highlight.X, highlight.Y, currentRoom);
-			if (attackable == 1){
-				log.push_back(messages["ATTACKABLE"]);
-				if (people[1].HP == 0){
-					currentRoom.tileArray[highlight.Y][highlight.X] = 0;
+			if (currentRoom.actorArray[highlight.Y][highlight.X] > 0){
+				attack(currentRoom, player, actorList[findActor(actorList, highlight)], log);
+
+				// If the actor died
+				if (actorList[findActor(actorList, highlight)].stats.HP <= 0){
+					Actor tempActor = actorList[findActor(actorList, highlight)];
+					currentRoom.actorArray[tempActor.location.Y][tempActor.location.X] = 0;
 					log.push_back(messages["ENEMY_DEATH"]);
+					actorList.erase(actorList.begin() + findActor(actorList, highlight));
+					
 				}
 			}
 			else{
@@ -339,7 +388,7 @@ int main()
 				break;
 
 				// MAP_DOOR_LOCKED
-			case 6:
+			case 3:
 				if (useKey == true && keyCount > 0)
 				{
 					log.push_back(messages["USE_KEY"]);
@@ -356,21 +405,21 @@ int main()
 					log.push_back(messages["DOOR_LOCKED"]);
 				break;
 
-			case 7:
+			case 2:
 					//room transition
 				if (goToRoom == true)
 				{
-					if (player.Y < 10)  // going up
+					if (player.location.Y < 10)  // going up
 					{
-						changeRoom(currentRoom, { 0, 1 });
-						player = currentRoom.getSouth();
+						changeRoom(currentRoom, { 0, 1 }, actorList);
+						player.location = currentRoom.getSouth();
 						highlight.Y = currentRoom.getSouth().Y - 1;
 						highlight.X = currentRoom.getSouth().X;
 					}
-					else if (player.Y > 10)	// going down
+					else if (player.location.Y > 10)	// going down
 					{
-						changeRoom(currentRoom, { 0, -1 });
-						player = currentRoom.getNorth();
+						changeRoom(currentRoom, { 0, -1 }, actorList);
+						player.location = currentRoom.getNorth();
 						highlight.Y = currentRoom.getNorth().Y + 1;
 						highlight.X = currentRoom.getNorth().X;
 					}
@@ -394,15 +443,15 @@ int main()
 
 			// move key pressed
 		case CONSOLE_KEY_M:
-			delta.X = (highlight.X - player.X);
-			delta.Y = (highlight.Y - player.Y);
+			delta.X = (highlight.X - player.location.X);
+			delta.Y = (highlight.Y - player.location.Y);
 
 			// Check if the player can move in specified direction
 			if (isPassable(highlight.X, highlight.Y, currentRoom))
 			{
 				// If allowed, move in specified direction
-				player.X = highlight.X;
-				player.Y = highlight.Y;
+				player.location.X = highlight.X;
+				player.location.Y = highlight.Y;
 			}
 			break;
 
@@ -420,73 +469,19 @@ int main()
 		// Check if a move action has been performed, and adjusts highlight
 		if (delta.X != 0 || delta.Y != 0)
 		{
-			highlight.X = player.X + delta.X;
-			highlight.Y = player.Y + delta.Y;
+			highlight.X = player.location.X + delta.X;
+			highlight.Y = player.location.Y + delta.Y;
 		}
 	}
 	return 0;
 }
 
-void displayMap(Room currentRoom){
-	int tile;
+///////////////////////////////////////////////////////////////////////////////
+// Operators
 
-	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
-		for (int b = 0; b < schooled::MAP_WIDTH; b++){
-			if (currentRoom.itemArray[a][b] > 0)
-			{	
-				tile = currentRoom.itemArray[a][b];
-				schooled::buffer[a][b].Char.AsciiChar = itemIndex[tile].tile.character;
-				schooled::buffer[a][b].Attributes = itemIndex[tile].tile.colorCode;
-			}
-			else
-			{
-				tile = currentRoom.tileArray[a][b];
-				schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
-				schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
-			}
-		}
-	}
-}
-
-bool isPassable(int mapX, int mapY, Room currentRoom){
-	if (mapX < 0 || mapX >= schooled::MAP_WIDTH || mapY < 0 || mapY >= schooled::MAP_HEIGHT)
-		return false;
-
-	int tileValue = 0;
-	tileValue = currentRoom.tileArray[mapY][mapX];
-
-	if (tileIndex[tileValue].isPassable)
-		return true;
-	return false;
-}
-
-bool isInteractable(int mapX, int mapY, Room currentRoom){
-	int tileValue;
-	tileValue = currentRoom.tileArray[mapY][mapX];
-	
-	if (tileIndex[tileValue].isInteractable)
-		return true;
-	return false;
-}
-
-int attack(int mapX, int mapY, Room currentRoom){
-	int tileValue = 0;
-	tileValue = currentRoom.tileArray[mapY][mapX];
-	if (tileValue == 4){
-		people[1].HP = people[1].HP - people[0].STR;
-		return 1;
-	}
-	else{
-		return 0;
-	}
-}
-
-void changeRoom(Room& currentRoom, COORD change)
+bool operator ==(COORD a, COORD b)
 {
-	roomArray[currentRoom.location.X][currentRoom.location.Y] = currentRoom;
-	currentRoom = roomArray
-		[currentRoom.location.X + change.X]
-		[currentRoom.location.Y + change.Y];
+	return (a.X == b.X && a.Y == b.Y);
 }
 
 istream& operator >>(ifstream& stream, Room& r)
@@ -517,29 +512,104 @@ istream& operator >>(ifstream& stream, Room& r)
 			stream >> r.itemArray[a][b];
 		}
 	}
+	getline(stream, m); // blank
 
-	return stream;
-}
-
-ostream& operator <<(ofstream& stream, const Room& r)
-{
-	stream << r.message << endl;
-	//stream << r.location.X << " " << r.location.Y << endl;
-
+	// Get the actor array
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
-			stream << r.tileArray[a][b] << " ";
+			stream >> r.actorArray[a][b];
+			if (r.actorArray[a][b] > 0)
+			{
+				r.actorList.push_back(actorIndex[r.actorArray[a][b]]);
+				r.actorList[r.actorList.size() - 1].location = { b, a };
+			}
 		}
-		stream << endl;
 	}
+
 	return stream;
 }
-
-const char *Room::getMessage() { return message.c_str(); }
 
 Item::Item(Tile t, Stats s) : tile(t), stats(s) {}
 
 Item::Item() {}
+
+Actor::Actor(Tile t, Stats s) : tile(t), stats(s) {}
+
+Actor::Actor() {}
+
+int findActor(vector<Actor> a, COORD c)
+{
+	for (unsigned int i = 0; i < a.size(); i++)
+	{
+		if (a[i].location == c)
+			return i;
+	}
+	return -1;
+}
+
+void displayMap(Room currentRoom){
+	int tile;
+
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
+		for (int b = 0; b < schooled::MAP_WIDTH; b++){
+			if (currentRoom.actorArray[a][b] > 0)
+			{
+				tile = currentRoom.actorArray[a][b];
+				schooled::buffer[a][b].Char.AsciiChar = actorIndex[tile].tile.character;
+				schooled::buffer[a][b].Attributes = actorIndex[tile].tile.colorCode;
+			}
+			else if (currentRoom.itemArray[a][b] > 0)
+			{
+				tile = currentRoom.itemArray[a][b];
+				schooled::buffer[a][b].Char.AsciiChar = itemIndex[tile].tile.character;
+				schooled::buffer[a][b].Attributes = itemIndex[tile].tile.colorCode;
+			}
+			else
+			{
+				tile = currentRoom.tileArray[a][b];
+				schooled::buffer[a][b].Char.AsciiChar = tileIndex[tile].character;
+				schooled::buffer[a][b].Attributes = tileIndex[tile].colorCode;
+			}
+		}
+	}
+}
+
+bool isPassable(int mapX, int mapY, Room currentRoom){
+	if (mapX < 0 || mapX >= schooled::MAP_WIDTH || mapY < 0 || mapY >= schooled::MAP_HEIGHT)
+		return false;
+
+	int tileValue = currentRoom.tileArray[mapY][mapX];
+	int actorValue = currentRoom.actorArray[mapY][mapX];
+	if (tileIndex[tileValue].isPassable && actorValue == 0)
+		return true;
+	return false;
+}
+
+bool isInteractable(int mapX, int mapY, Room currentRoom){
+	int tileValue;
+	tileValue = currentRoom.tileArray[mapY][mapX];
+	
+	if (tileIndex[tileValue].isInteractable)
+		return true;
+	return false;
+}
+
+void attack(Room& currentRoom, Actor attacker, Actor& defender, vector<const char *>& log){
+	string message;
+	defender.stats.HP -= attacker.stats.STR;
+	message = messages["ATTACKABLE"] + to_string(attacker.stats.STR) + " damage! Wow!";
+	log.push_back(messages["ATTACKABLE"]);
+}
+
+void changeRoom(Room& currentRoom, COORD change, vector<Actor> actorList)
+{
+	currentRoom.actorList = actorList;
+	roomArray[currentRoom.location.X][currentRoom.location.Y] = currentRoom;
+	currentRoom = roomArray[currentRoom.location.X + change.X][currentRoom.location.Y + change.Y];
+
+}
+
+const char *Room::getMessage() { return message.c_str(); }
 
 Room loadRoom(string fileName)
 {
