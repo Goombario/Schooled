@@ -51,7 +51,6 @@ struct Tile
 	char character;
 	int colorCode;
 	bool isPassable;
-	bool isInteractable;
 };
 
 struct Stats{
@@ -128,24 +127,23 @@ ostream& operator <<(ofstream& stream, const Room& r)
 // Global variables
 
 const Tile tileIndex[] = {	// symbol, colour, isPassable
-	{ ' ', con::fgBlack, true, false },		// (0) MAP_FLOOR
-	{ '=', con::fgHiGreen, false, false },	// (1) MAP_WALL_TOP
-	{ 'D', con::fgHiBlue, true, false },	// (2) MAP_DOOR
-	{ '|', con::fgHiGreen, false, false },	// (3) MAP_WALL_SIDE
-	{ 'X', con::fgHiWhite, false, true },	// (4) ENEMY (UNUSED)
-	{ '~', con::fgHiWhite, true, true },	// (5) KEY (UNUSED)
-	{ 'D', con::fgHiRed, false, true },		// (6) MAP_DOOR_LOCKED
-	{ 'D', con::fgLoBlue, false, true }		// (7) DOOR_TO_NEW_ROOM
+	{ ' ', con::fgBlack, true },	// (0) MAP_FLOOR
+	{ '=', con::fgHiGreen, false },	// (1) MAP_WALL_TOP
+	{ 'D', con::fgHiBlue, true },	// (2) MAP_DOOR
+	{ '|', con::fgHiGreen, false },	// (3) MAP_WALL_SIDE
+
 };
 const Item itemIndex[] = {
-	Item(),		    										// (0) NULL
-	Item({ '~', con::fgHiWhite, true, true }, { 1, 1, 1 }),	// (1) KEY
-	Item({ 'D', con::fgLoBlue, false, true }, { 1, 1, 1 })	// (2) DOOR_TO_NEW_ROOM
+	Item({ ' ', con::fgBlack, true }, { 1, 1, 1 }),		// (0) NULL
+	Item({ '~', con::fgHiWhite, true }, { 1, 1, 1 }),	// (1) KEY
+	Item({ 'D', con::fgLoBlue, false }, { 1, 1, 1 }),	// (2) DOOR_TO_NEW_ROOM
+	Item({ 'D', con::fgHiRed, false }, { 1, 1, 1 })		// (3) MAP_DOOR_LOCKED
+
 };
 
 const Actor actorIndex[] = {
-	Actor(),													// (0) NULL
-	Actor({ 'X', con::fgHiWhite, false, true }, { 10, 2, 1 })	// (1) BULLY_WEAK
+	Actor(),											// (0) NULL
+	Actor({ 'X', con::fgHiWhite, false }, { 10, 2, 1 })	// (1) BULLY_WEAK
 };
 
 map<string, char *> messages =
@@ -196,9 +194,6 @@ void flavourText();
 
 // Checks if a tile is passable
 bool isPassable(int mapX, int mapY, Room);
-
-// Checks if a tile is interactable
-bool isInteractable(int mapX, int mapY, Room);
 
 // attacks an actor
 void attack(Room&, Actor, Actor&, vector<const char *>&);
@@ -382,18 +377,13 @@ int main()
 				currentRoom.itemArray[highlight.Y][highlight.X] = 0;
 				break;
 
-				// ENEMY
-			case 4:
-				log.push_back(messages["Q_RANDOM"]);
-				break;
-
 				// MAP_DOOR_LOCKED
 			case 3:
 				if (useKey == true && keyCount > 0)
 				{
 					log.push_back(messages["USE_KEY"]);
 					keyCount--;
-					currentRoom.itemArray[highlight.Y][highlight.X] = 2;
+					currentRoom.itemArray[highlight.Y][highlight.X] = 0;
 					useKey = false;
 				}
 				else if (useKey == false && keyCount > 0)
@@ -433,6 +423,11 @@ int main()
 					log.push_back(messages["Q_NEXT_ROOM"]);
 					goToRoom = true;
 				}
+				break;
+
+				// ENEMY
+			case 4:
+				log.push_back(messages["Q_RANDOM"]);
 				break;
 
 			default:
@@ -579,17 +574,9 @@ bool isPassable(int mapX, int mapY, Room currentRoom){
 		return false;
 
 	int tileValue = currentRoom.tileArray[mapY][mapX];
+	int itemValue = currentRoom.itemArray[mapY][mapX];
 	int actorValue = currentRoom.actorArray[mapY][mapX];
-	if (tileIndex[tileValue].isPassable && actorValue == 0)
-		return true;
-	return false;
-}
-
-bool isInteractable(int mapX, int mapY, Room currentRoom){
-	int tileValue;
-	tileValue = currentRoom.tileArray[mapY][mapX];
-	
-	if (tileIndex[tileValue].isInteractable)
+	if (tileIndex[tileValue].isPassable && actorValue == 0 && itemIndex[itemValue].tile.isPassable)
 		return true;
 	return false;
 }
