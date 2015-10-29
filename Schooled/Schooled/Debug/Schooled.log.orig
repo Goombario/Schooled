@@ -1,7 +1,7 @@
 <<<<<<< local
-﻿Build started 10/19/2015 5:38:00 PM.
+﻿Build started 10/26/2015 10:16:39 AM.
 =======
-﻿Build started 10/20/2015 10:51:58 AM.
+﻿Build started 10/29/2015 3:17:49 PM.
 >>>>>>> other
      1>Project "C:\Hg\Schooled\Schooled\Schooled\Schooled.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
@@ -15,7 +15,7 @@
 Build succeeded.
 
 <<<<<<< local
-Time Elapsed 00:00:04.54
+Time Elapsed 00:00:04.23
 =======
-Time Elapsed 00:00:02.46
+Time Elapsed 00:00:01.44
 >>>>>>> other
