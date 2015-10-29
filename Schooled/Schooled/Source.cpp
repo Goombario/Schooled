@@ -64,7 +64,7 @@ class Actor
 public:
 	Actor();
 	Actor(Tile, Stats);
-	void attack(Actor&, vector<const char *>&);
+	void attack(Actor&);
 
 	COORD getLocation() { return location; }
 	int getX() { return location.X; }
@@ -166,14 +166,9 @@ map<string, char *> messages =
 	{ "NEW_ROOM",		"New room." },
 	{ "ENEMY_DEATH",	"It died..." },
 	{ "UNATTACKABLE",	"You can't kill that, you silly!" },
-	{ "ATTACKABLE",		"You hit that thing with " /*+ people[0].STR + " damage! Wow!"*/ }
+	{ "ATTACKABLE",		"You hit that thing with " /*+ people[0].STR + " damage! Wow!"*/ },
 	{ "ENEMY_ATTACK", "You got hit with "/* + people[0].STR + " damage! Ouch!"*/ },
 	{ "PLAYER_DEATH", "You died..." }
-};
-
-Stats people[] = {
-	{ 10, 2, 2 }, // our player
-	{ 10, 2, 1 }  // Weak bully? Cyber bully maybe?
 };
 
 Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
@@ -194,7 +189,6 @@ int eAttack = 0;
 void drawTile(int x, int y);
 void enemy1();
 void flavourText();
-int enemyAttack(int mapX, int mapY);
 
 int main()
 {
@@ -280,7 +274,7 @@ int main()
 		console.Position(5, 21);
 		console << keyCount;
 		console.Position(5, 25);
-		console << "HP: " << people[0].HP;
+		console << "HP: " << player.getStats().HP;
 
 		console.Position(5, 22);
 		console << player.getLocation().X << "," << player.getLocation().Y;
@@ -307,7 +301,7 @@ int main()
 		}
 		else
 			console << log[log.size() - 1];
-		if (people[0].HP == 0)
+		if (player.getStats().HP <= 0)
 			return 0;
 
 
@@ -352,7 +346,8 @@ int main()
 		case CONSOLE_KEY_N:
 			if (currentRoom.getActorInt(highlight) > 0){
 				Actor *a = &actorList[findActor(actorList, highlight)];
-				player.attack(*a, log);
+				player.attack(*a);
+				log.push_back(messages["ATTACKABLE"]);
 
 				// If the actor died
 				if (a->getStats().HP <= 0){
@@ -362,10 +357,10 @@ int main()
 					
 				}
 				else{
-					eAttack = enemyAttack(highlight.X, highlight.Y);
+					a->attack(player);
 					log.push_back(messages["ENEMY_ATTACK"]);
 				}
-				if (people[0].HP == 0){
+				if (player.getStats().HP <= 0){
 					log.push_back(messages["PLAYER_DEATH"]);
 					KEYPRESS aKeyPress = console.WaitForKeypress();
 				}
@@ -435,11 +430,6 @@ int main()
 				}
 				break;
 
-				// ENEMY
-			case 4:
-				log.push_back(messages["Q_RANDOM"]);
-				break;
-
 			default:
 				break;
 				
@@ -461,7 +451,7 @@ int main()
 
 			// quit
 		case CONSOLE_KEY_ESCAPE:
-			currentRoom.save("Room1.sav");
+			currentRoom.save("Rooms/Room1.sav");
 			exitGame();
 			return 0;
 
@@ -552,11 +542,8 @@ bool Room::isPassable(COORD tile){
 	return false;
 }
 
-void Actor::attack(Actor& defender, vector<const char *>& log){
-	string message;
+void Actor::attack(Actor& defender){
 	defender.stats.HP -= stats.STR;
-	message = messages["ATTACKABLE"] + to_string(stats.STR) + " damage! Wow!";
-	log.push_back(messages["ATTACKABLE"]);
 }
 
 void changeRoom(Room& currentRoom, COORD change, vector<Actor> actorList)
@@ -635,9 +622,9 @@ void Room::save(string fileName)
 		exit(1);
 	}
 	
-	stream << message << endl;
+	stream << message << endl << endl;
 
-	// Get the tile array
+	// Save the tile array
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
 			stream << tileArray[a][b] << " ";
@@ -646,14 +633,14 @@ void Room::save(string fileName)
 	}
 	stream << endl;
 
-	// Get the entrance coordinates
+	// Save the entrance coordinates
 	for (COORD &c : entrances)
 	{
 		stream << c.X << " " << c.Y << endl;
 	}
 	stream << endl;
 
-	// Get the item array
+	// Save the item array
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
 			stream << itemArray[a][b] << " ";
@@ -662,7 +649,7 @@ void Room::save(string fileName)
 	}
 	stream << endl;
 
-	// Get the actor array
+	// Save the actor array
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
 			stream << actorArray[a][b] << " ";
@@ -675,25 +662,6 @@ void Room::save(string fileName)
 
 void exitGame()
 {
-	
+
 	return;
-}
-int enemyAttack(int mapX, int mapY){
-	int tileValue = 0;
-	if (currentRoom == 1){
-		tileValue = roomOneArray[mapY][mapX];
-	}
-	else if (currentRoom == 2){
-		tileValue = roomTwoArray[mapY][mapX];
-	}
-	else if (currentRoom == 3){
-		tileValue = roomThreeArray[mapY][mapX];
-	}
-	if (tileValue == 4){
-		people[0].HP = people[0].HP - people[1].STR;
-		return 1;
-	}
-	else{
-		return 0;
-	}
 }
