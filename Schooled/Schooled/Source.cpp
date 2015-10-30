@@ -51,6 +51,7 @@ struct Tile
 	char character;
 	int colorCode;
 	bool isPassable;
+	int tileInt;
 };
 
 struct Stats{
@@ -136,23 +137,23 @@ private:
 // Global variables
 
 const Tile tileIndex[] = {	// symbol, colour, isPassable
-	{ ' ', con::fgBlack, true },	// (0) MAP_FLOOR
-	{ '=', con::fgHiGreen, false },	// (1) MAP_WALL_TOP
-	{ 'D', con::fgHiBlue, true },	// (2) MAP_DOOR
-	{ '|', con::fgHiGreen, false },	// (3) MAP_WALL_SIDE
+	{ ' ', con::fgBlack, true, 0 },	// (0) MAP_FLOOR
+	{ '=', con::fgHiGreen, false, 1 },	// (1) MAP_WALL_TOP
+	{ 'D', con::fgHiBlue, true, 2 },	// (2) MAP_DOOR
+	{ '|', con::fgHiGreen, false, 3 },	// (3) MAP_WALL_SIDE
 
 };
 const Item itemIndex[] = {
-	Item({ ' ', con::fgBlack, true }, { 1, 1, 1 }),		// (0) NULL
-	Item({ '~', con::fgHiWhite, true }, { 1, 1, 1 }),	// (1) KEY
-	Item({ 'D', con::fgLoBlue, false }, { 1, 1, 1 }),	// (2) DOOR_TO_NEW_ROOM
-	Item({ 'D', con::fgHiRed, false }, { 1, 1, 1 })		// (3) MAP_DOOR_LOCKED
+	Item({ ' ', con::fgBlack, true, 0 }, { 1, 1, 1 }),		// (0) NULL
+	Item({ '~', con::fgHiWhite, true, 1 }, { 1, 1, 1 }),	// (1) KEY
+	Item({ 'D', con::fgLoBlue, false, 2 }, { 1, 1, 1 }),	// (2) DOOR_TO_NEW_ROOM
+	Item({ 'D', con::fgHiRed, false, 3 }, { 1, 1, 1 })		// (3) MAP_DOOR_LOCKED
 
 };
 
 const Actor actorIndex[] = {
 	Actor(),					        // (0) NULL
-	Actor({ 'X', con::fgHiWhite, false }, { 10, 2, 1 })	// (1) BULLY_WEAK
+	Actor({ 'X', con::fgHiWhite, false, 1 }, { 10, 2, 1 })	// (1) BULLY_WEAK
 };
 
 map<string, char *> messages =
@@ -181,6 +182,9 @@ void changeRoom(Room&, COORD, vector<Actor>);
 
 // Deletes all dynamic variables
 void exitGame();
+
+// Moves the enemy
+void moveEnemy(COORD, Actor&, Room&);
 
 // Finds the actor in the current room
 int findActor(vector<Actor>, COORD);
@@ -446,6 +450,10 @@ int main()
 			{
 				// If allowed, move in specified direction
 				player.setLocation(highlight);
+				for (Actor a : actorList)
+				{
+					moveEnemy(player.getLocation(), a, currentRoom);
+				}
 			}
 			break;
 
@@ -466,7 +474,9 @@ int main()
 		{
 			highlight.X = player.getX() + delta.X;
 			highlight.Y = player.getY() + delta.Y;
+			
 		}
+		
 	}
 	return 0;
 }
@@ -664,4 +674,54 @@ void exitGame()
 {
 
 	return;
+}
+
+void moveEnemy(COORD playerPos, Actor& enemy, Room& currentRoom) 
+{
+	// If enemy line of sight then move
+	int differenceX, differenceY, deltaX, deltaY;
+	deltaX = 0;
+	deltaY = 0;
+	differenceX = enemy.getX() - playerPos.X;
+	differenceY = enemy.getY() - playerPos.Y;
+
+	if (abs(differenceX) > abs(differenceY))
+	{
+		if (enemy.getX() > playerPos.X){
+			deltaX = -1;
+		}
+		else
+			deltaX = 1;
+		if (! currentRoom.isPassable({ enemy.getX() + deltaX, enemy.getY() + deltaY }))
+		{
+			deltaX = 0;
+			if (enemy.getY() > playerPos.Y)
+				deltaY = -1;
+			else
+				deltaY = 1;
+		}
+	}
+	else
+	{
+		if (enemy.getY() > playerPos.Y)
+			deltaY = -1;
+		else
+			deltaY = 1;
+		if (!currentRoom.isPassable({ enemy.getX() + deltaX, enemy.getY() + deltaY }))
+		{
+			deltaY = 0;
+			if (enemy.getX() > playerPos.X){
+				deltaX = -1;
+			}
+			else
+				deltaX = 1;
+		}
+	}
+	if (currentRoom.isPassable({ enemy.getX() + deltaX, enemy.getY() + deltaY })) 
+	{
+		currentRoom.setActorInt(enemy.getLocation(), 0);
+		enemy.setLocation({ enemy.getX() + deltaX, enemy.getY() + deltaY });
+		currentRoom.setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
+	}
+
 }
