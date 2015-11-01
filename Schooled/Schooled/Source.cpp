@@ -86,7 +86,7 @@ class Room
 public:
 	Room();
 	Room(string);
-	const char *getMessage();
+	string getMessage();
 	COORD getNorth() { return entrances[0]; }
 	COORD getSouth() { return entrances[1]; }
 	COORD getEast() { return entrances[2]; }
@@ -156,7 +156,7 @@ const Actor actorIndex[] = {
 	Actor({ 'X', con::fgHiWhite, false, 1 }, { 10, 2, 1 })	// (1) BULLY_WEAK
 };
 
-map<string, char *> messages =
+map<string, string> messages =
 {
 	{ "Q_RANDOM",		"Random: What do you want ?" },
 	{ "GET_KEY",		"It's a key! You picked it up." },
@@ -166,9 +166,9 @@ map<string, char *> messages =
 	{ "Q_NEXT_ROOM",	"Go to next room?" },
 	{ "NEW_ROOM",		"New room." },
 	{ "ENEMY_DEATH",	"It died..." },
-	{ "UNATTACKABLE",	"You can't kill that, you silly!" },
-	{ "ATTACKABLE",		"You hit that thing with " /*+ people[0].STR + " damage! Wow!"*/ },
-	{ "ENEMY_ATTACK", "You got hit with "/* + people[0].STR + " damage! Ouch!"*/ },
+	{ "UNATTACKABLE", "You can't kill that, you silly!" },
+	{ "ATTACKABLE",		"You hit that thing with " },
+	{ "ENEMY_ATTACK", "You got hit with " },
 	{ "PLAYER_DEATH", "You died..." }
 };
 
@@ -183,8 +183,17 @@ void changeRoom(Room&, COORD, vector<Actor>);
 // Deletes all dynamic variables
 void exitGame();
 
+// initializes the buffer
+void setBuffer();
+
 // Moves the enemy
 void moveEnemy(COORD, Actor&, Room&);
+
+// Draws the log to the screen
+void displayLog(vector<string>);
+
+// draws a string to the buffer
+void drawToBuffer(string, WORD, int, int);
 
 // Finds the actor in the current room
 int findActor(vector<Actor>, COORD);
@@ -244,8 +253,17 @@ int main()
 	vector<Actor> actorList = currentRoom.actorList;
 
 	// Initialize the log
-	vector<const char *> log;
+	vector<string> log;
 	log.push_back("");
+
+	// Initialize the buffer
+	ReadConsoleOutput(hConsole, (CHAR_INFO *)schooled::buffer,
+		schooled::dwBufferSize, schooled::dwBufferCoord, &rcRegion);
+
+	setBuffer();
+
+	WriteConsoleOutput(hConsole, (CHAR_INFO *)schooled::buffer,
+		schooled::dwBufferSize, schooled::dwBufferCoord, &rcRegion);
 
 	// Main program loop
 	while (true)
@@ -269,42 +287,20 @@ int main()
 
 		// Display the highlight
 		schooled::buffer[highlight.Y][highlight.X].Attributes = con::bgHiWhite;
+
+		// Display the messages
+		displayLog(log);
+
+		// Display stats
+		drawToBuffer(to_string(keyCount), con::fgHiWhite, 21, 5);	// Key count
+		drawToBuffer((to_string(player.getLocation().X) + ","		// Player coordinates
+			+ to_string(player.getLocation().Y)), con::fgHiWhite, 22, 5);
+		drawToBuffer(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 24, 5);	// Player hitpoints
 		
 		// Writes the buffer to the screen
 		WriteConsoleOutput(hConsole, (CHAR_INFO *)schooled::buffer,
-			schooled::dwBufferSize, schooled::dwBufferCoord, &rcRegion);
+			schooled::dwBufferSize, schooled::dwBufferCoord, &rcRegion);		
 
-		// Display keycount
-		console.Position(5, 21);
-		console << keyCount;
-		console.Position(5, 25);
-		console << "HP: " << player.getStats().HP;
-
-		console.Position(5, 22);
-		console << player.getLocation().X << "," << player.getLocation().Y;
-		
-		console.Position(5, 23);
-		//console << actorList[0].stats.HP;
-		
-		// Display the messages
-		console.Position(21, 23);
-		SetConsoleTextAttribute(hConsole, con::fgHiWhite);
-		if (log.size() > 2)
-		{
-			console << log[log.size() - 1];
-			console.Position(21, 22);
-			console << log[log.size() - 2];
-			console.Position(21, 21);
-			console << log[log.size() - 3];
-		}
-		else if (log.size() > 1)
-		{
-			console << log[log.size() - 1];
-			console.Position(21, 22);
-			console << log[log.size() - 2];
-		}
-		else
-			console << log[log.size() - 1];
 		if (player.getStats().HP <= 0)
 			return 0;
 
@@ -351,18 +347,20 @@ int main()
 			if (currentRoom.getActorInt(highlight) > 0){
 				Actor *a = &actorList[findActor(actorList, highlight)];
 				player.attack(*a);
-				log.push_back(messages["ATTACKABLE"]);
+				log.push_back(messages["ATTACKABLE"] +  to_string(player.getStats().STR) + " damage! Wow!");
 
 				// If the actor died
-				if (a->getStats().HP <= 0){
+				if (a->getStats().HP <= 0)
+				{
 					currentRoom.setActorInt(a->getLocation(), 0);
 					log.push_back(messages["ENEMY_DEATH"]);
 					actorList.erase(actorList.begin() + findActor(actorList, highlight));
 					
 				}
-				else{
+				else
+				{
 					a->attack(player);
-					log.push_back(messages["ENEMY_ATTACK"]);
+					log.push_back(messages["ENEMY_ATTACK"] + to_string(a->getStats().HP) + " damage! Ouch!");
 				}
 				if (player.getStats().HP <= 0){
 					log.push_back(messages["PLAYER_DEATH"]);
@@ -564,6 +562,49 @@ void changeRoom(Room& currentRoom, COORD change, vector<Actor> actorList)
 
 }
 
+void displayLog(vector<string> log)
+{
+	int max = (log.size() >= 3) ? (log.size() - 3) : 0;
+	int row, col;
+	row = schooled::SCREEN_HEIGHT-1;
+	col = 23;
+	for (int i = log.size() - 1; i >= max; i--)
+	{
+		drawToBuffer(log[i], con::fgHiWhite, row, col);
+		row--;
+		col = 23;
+	}
+}
+
+void setBuffer()
+{
+	for (int a = 0; a < schooled::SCREEN_HEIGHT; a++){
+		for (int b = 0; b < schooled::SCREEN_WIDTH; b++){
+			schooled::buffer[a][b].Char.AsciiChar = ' ';
+			schooled::buffer[a][b].Attributes = con::fgBlack | con::bgBlack;
+		}
+	}
+}
+
+void drawToBuffer(string s, WORD w, int row, int col)
+{
+	int startCol = col;
+	for (int i = 0; i < s.size(); i++)
+	{
+		schooled::buffer[row][col].Char.AsciiChar = s[i];
+		schooled::buffer[row][col].Attributes = w;
+		if (col < schooled::SCREEN_WIDTH - 1)
+		{
+			col++;
+		}
+		else
+		{
+			col = startCol;
+			row--;
+		}
+	}
+}
+
 Room::Room() {}
 
 Room::Room(string fileName)
@@ -619,7 +660,7 @@ Room::Room(string fileName)
 	stream.close();
 }
 
-const char *Room::getMessage() { return message.c_str(); }
+string Room::getMessage() { return message; }
 
 void Room::save(string fileName)
 {
