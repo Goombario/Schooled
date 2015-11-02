@@ -70,15 +70,24 @@ public:
 	COORD getLocation() { return location; }
 	int getX() { return location.X; }
 	int getY() { return location.Y; }
+	int getMinX(){ return minX; }
+	int getMaxX(){ return maxX; }
+	int getMinY(){ return minY; }
+	int getMaxY(){ return maxY; }
 	Stats getStats() { return stats; }
 	Tile getTile() { return tile; }
 
 	void setLocation(COORD c) { location = c; }
+	void setMinX(int x){ minX = x; }
+	void setMaxX(int x){ maxX = x; }
+	void setMinY(int y){ minY = y; }
+	void setMaxY(int y){ maxY = y; }
 
 private:
 	COORD location;
 	Stats stats;
 	Tile tile;
+	int minX, maxX, minY, maxY;
 };
 
 class Room
@@ -188,6 +197,8 @@ void setBuffer();
 
 // Moves the enemy
 void moveEnemy(COORD, Actor&, Room&);
+
+bool lineOfSight(COORD, Actor&, Room&);
 
 // Draws the log to the screen
 void displayLog(vector<string>);
@@ -363,7 +374,7 @@ int main()
 				else
 				{
 					a->attack(player);
-					log.push_back(messages["ENEMY_ATTACK"] + to_string(a->getStats().HP) + " damage! Ouch!");
+					log.push_back(messages["ENEMY_ATTACK"] + to_string(a->getStats().STR) + " damage! Ouch!");
 				}
 				if (player.getStats().HP <= 0){
 					log.push_back(messages["PLAYER_DEATH"]);
@@ -372,6 +383,10 @@ int main()
 			}
 			else{
 				log.push_back(messages["UNATTACKABLE"]);
+			}
+			for (Actor& a : actorList)
+			{
+				moveEnemy(player.getLocation(), a, currentRoom);
 			}
 			break;
 
@@ -439,8 +454,12 @@ int main()
 				break;
 				
 			}
+			for (Actor& a : actorList)
+			{
+				moveEnemy(player.getLocation(), a, currentRoom);
+			}
 			break;
-
+			
 			// move key pressed
 		case CONSOLE_KEY_M:
 			delta.X = (highlight.X - player.getX());
@@ -737,52 +756,56 @@ void moveEnemy(COORD playerPos, Actor& enemy, Room& currentRoom)
 	differenceX = enemyX - playerX;
 	differenceY = enemyY - playerY;
 
-	if (differenceX > -2 && differenceX < 2 && differenceY > -2 && differenceY < 2){
-		deltaX = 0;
-		deltaY = 0;
-	}
-	else{
-		if (differenceX > differenceY)
-		{
-			if (enemyX > playerX)
-				deltaX = -1;
-			else if (enemyX < playerX)
-				deltaX = 1;
-			else
-				deltaX = 0;
-			if (!currentRoom.isPassable({ enemyX + deltaX, enemyY + deltaY }))
-			{
-				deltaX = 0;
-				if (enemyY > playerY)
-					deltaY = -1;
-				else if (enemyY < playerY)
-					deltaY = 1;
-				else
-					deltaY = 0;
-			}
+	if (lineOfSight(playerPos, enemy, currentRoom) == true){
+		if (differenceX > -2 && differenceX < 2 && differenceY > -2 && differenceY < 2){
+			deltaX = 0;
+			deltaY = 0;
 		}
-		else
-		{
-			if (enemyY > playerY)
-				deltaY = -1;
-			else if (enemyY < playerY)
-				deltaY = 1;
-			else
-				deltaY = 0;
-			if (!currentRoom.isPassable({ enemyX + deltaX, enemyY + deltaY }))
+		else{
+			if (differenceX > differenceY)
 			{
-				deltaY = 0;
 				if (enemyX > playerX)
 					deltaX = -1;
 				else if (enemyX < playerX)
 					deltaX = 1;
 				else
 					deltaX = 0;
+				if (!currentRoom.isPassable({ enemyX + deltaX, enemyY + deltaY }))
+				{
+					deltaX = 0;
+					if (enemyY > playerY)
+						deltaY = -1;
+					else if (enemyY < playerY)
+						deltaY = 1;
+					else
+						deltaY = 0;
+				}
+			}
+			else
+			{
+				if (enemyY > playerY)
+					deltaY = -1;
+				else if (enemyY < playerY)
+					deltaY = 1;
+				else
+					deltaY = 0;
+				if (!currentRoom.isPassable({ enemyX + deltaX, enemyY + deltaY }))
+				{
+					deltaY = 0;
+					if (enemyX > playerX)
+						deltaX = -1;
+					else if (enemyX < playerX)
+						deltaX = 1;
+					else
+						deltaX = 0;
+				}
 			}
 		}
 	}
-
-	
+	else{
+		deltaX = 0;
+		deltaY = 0;
+	}
 
 	if (currentRoom.isPassable({ enemyX + deltaX, enemyY + deltaY })) 
 	{
@@ -790,4 +813,50 @@ void moveEnemy(COORD playerPos, Actor& enemy, Room& currentRoom)
 		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
 		currentRoom.setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
 	}
+}
+bool lineOfSight(COORD playerPos, Actor& enemy, Room& currentRoom)
+{
+	bool isFound = false;
+
+	for (int a = 1; isFound == false; a++)
+	{
+		if (! currentRoom.isPassable({ enemy.getX() - a, enemy.getY() }))
+		{
+			enemy.setMinX(enemy.getX() - a);
+			isFound = true;
+		}
+	}
+	isFound = false;
+	for (int a = 1; isFound == false; a++)
+	{
+		if (! currentRoom.isPassable({ enemy.getX() + a, enemy.getY() }))
+		{
+			enemy.setMaxX(enemy.getX() + a);
+			isFound = true;
+		}
+	}
+	isFound = false;
+	for (int a = 1; isFound == false; a++)
+	{
+		if (! currentRoom.isPassable({ enemy.getX(), enemy.getY() - a }))
+		{
+			enemy.setMinY(enemy.getY() - a);
+			isFound = true;
+		}
+
+	}
+	isFound = false;
+	for (int a = 1; isFound == false; a++)
+	{
+		if (! currentRoom.isPassable({ enemy.getX(), enemy.getY() + a }))
+		{
+			enemy.setMaxY(enemy.getY() + a);
+			isFound = true;
+		}
+
+	}
+	if (playerPos.X >= enemy.getMinX() && playerPos.Y >= enemy.getMinY() && playerPos.X <= enemy.getMaxX() && playerPos.Y <= enemy.getMaxY())
+		return true;
+	else
+		return false;
 }
