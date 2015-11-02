@@ -31,9 +31,9 @@ namespace schooled{
 	const int ITEM_INDEX_SIZE = 2;
 
 
-	COORD enemy1{ 18, 16 };
-        int enemy1X = 18;
-	int enemy1Y = 16;
+	//COORD enemy1{ 18, 16 };
+    //int enemy1X = 18;
+	//int enemy1Y = 16;
 
 	CHAR_INFO buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
 	COORD dwBufferSize = { SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -152,8 +152,8 @@ const Item itemIndex[] = {
 };
 
 const Actor actorIndex[] = {
-	Actor(),					        // (0) NULL
-	Actor({ 'X', con::fgHiWhite, false, 1 }, { 10, 2, 1 })	// (1) BULLY_WEAK
+	Actor(),												// (0) NULL
+	Actor({ 'X', con::fgHiWhite, false, 1 }, { 10, 2, 1 }),	// (1) BULLY_WEAK
 };
 
 map<string, string> messages =
@@ -203,6 +203,8 @@ void drawTile(int x, int y);
 void enemy1();
 void flavourText();
 
+
+
 int main()
 {
 	///////////////////////////////////////////////////////////////////////////
@@ -211,7 +213,7 @@ int main()
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
 
 	// Initialize the player's on-screen location
-	Actor player({ '8', con::fgHiWhite }, { 10, 2, 2 });
+	Actor player({ '8', con::fgHiWhite}, { 10, 2, 2 });
 	player.setLocation({ 2, 18 });
 	COORD highlight{ 2, 17 };
 	COORD delta{ 0, 0 };
@@ -295,6 +297,7 @@ int main()
 		drawToBuffer(to_string(keyCount), con::fgHiWhite, 21, 5);	// Key count
 		drawToBuffer((to_string(player.getLocation().X) + ","		// Player coordinates
 			+ to_string(player.getLocation().Y)), con::fgHiWhite, 22, 5);
+
 		drawToBuffer(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 24, 5);	// Player hitpoints
 		
 		// Writes the buffer to the screen
@@ -448,9 +451,9 @@ int main()
 			{
 				// If allowed, move in specified direction
 				player.setLocation(highlight);
-				for (Actor a : actorList)
+				for (Actor& a : actorList)
 				{
-					moveEnemy(player.getLocation(), a, currentRoom);
+						moveEnemy(player.getLocation(), a, currentRoom);
 				}
 			}
 			break;
@@ -717,52 +720,74 @@ void exitGame()
 	return;
 }
 
+//Actor a : actorList;
+//int enemyX = a.getX();
+//int enemyY = a.getY();
+
 void moveEnemy(COORD playerPos, Actor& enemy, Room& currentRoom) 
 {
 	// If enemy line of sight then move
 	int differenceX, differenceY, deltaX, deltaY;
+	int enemyX = enemy.getX();
+	int enemyY = enemy.getY();
+	int playerX = playerPos.X;
+	int playerY = playerPos.Y;
 	deltaX = 0;
 	deltaY = 0;
-	differenceX = enemy.getX() - playerPos.X;
-	differenceY = enemy.getY() - playerPos.Y;
+	differenceX = enemyX - playerX;
+	differenceY = enemyY - playerY;
 
-	if (abs(differenceX) > abs(differenceY))
-	{
-		if (enemy.getX() > playerPos.X){
-			deltaX = -1;
-		}
-		else
-			deltaX = 1;
-		if (! currentRoom.isPassable({ enemy.getX() + deltaX, enemy.getY() + deltaY }))
-		{
-			deltaX = 0;
-			if (enemy.getY() > playerPos.Y)
-				deltaY = -1;
-			else
-				deltaY = 1;
-		}
+	if (differenceX > -2 && differenceX < 2 && differenceY > -2 && differenceY < 2){
+		deltaX = 0;
+		deltaY = 0;
 	}
-	else
-	{
-		if (enemy.getY() > playerPos.Y)
-			deltaY = -1;
-		else
-			deltaY = 1;
-		if (!currentRoom.isPassable({ enemy.getX() + deltaX, enemy.getY() + deltaY }))
+	else{
+		if (differenceX > differenceY)
 		{
-			deltaY = 0;
-			if (enemy.getX() > playerPos.X){
+			if (enemyX > playerX)
 				deltaX = -1;
-			}
-			else
+			else if (enemyX < playerX)
 				deltaX = 1;
+			else
+				deltaX = 0;
+			if (!currentRoom.isPassable({ enemyX + deltaX, enemyY + deltaY }))
+			{
+				deltaX = 0;
+				if (enemyY > playerY)
+					deltaY = -1;
+				else if (enemyY < playerY)
+					deltaY = 1;
+				else
+					deltaY = 0;
+			}
+		}
+		else
+		{
+			if (enemyY > playerY)
+				deltaY = -1;
+			else if (enemyY < playerY)
+				deltaY = 1;
+			else
+				deltaY = 0;
+			if (!currentRoom.isPassable({ enemyX + deltaX, enemyY + deltaY }))
+			{
+				deltaY = 0;
+				if (enemyX > playerX)
+					deltaX = -1;
+				else if (enemyX < playerX)
+					deltaX = 1;
+				else
+					deltaX = 0;
+			}
 		}
 	}
-	if (currentRoom.isPassable({ enemy.getX() + deltaX, enemy.getY() + deltaY })) 
+
+	
+
+	if (currentRoom.isPassable({ enemyX + deltaX, enemyY + deltaY })) 
 	{
 		currentRoom.setActorInt(enemy.getLocation(), 0);
-		enemy.setLocation({ enemy.getX() + deltaX, enemy.getY() + deltaY });
+		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
 		currentRoom.setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
 	}
-
 }
