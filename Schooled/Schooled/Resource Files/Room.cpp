@@ -191,7 +191,6 @@ void Room::save(string fileName)
 
 void Room::moveEnemy(COORD playerPos, Actor& enemy)
 {
-	// If enemy line of sight then move
 	int differenceX, differenceY, deltaX, deltaY;
 	int enemyX = enemy.getX();
 	int enemyY = enemy.getY();
@@ -201,13 +200,17 @@ void Room::moveEnemy(COORD playerPos, Actor& enemy)
 	deltaY = 0;
 	differenceX = enemyX - playerX;
 	differenceY = enemyY - playerY;
+	bool inRange = differenceX > -4 && differenceX < 4 && differenceY > -4 && differenceY < 4;
 
-	if (lineOfSight(playerPos, enemy) == true){
-		if (differenceX > -2 && differenceX < 2 && differenceY > -2 && differenceY < 2){
+	if (lineOfSight(playerPos, enemy) == true || inRange && lineOfSight(playerPos, enemy) == false)
+{
+		if (differenceX > -2 && differenceX < 2 && differenceY > -2 && differenceY < 2)
+		{
 			deltaX = 0;
 			deltaY = 0;
 		}
-		else{
+		else
+		{
 			if (abs(differenceX) > abs(differenceY))
 			{
 				deltaX = (enemyX > playerX) ? -1 : 1;
@@ -248,7 +251,7 @@ bool Room::lineOfSight(COORD playerPos, Actor& enemy)
 	{
 		if (!isPassable({ enemy.getX() - a, enemy.getY() }))
 		{
-			enemy.setMinX(enemy.getX() - a - 1);
+			enemy.setMinX(enemy.getX() - a);
 			isFound = true;
 		}
 	}
@@ -257,7 +260,7 @@ bool Room::lineOfSight(COORD playerPos, Actor& enemy)
 	{
 		if (!isPassable({ enemy.getX() + a, enemy.getY() }))
 		{
-			enemy.setMaxX(enemy.getX() + a + 1);
+			enemy.setMaxX(enemy.getX() + a);
 			isFound = true;
 		}
 	}
@@ -266,7 +269,7 @@ bool Room::lineOfSight(COORD playerPos, Actor& enemy)
 	{
 		if (!isPassable({ enemy.getX(), enemy.getY() - a }))
 		{
-			enemy.setMinY(enemy.getY() - a - 1);
+			enemy.setMinY(enemy.getY() - a);
 			isFound = true;
 		}
 
@@ -276,7 +279,7 @@ bool Room::lineOfSight(COORD playerPos, Actor& enemy)
 	{
 		if (!isPassable({ enemy.getX(), enemy.getY() + a }))
 		{
-			enemy.setMaxY(enemy.getY() + a + 1);
+			enemy.setMaxY(enemy.getY() + a);
 			isFound = true;
 		}
 
