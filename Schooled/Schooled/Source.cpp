@@ -184,6 +184,19 @@ map<string, string> messages =
 Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 
 ///////////////////////////////////////////////////////////////////////////////
+// Operators
+
+bool operator ==(COORD a, COORD b)
+{
+	return (a.X == b.X && a.Y == b.Y);
+}
+
+COORD operator +(COORD a, COORD b)
+{
+	return { a.X + b.X, a.Y + b.Y };
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Function declarations
 
 // Changes the current room to the number of the one given.
@@ -501,14 +514,6 @@ int main()
 	return 0;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Operators
-
-bool operator ==(COORD a, COORD b)
-{
-	return (a.X == b.X && a.Y == b.Y);
-}
-
 Item::Item(Tile t, Stats s) : tile(t), stats(s) {}
 
 Item::Item() {}
@@ -762,42 +767,22 @@ void moveEnemy(COORD playerPos, Actor& enemy, Room& currentRoom)
 			deltaY = 0;
 		}
 		else{
-			if (differenceX > differenceY)
+			if (abs(differenceX) > abs(differenceY))
 			{
-				if (enemyX > playerX)
-					deltaX = -1;
-				else if (enemyX < playerX)
-					deltaX = 1;
-				else
-					deltaX = 0;
+				deltaX = (enemyX > playerX) ? -1 : 1;
 				if (!currentRoom.isPassable({ enemyX + deltaX, enemyY + deltaY }))
 				{
 					deltaX = 0;
-					if (enemyY > playerY)
-						deltaY = -1;
-					else if (enemyY < playerY)
-						deltaY = 1;
-					else
-						deltaY = 0;
+					deltaY = (enemyY > playerY) ? -1 : 1;
 				}
 			}
 			else
 			{
-				if (enemyY > playerY)
-					deltaY = -1;
-				else if (enemyY < playerY)
-					deltaY = 1;
-				else
-					deltaY = 0;
+				deltaY = (enemyY > playerY) ? -1 : 1;
 				if (!currentRoom.isPassable({ enemyX + deltaX, enemyY + deltaY }))
 				{
 					deltaY = 0;
-					if (enemyX > playerX)
-						deltaX = -1;
-					else if (enemyX < playerX)
-						deltaX = 1;
-					else
-						deltaX = 0;
+					deltaX = (enemyX > playerX) ? -1 : 1;
 				}
 			}
 		}
@@ -822,7 +807,7 @@ bool lineOfSight(COORD playerPos, Actor& enemy, Room& currentRoom)
 	{
 		if (! currentRoom.isPassable({ enemy.getX() - a, enemy.getY() }))
 		{
-			enemy.setMinX(enemy.getX() - a);
+			enemy.setMinX(enemy.getX() - a - 1);
 			isFound = true;
 		}
 	}
@@ -831,7 +816,7 @@ bool lineOfSight(COORD playerPos, Actor& enemy, Room& currentRoom)
 	{
 		if (! currentRoom.isPassable({ enemy.getX() + a, enemy.getY() }))
 		{
-			enemy.setMaxX(enemy.getX() + a);
+			enemy.setMaxX(enemy.getX() + a + 1);
 			isFound = true;
 		}
 	}
@@ -840,7 +825,7 @@ bool lineOfSight(COORD playerPos, Actor& enemy, Room& currentRoom)
 	{
 		if (! currentRoom.isPassable({ enemy.getX(), enemy.getY() - a }))
 		{
-			enemy.setMinY(enemy.getY() - a);
+			enemy.setMinY(enemy.getY() - a - 1);
 			isFound = true;
 		}
 
@@ -850,7 +835,7 @@ bool lineOfSight(COORD playerPos, Actor& enemy, Room& currentRoom)
 	{
 		if (! currentRoom.isPassable({ enemy.getX(), enemy.getY() + a }))
 		{
-			enemy.setMaxY(enemy.getY() + a);
+			enemy.setMaxY(enemy.getY() + a + 1);
 			isFound = true;
 		}
 
