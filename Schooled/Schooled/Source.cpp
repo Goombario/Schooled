@@ -56,6 +56,7 @@ void exitGame();
 
 // Draws the log to the screen
 void displayLog(vector<string>, Buffer&);
+void displayLog(vector<string>);
 
 
 int main()
@@ -132,11 +133,8 @@ int main()
 		// Display the highlight
 		buffer.draw(con::bgHiWhite, highlight.Y, highlight.X);
 
-		// Display the messages
-		displayLog(log, buffer);
-
 		// Display stats
-		buffer.draw(to_string(keyCount), con::fgHiWhite, 21, 5);	// Key count
+		buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 21, 5);	// Key count
 		buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
 			+ to_string(player.getLocation().Y)), con::fgHiWhite, 22, 5);
 
@@ -144,6 +142,9 @@ int main()
 		
 		// Writes the buffer to the screen
 		buffer.close(hConsole);
+
+		// Display the messages
+		displayLog(log);
 
 		if (player.getStats().HP <= 0)
 			return 0;
@@ -231,17 +232,11 @@ int main()
 
 				// MAP_DOOR_LOCKED
 			case 3:
-				if (useKey == true && keyCount > 0)
+				if (keyCount > 0)
 				{
 					log.push_back(messages["USE_KEY"]);
 					keyCount--;
 					currentRoom.setItemInt(highlight, 0);
-					useKey = false;
-				}
-				else if (useKey == false && keyCount > 0)
-				{
-					log.push_back(messages["Q_USE_KEY"]);
-					useKey = true;
 				}
 				else 
 					log.push_back(messages["DOOR_LOCKED"]);
@@ -334,13 +329,63 @@ void changeRoom(Room& currentRoom, COORD change)
 
 void displayLog(vector<string> log, Buffer& buffer)
 {
-	int max = (log.size() >= 3) ? (log.size() - 3) : 0;
+	int max = (log.size() >= 3) ? (log.size() - 3) : 0;	// determines the number of lines to display
 	int row, col;
+	int grayscale = 0;
 	row = schooled::SCREEN_HEIGHT-1;
 	col = 23;
 	for (int i = log.size() - 1; i >= max; i--)
 	{
-		buffer.draw(log[i], con::fgHiWhite, row, col);
+		switch (grayscale)
+		{
+		case 0:
+			buffer.draw(log[i], con::fgHiWhite, row, col);
+			break;
+
+		case 1:
+			buffer.draw(log[i], con::fgLoWhite, row, col);
+			break;
+
+		case 2:
+			buffer.draw(log[i], con::fgGray, row, col);
+			break;
+		}
+		grayscale++;
+		row--;
+		col = 23;
+	}
+}
+
+void displayLog(vector<string> log)
+{
+	int max = (log.size() >= 3) ? (log.size() - 3) : 0;	// determines the number of lines to display
+	int row, col;
+	int grayscale = 0;
+	row = schooled::SCREEN_HEIGHT - 1;
+	col = 23;
+	for (int i = log.size() - 1; i >= max; i--)
+	{
+		switch (grayscale)
+		{
+		case 0:
+			for (int e = 0; e < log[i].size(); e++)
+			{
+				consol
+				console << log[i][e];
+			}
+
+			buffer.draw(log[i], con::fgHiWhite, row, col);
+			break;
+
+		case 1:
+			buffer.draw(log[i], con::fgLoWhite, row, col);
+			break;
+
+		case 2:
+			buffer.draw(log[i], con::fgGray, row, col);
+			break;
+		}
+		grayscale++;
 		row--;
 		col = 23;
 	}
