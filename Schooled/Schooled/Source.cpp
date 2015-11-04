@@ -13,6 +13,7 @@
 #include "Header Files\Console_color.h"
 #include "Header Files\Actor.h"
 #include "Header Files\Room.h"
+#include "Header Files\Log.h"
 
 #include "Console Library/Console.h"
 
@@ -24,22 +25,6 @@ namespace con = JadedHoboConsole;	// Used for the color
 
 ///////////////////////////////////////////////////////////////////////////////
 // Global variables
-
-map<string, string> messages =
-{
-	{ "Q_RANDOM",		"Random: What do you want ?" },
-	{ "GET_KEY",		"It's a key! You picked it up." },
-	{ "DOOR_LOCKED",	"The door is locked, you need a key." },
-	{ "USE_KEY",		"You used a key!" },
-	{ "Q_USE_KEY",		"The door is locked, use a key?"},
-	{ "Q_NEXT_ROOM",	"Go to next room?" },
-	{ "NEW_ROOM",		"New room." },
-	{ "ENEMY_DEATH",	"It died..." },
-	{ "UNATTACKABLE", "You can't kill that, you silly!" },
-	{ "ATTACKABLE",		"You hit that thing with " },
-	{ "ENEMY_ATTACK", "You got hit with " },
-	{ "PLAYER_DEATH", "You died..." }
-};
 
 Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 
@@ -54,9 +39,7 @@ void changeRoom(Room&, COORD);
 // Deletes all dynamic variables
 void exitGame();
 
-// Draws the log to the screen
 void displayLog(vector<string>, Buffer&);
-void displayLog(vector<string>);
 
 
 int main()
@@ -106,8 +89,8 @@ int main()
 	Room currentRoom = roomOne;
 
 	// Initialize the log
-	vector<string> log;
-	log.push_back("");
+	Log log;
+	//vector<string> log;
 
 	// Initialize the buffer
 	Buffer buffer;
@@ -115,7 +98,6 @@ int main()
 	// Main program loop
 	while (true)
 	{
-		// Wipe console clear
 		console.Clear();
 
 		///////////////////////////////////////////////////////////////////////
@@ -140,15 +122,14 @@ int main()
 
 		buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 24, 5);	// Player hitpoints
 		
+		// Display the messages
+		log.display(buffer);
+
 		// Writes the buffer to the screen
 		buffer.close(hConsole);
 
-		// Display the messages
-		displayLog(log);
-
 		if (player.getStats().HP <= 0)
 			return 0;
-
 
 		///////////////////////////////////////////////////////////////////////
 		// Input phase
@@ -326,72 +307,6 @@ void changeRoom(Room& currentRoom, COORD change)
 	currentRoom = roomArray[currentRoom.getX() + change.X][currentRoom.getY() + change.Y];
 
 }
-
-void displayLog(vector<string> log, Buffer& buffer)
-{
-	int max = (log.size() >= 3) ? (log.size() - 3) : 0;	// determines the number of lines to display
-	int row, col;
-	int grayscale = 0;
-	row = schooled::SCREEN_HEIGHT-1;
-	col = 23;
-	for (int i = log.size() - 1; i >= max; i--)
-	{
-		switch (grayscale)
-		{
-		case 0:
-			buffer.draw(log[i], con::fgHiWhite, row, col);
-			break;
-
-		case 1:
-			buffer.draw(log[i], con::fgLoWhite, row, col);
-			break;
-
-		case 2:
-			buffer.draw(log[i], con::fgGray, row, col);
-			break;
-		}
-		grayscale++;
-		row--;
-		col = 23;
-	}
-}
-
-void displayLog(vector<string> log)
-{
-	int max = (log.size() >= 3) ? (log.size() - 3) : 0;	// determines the number of lines to display
-	int row, col;
-	int grayscale = 0;
-	row = schooled::SCREEN_HEIGHT - 1;
-	col = 23;
-	for (int i = log.size() - 1; i >= max; i--)
-	{
-		switch (grayscale)
-		{
-		case 0:
-			for (int e = 0; e < log[i].size(); e++)
-			{
-				consol
-				console << log[i][e];
-			}
-
-			buffer.draw(log[i], con::fgHiWhite, row, col);
-			break;
-
-		case 1:
-			buffer.draw(log[i], con::fgLoWhite, row, col);
-			break;
-
-		case 2:
-			buffer.draw(log[i], con::fgGray, row, col);
-			break;
-		}
-		grayscale++;
-		row--;
-		col = 23;
-	}
-}
-
-
 
 void exitGame()
 {

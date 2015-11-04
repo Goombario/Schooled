@@ -33,6 +33,9 @@
     <ClCompile Include="Resource Files\Schooled.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="Resource Files\Log.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console Library\Console.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header Files\Actor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
