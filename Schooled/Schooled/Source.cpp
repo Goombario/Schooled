@@ -53,8 +53,8 @@ int main()
 
 	// Initialize the player's on-screen location
 	Actor player({ '8', con::fgHiWhite}, { 10, 2, 2 });
-	player.setLocation({ 2, 18 });
-	COORD highlight{ 2, 17 };
+	player.setLocation({ 2, 3 });
+	COORD highlight{ 3, 3 };
 	COORD delta{ 0, 0 };
 
 	// UI materials
@@ -70,7 +70,7 @@ int main()
 	Room currentRoom = roomArray[1][1];*/
 
 	// Load the rooms from the file
-	Room roomOne("Rooms/Room1_1.txt");
+	Room roomOne("Rooms/Room4_1.txt");
 	roomOne.setLocation({ 1, 1 });
 
 	Room roomTwo("Rooms/Room2_1.txt");
@@ -197,7 +197,6 @@ int main()
 						log.push_back(messages["ENEMY_DEATH"]);
 						currentRoom.setItemInt(a->getLocation(), a->dropItem());
 						currentRoom.removeActor(highlight);
-
 					}
 				}
 				else{
