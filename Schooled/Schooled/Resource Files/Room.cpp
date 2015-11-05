@@ -52,7 +52,7 @@ Actor& Room::getActor(COORD c)
 
 }
 
-vector<Actor> Room::getActorList()
+vector<Actor>& Room::getActorList()
 {
 	return actorList;
 }
