@@ -44,6 +44,7 @@ map<string, string> messages =
 Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 
 
+int tCount = 0;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Function declarations
@@ -56,6 +57,9 @@ void exitGame();
 
 // Draws the log to the screen
 void displayLog(vector<string>, Buffer&);
+
+// If turn is over return false
+bool playerTurn(Actor);
 
 
 int main()
@@ -151,173 +155,186 @@ int main()
 
 		///////////////////////////////////////////////////////////////////////
 		// Input phase
-
-		KEYPRESS sKeyPress = console.WaitForKeypress();
-
-		///////////////////////////////////////////////////////////////////////
-		// Processing phase
-
-		delta.X = 0;
-		delta.Y = 0;
-
-		switch (sKeyPress.eCode)
+		if (playerTurn(player) == true)
 		{
-			// down selected
-		case CONSOLE_KEY_DOWN:
+			KEYPRESS sKeyPress = console.WaitForKeypress();
+
+			///////////////////////////////////////////////////////////////////////
+			// Processing phase
+
 			delta.X = 0;
-			delta.Y = 1;
-			break;
-
-			// left selected
-		case CONSOLE_KEY_LEFT:
-			delta.X = -1;
 			delta.Y = 0;
-			break;
 
-			// right selected
-		case CONSOLE_KEY_RIGHT:
-			delta.X = 1;
-			delta.Y = 0;
-			break;
+			switch (sKeyPress.eCode)
+			{
+				// down selected
+			case CONSOLE_KEY_DOWN:
+				delta.X = 0;
+				delta.Y = 1;
+				break;
 
-			// up selected
-		case CONSOLE_KEY_UP:
-			delta.X = 0;
-			delta.Y = -1;
-			break;
+				// left selected
+			case CONSOLE_KEY_LEFT:
+				delta.X = -1;
+				delta.Y = 0;
+				break;
 
-			//attack things B)
-		case CONSOLE_KEY_N:
-			if (currentRoom.getActorInt(highlight) > 0){
-				Actor *a = &currentRoom.getActor(highlight);
-				player.attack(currentRoom.getActor(highlight));
-				log.push_back(messages["ATTACKABLE"] +  to_string(player.getStats().STR) + " damage! Wow!");
+				// right selected
+			case CONSOLE_KEY_RIGHT:
+				delta.X = 1;
+				delta.Y = 0;
+				break;
 
-				// If the actor died
-				if (a->getStats().HP <= 0)
+				// up selected
+			case CONSOLE_KEY_UP:
+				delta.X = 0;
+				delta.Y = -1;
+				break;
+
+				//attack things B)
+			case CONSOLE_KEY_N:
+				tCount++;
+				if (currentRoom.getActorInt(highlight) > 0){
+					Actor *a = &currentRoom.getActor(highlight);
+					player.attack(currentRoom.getActor(highlight));
+					log.push_back(messages["ATTACKABLE"] + to_string(player.getStats().STR) + " damage! Wow!");
+
+					// If the actor died
+					if (a->getStats().HP <= 0)
+					{
+						currentRoom.setActorInt(a->getLocation(), 0);
+						log.push_back(messages["ENEMY_DEATH"]);
+						currentRoom.removeActor(highlight);
+
+					}
+				}
+				else{
+					log.push_back(messages["UNATTACKABLE"]);
+				}
+				break;
+
+				//checks interactable
+			case CONSOLE_KEY_SPACE:
+				switch (currentRoom.getItemInt(highlight))
+					//basically if the object is interactable
 				{
-					currentRoom.setActorInt(a->getLocation(), 0);
-					log.push_back(messages["ENEMY_DEATH"]);
-					currentRoom.removeActor(highlight);
-					
+					// KEY
+				case 1:
+					log.push_back(messages["GET_KEY"]);
+					keyCount++;
+					currentRoom.setItemInt(highlight, 0);
+					break;
+
+					// MAP_DOOR_LOCKED
+				case 3:
+					if (useKey == true && keyCount > 0)
+					{
+						log.push_back(messages["USE_KEY"]);
+						keyCount--;
+						currentRoom.setItemInt(highlight, 0);
+						useKey = false;
+					}
+					else if (useKey == false && keyCount > 0)
+					{
+						log.push_back(messages["Q_USE_KEY"]);
+						useKey = true;
+					}
+					else
+						log.push_back(messages["DOOR_LOCKED"]);
+					break;
+
+				case 2:
+					//room transition
+					if (goToRoom == true)
+					{
+						if (player.getY() < 10)  // going up
+						{
+							changeRoom(currentRoom, { 0, 1 });
+							player.setLocation(currentRoom.getSouth());
+							highlight.Y = currentRoom.getSouth().Y - 1;
+							highlight.X = currentRoom.getSouth().X;
+						}
+						else if (player.getY() > 10)	// going down
+						{
+							changeRoom(currentRoom, { 0, -1 });
+							player.setLocation(currentRoom.getNorth());
+							highlight.Y = currentRoom.getNorth().Y + 1;
+							highlight.X = currentRoom.getNorth().X;
+						}
+
+						log.clear();
+						log.push_back(currentRoom.getMessage());
+						goToRoom = false;
+					}
+					else if (goToRoom == false)
+					{
+						log.push_back(messages["Q_NEXT_ROOM"]);
+						goToRoom = true;
+					}
+					break;
+
+				default:
+					break;
+
+				}
+				break;
+
+				// move key pressed
+			case CONSOLE_KEY_M:
+				tCount++;
+				delta.X = (highlight.X - player.getX());
+				delta.Y = (highlight.Y - player.getY());
+
+				// Check if the player can move in specified direction
+				if (currentRoom.isPassable(highlight))
+				{
+					// If allowed, move in specified direction
+					player.setLocation(highlight);
+				}
+				break;
+
+				// quit
+			case CONSOLE_KEY_ESCAPE:
+				currentRoom.save("Rooms/Room1.sav");
+				exitGame();
+				return 0;
+
+				// Ignore any other key
+			default:
+				break;
+			}
+
+
+			// Check if a move action has been performed, and adjusts highlight
+			if (delta.X != 0 || delta.Y != 0)
+			{
+				highlight.X = player.getX() + delta.X;
+				highlight.Y = player.getY() + delta.Y;
+
+			}
+		}
+		else
+		{
+			for (Actor& a : currentRoom.getActorList())
+			{
+				if (currentRoom.isAdjacent(player.getLocation(), a))
+				{
+					a.attack(player);
+					log.push_back(messages["ENEMY_ATTACK"] + to_string(a.getStats().STR) + " damage! Ouch!");
+					Sleep(200);
+					if (player.getStats().HP <= 0)
+					{
+						log.push_back(messages["PLAYER_DEATH"]);
+						KEYPRESS aKeyPress = console.WaitForKeypress();
+					}
 				}
 				else
 				{
-					a->attack(player);
-					log.push_back(messages["ENEMY_ATTACK"] + to_string(a->getStats().STR) + " damage! Ouch!");
-				}
-				if (player.getStats().HP <= 0){
-					log.push_back(messages["PLAYER_DEATH"]);
-					KEYPRESS aKeyPress = console.WaitForKeypress();
+					currentRoom.moveActors(player.getLocation());
+					Sleep(200);
 				}
 			}
-			else{
-				log.push_back(messages["UNATTACKABLE"]);
-			}
-			currentRoom.moveActors(player.getLocation());
-			break;
-
-			//checks interactable
-		case CONSOLE_KEY_SPACE:
-			switch (currentRoom.getItemInt(highlight))
-			//basically if the object is interactable
-			{
-				// KEY
-			case 1:
-				log.push_back(messages["GET_KEY"]);
-				keyCount++;
-				currentRoom.setItemInt(highlight, 0);
-				break;
-
-				// MAP_DOOR_LOCKED
-			case 3:
-				if (useKey == true && keyCount > 0)
-				{
-					log.push_back(messages["USE_KEY"]);
-					keyCount--;
-					currentRoom.setItemInt(highlight, 0);
-					useKey = false;
-				}
-				else if (useKey == false && keyCount > 0)
-				{
-					log.push_back(messages["Q_USE_KEY"]);
-					useKey = true;
-				}
-				else 
-					log.push_back(messages["DOOR_LOCKED"]);
-				break;
-
-			case 2:
-					//room transition
-				if (goToRoom == true)
-				{
-					if (player.getY() < 10)  // going up
-					{
-						changeRoom(currentRoom, { 0, 1 });
-						player.setLocation(currentRoom.getSouth());
-						highlight.Y = currentRoom.getSouth().Y - 1;
-						highlight.X = currentRoom.getSouth().X;
-					}
-					else if (player.getY() > 10)	// going down
-					{
-						changeRoom(currentRoom, { 0, -1 });
-						player.setLocation(currentRoom.getNorth());
-						highlight.Y = currentRoom.getNorth().Y + 1;
-						highlight.X = currentRoom.getNorth().X;
-					}
-
-					log.clear();
-					log.push_back(currentRoom.getMessage());
-					goToRoom = false;
-				}
-				else if (goToRoom == false)
-				{
-					log.push_back(messages["Q_NEXT_ROOM"]);
-					goToRoom = true;
-				}
-				break;
-
-			default:
-				break;
-				
-			}
-			currentRoom.moveActors(player.getLocation());
-			break;
-			
-			// move key pressed
-		case CONSOLE_KEY_M:
-			delta.X = (highlight.X - player.getX());
-			delta.Y = (highlight.Y - player.getY());
-
-			// Check if the player can move in specified direction
-			if (currentRoom.isPassable(highlight))
-			{
-				// If allowed, move in specified direction
-				player.setLocation(highlight);
-				currentRoom.moveActors(player.getLocation());
-			}
-			break;
-
-			// quit
-		case CONSOLE_KEY_ESCAPE:
-			currentRoom.save("Rooms/Room1.sav");
-			exitGame();
-			return 0;
-
-			// Ignore any other key
-		default:
-			break;
 		}
-		
-		
-		// Check if a move action has been performed, and adjusts highlight
-		if (delta.X != 0 || delta.Y != 0)
-		{
-			highlight.X = player.getX() + delta.X;
-			highlight.Y = player.getY() + delta.Y;
-			
-		}
-		
 	}
 	return 0;
 }
@@ -346,11 +363,22 @@ void displayLog(vector<string> log, Buffer& buffer)
 	}
 }
 
-
+bool playerTurn(Actor a){
+	if (tCount == a.getStats().EN){
+		tCount++;
+		return false;
+	}
+	else if (tCount == a.getStats().EN + 1){
+		tCount = 0;
+		return false;
+	}
+	else{
+		return true;
+	}
+}
 
 void exitGame()
 {
-
 	return;
 }
 
