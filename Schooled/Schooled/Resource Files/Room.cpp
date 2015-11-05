@@ -8,7 +8,7 @@ using std::endl;
 void Room::display(Buffer& buffer){
 	int tile;
 	Actor tempA;
-	Item tempI;
+	ItemPtr tempI;
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
 			if (actorArray[a][b] > 0)
@@ -21,7 +21,7 @@ void Room::display(Buffer& buffer){
 			{
 				tile = itemArray[a][b];
 				tempI = itemIndex[tile];
-				buffer.draw(tempI.getTile().character, tempI.getTile().colorCode, a, b);
+				buffer.draw(tempI->getTile().character, tempI->getTile().colorCode, a, b);
 
 			}
 			else
@@ -81,8 +81,8 @@ bool Room::isPassable(COORD tile){
 	int tileValue = tileArray[mapY][mapX];
 	int itemValue = itemArray[mapY][mapX];
 	int actorValue = actorArray[mapY][mapX];
-	Item tempI = itemIndex[itemValue];
-	if (tileIndex[tileValue].isPassable && actorValue == 0 && tempI.getTile().isPassable)
+	ItemPtr tempI = itemIndex[itemValue];
+	if (tileIndex[tileValue].isPassable && actorValue == 0 && tempI->getTile().isPassable)
 		return true;
 	return false;
 }

@@ -66,17 +66,20 @@ static const Tile tileIndex[] = {	// symbol, colour, isPassable
 	{ '|', con::fgHiGreen, false, 3 },	// (3) MAP_WALL_SIDE
 
 };
-static const Item itemIndex[] = {
-	Item({ ' ', con::fgBlack, true, 0 }, { 1, 1, 1 }),		// (0) NULL
-	Item({ '~', con::fgHiWhite, true, 1 }, { 1, 1, 1 }),	// (1) KEY
-	Item({ 'D', con::fgLoBlue, false, 2 }, { 1, 1, 1 }),	// (2) DOOR_TO_NEW_ROOM
-	Item({ 'D', con::fgHiRed, false, 3 }, { 1, 1, 1 })		// (3) MAP_DOOR_LOCKED
-
+static const ItemPtr itemIndex[] = {
+	new Item({ ' ', con::fgBlack, true, 0 }, { 1, 1, 1 }),		// (0) NULL
+	new Item({ '~', con::fgHiWhite, true, 1 }, { 1, 1, 1 }),	// (1) KEY
+	new Item({ 'D', con::fgLoBlue, false, 2 }, { 1, 1, 1 }),	// (2) DOOR_TO_NEW_ROOM
+	new Item({ 'D', con::fgHiRed, false, 3 }, { 1, 1, 1 })		// (3) MAP_DOOR_LOCKED
 };
 
 static const Actor actorIndex[] = {
 	Actor(),												// (0) NULL
-	Actor({ 'X', con::fgHiWhite, false, 1 }, { 10, 2, 1 }),	// (1) BULLY_WEAK
+	Actor({ 'X', con::fgHiWhite, false, 1 }, 
+			{ 10, 2, 1 },
+			itemIndex[1],
+			"He punches you.",
+			"You punch him.")	// (1) BULLY_WEAK
 };
 
 #endif

@@ -13,16 +13,24 @@ void Buffer::draw(std::string s, WORD w, int row, int col)
 	int startCol = col;
 	for (unsigned int i = 0; i < s.size(); i++)
 	{
-		buffer[row][col].Char.AsciiChar = s[i];
-		buffer[row][col].Attributes = w;
-		if (col < schooled::SCREEN_WIDTH - 1)
+		if (s[i] == '\n')
 		{
-			col++;
+			col = startCol;
+			row++;
 		}
 		else
 		{
-			col = startCol;
-			row--;
+			buffer[row][col].Char.AsciiChar = s[i];
+			buffer[row][col].Attributes = w;
+			if (col < schooled::SCREEN_WIDTH - 1)
+			{
+				col++;
+			}
+			else
+			{
+				col = startCol;
+				row++;
+			}
 		}
 	}
 }

@@ -27,4 +27,6 @@ private:
 
 };
 
+typedef Item* ItemPtr;
+
 #endif

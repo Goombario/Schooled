@@ -72,10 +72,11 @@ void Log::display(HANDLE hConsole)
 
 void Log::display(Buffer& buffer)
 {
-	int max = (log.size() >= 3) ? (log.size() - 3) : 0;	// determines the number of lines to display
+	const int SIZE = 4;
+	int max = (log.size() >= SIZE) ? (log.size() - SIZE) : 0;	// determines the number of lines to display
 	int row, col;
 	int grayscale = 0;
-	row = schooled::SCREEN_HEIGHT - 1;
+	row = schooled::SCREEN_HEIGHT - SIZE;
 	col = 23;
 	for (int i = log.size() - 1; i >= max; i--)
 	{
@@ -89,12 +90,12 @@ void Log::display(Buffer& buffer)
 			buffer.draw(log[i], con::fgLoWhite, row, col);
 			break;
 
-		case 2:
+		default:
 			buffer.draw(log[i], con::fgGray, row, col);
 			break;
 		}
 		grayscale++;
-		row--;
+		row++;
 		col = 23;
 	}
 }

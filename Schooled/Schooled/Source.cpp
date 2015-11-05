@@ -1,5 +1,6 @@
 ﻿#include <string>
 #include <conio.h>
+#include <fstream>
 #include <Windows.h>
 
 #include "Header Files\Schooled.h"
@@ -32,12 +33,16 @@ int tCount = 0;
 void changeRoom(Room&, COORD);
 
 // Deletes all dynamic variables
-void exitGame();
+void destroyEverything();
 
 void displayLog(vector<string>, Buffer&);
 
 // If turn is over return false
 bool playerTurn(Actor);
+
+//Gets file contents
+string getFileContents(std::ifstream&);            
+
 
 int main()
 {
@@ -89,6 +94,19 @@ int main()
 	buffer.open(hConsole);
 	buffer.clear();
 	buffer.close(hConsole);
+
+	std::ifstream Reader("title.txt");             //Open file
+
+	string Art = getFileContents(Reader);       //Get file
+
+	buffer.open(hConsole);             //Print it to the screen
+	buffer.draw(Art, con::fgHiWhite, 5, 3);
+	buffer.close(hConsole);
+
+	Reader.close();                           //Close file
+
+	KEYPRESS sKeyPress = console.WaitForKeypress();
+
 
 	// Main program loop
 	while (true)
@@ -170,13 +188,14 @@ int main()
 				if (currentRoom.getActorInt(highlight) > 0){
 					Actor *a = &currentRoom.getActor(highlight);
 					player.attack(currentRoom.getActor(highlight));
-					log.push_back(messages["ATTACKABLE"] + to_string(player.getStats().STR) + " damage! Wow!");
+					log.push_back(a->getMDefend() + " Deal " + to_string(player.getStats().STR) + " damage! Wow!");
 
 					// If the actor died
 					if (a->getStats().HP <= 0)
 					{
 						currentRoom.setActorInt(a->getLocation(), 0);
 						log.push_back(messages["ENEMY_DEATH"]);
+						currentRoom.setItemInt(a->getLocation(), a->dropItem());
 						currentRoom.removeActor(highlight);
 
 					}
@@ -254,7 +273,7 @@ int main()
 				// quit
 			case CONSOLE_KEY_ESCAPE:
 				currentRoom.save("Rooms/Room1.sav");
-				exitGame();
+				destroyEverything();
 				return 0;
 
 				// Ignore any other key
@@ -278,7 +297,7 @@ int main()
 				if (currentRoom.isAdjacent(player.getLocation(), a))
 				{
 					a.attack(player);
-					log.push_back(messages["ENEMY_ATTACK"] + to_string(a.getStats().STR) + " damage! Ouch!");
+					log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
 					Sleep(200);
 					if (player.getStats().HP <= 0)
 					{
@@ -317,8 +336,33 @@ bool playerTurn(Actor a){
 		return true;
 	}
 }
-void exitGame()
+void destroyEverything()
 {
+	/*for (int i = 0; i < *itemIndex->size(); i++)
+	{
+		
+	}*/
 	return;
 }
 
+string getFileContents(std::ifstream& File)
+{
+	string Lines = "";        //All lines
+
+	if (File)                      //Check if everything is good
+	{
+		while (File.good())
+		{
+			string TempLine;                  //Temp line
+			getline(File, TempLine);        //Get temp line
+			TempLine += "\n";                      //Add newline character
+
+			Lines += TempLine;                     //Add newline
+		}
+		return Lines;
+	}
+	else                           //Return error
+	{
+		return "ERROR File does not exist.";
+	}
+}
