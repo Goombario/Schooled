@@ -208,7 +208,8 @@ void Room::moveEnemy(COORD playerPos, Actor& enemy)
 
 	if (lineOfSight(playerPos, enemy) == true || inRange && lineOfSight(playerPos, enemy) == false)
 {
-		if (differenceX > -2 && differenceX < 2 && differenceY > -2 && differenceY < 2)
+		if (differenceX > -2 && differenceX < 2 && differenceY == 0 ||
+			differenceY > -2 && differenceY < 2 && differenceX == 0)
 		{
 			deltaX = 0;
 			deltaY = 0;
@@ -245,6 +246,7 @@ void Room::moveEnemy(COORD playerPos, Actor& enemy)
 		setActorInt(enemy.getLocation(), 0);
 		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
 		setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
+		Sleep(200);
 	}
 }
 bool Room::lineOfSight(COORD playerPos, Actor& enemy)
@@ -288,13 +290,17 @@ bool Room::lineOfSight(COORD playerPos, Actor& enemy)
 		}
 
 	}
-	if (playerPos.X >= enemy.getMinX() && playerPos.Y >= enemy.getMinY() && playerPos.X <= enemy.getMaxX() && playerPos.Y <= enemy.getMaxY())
+	if (playerPos.X >= enemy.getMinX() && playerPos.Y >= enemy.getMinY() && 
+		playerPos.X <= enemy.getMaxX() && playerPos.Y <= enemy.getMaxY())
 		return true;
 	else
 		return false;
 }
 bool Room::isAdjacent(COORD playerPos, Actor& enemy){
-	if (enemy.getX() == playerPos.X && enemy.getY() == playerPos.Y - 1 || enemy.getX() == playerPos.X && enemy.getY() == playerPos.Y + 1 || enemy.getX() == playerPos.X - 1 && enemy.getY() == playerPos.Y || enemy.getX() == playerPos.X + 1 && enemy.getY() == playerPos.Y)
+	if (enemy.getX() == playerPos.X && enemy.getY() == playerPos.Y - 1 || 
+		enemy.getX() == playerPos.X && enemy.getY() == playerPos.Y + 1 || 
+		enemy.getX() == playerPos.X - 1 && enemy.getY() == playerPos.Y || 
+		enemy.getX() == playerPos.X + 1 && enemy.getY() == playerPos.Y)
 	{
 		return true;
 	}
