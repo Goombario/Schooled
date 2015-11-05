@@ -1,9 +1,4 @@
-﻿#include <iostream>
-#include <fstream>
-#include <cassert>
-#include <string>
-#include <map>
-#include <vector>
+﻿#include <string>
 #include <conio.h>
 #include <Windows.h>
 
@@ -17,7 +12,8 @@
 
 #include "Console Library/Console.h"
 
-using namespace std;
+using std::to_string;
+using std::string;
 namespace con = JadedHoboConsole;	// Used for the color
 
 #define NDEBUG
@@ -27,8 +23,6 @@ namespace con = JadedHoboConsole;	// Used for the color
 // Global variables
 
 Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Function declarations
@@ -40,7 +34,6 @@ void changeRoom(Room&, COORD);
 void exitGame();
 
 void displayLog(vector<string>, Buffer&);
-
 
 int main()
 {
@@ -55,12 +48,8 @@ int main()
 	COORD highlight{ 2, 17 };
 	COORD delta{ 0, 0 };
 
-	int object = 0;
+	// UI materials
 	int keyCount = 0;
-	int attackable = 0;
-	int temp = 0;
-	bool useKey = false;
-	bool goToRoom = false;
 
 	/*Room tempRoom;
 	for (int i = 1; i <= 3; i++)
@@ -90,10 +79,12 @@ int main()
 
 	// Initialize the log
 	Log log;
-	//vector<string> log;
 
 	// Initialize the buffer
 	Buffer buffer;
+	buffer.open(hConsole);
+	buffer.clear();
+	buffer.close(hConsole);
 
 	// Main program loop
 	while (true)
@@ -224,33 +215,24 @@ int main()
 				break;
 
 			case 2:
-					//room transition
-				if (goToRoom == true)
+				//room transition
+				if (player.getY() < 10)  // going up
 				{
-					if (player.getY() < 10)  // going up
-					{
-						changeRoom(currentRoom, { 0, 1 });
-						player.setLocation(currentRoom.getSouth());
-						highlight.Y = currentRoom.getSouth().Y - 1;
-						highlight.X = currentRoom.getSouth().X;
-					}
-					else if (player.getY() > 10)	// going down
-					{
-						changeRoom(currentRoom, { 0, -1 });
-						player.setLocation(currentRoom.getNorth());
-						highlight.Y = currentRoom.getNorth().Y + 1;
-						highlight.X = currentRoom.getNorth().X;
-					}
+					changeRoom(currentRoom, { 0, 1 });
+					player.setLocation(currentRoom.getSouth());
+					highlight.Y = currentRoom.getSouth().Y - 1;
+					highlight.X = currentRoom.getSouth().X;
+				}
+				else if (player.getY() > 10)	// going down
+				{
+					changeRoom(currentRoom, { 0, -1 });
+					player.setLocation(currentRoom.getNorth());
+					highlight.Y = currentRoom.getNorth().Y + 1;
+					highlight.X = currentRoom.getNorth().X;
+				}
 
-					log.clear();
-					log.push_back(currentRoom.getMessage());
-					goToRoom = false;
-				}
-				else if (goToRoom == false)
-				{
-					log.push_back(messages["Q_NEXT_ROOM"]);
-					goToRoom = true;
-				}
+				log.clear();
+				log.push_back(currentRoom.getMessage());				
 				break;
 
 			default:
@@ -297,8 +279,6 @@ int main()
 	}
 	return 0;
 }
-
-
 
 
 void changeRoom(Room& currentRoom, COORD change)
