@@ -40,7 +40,7 @@ void displayLog(vector<string>, Buffer&);
 // If turn is over return false
 bool playerTurn(Actor);
 
-//Gets file contents
+//Gets file contents (NEEDS REMOVAL)
 string getFileContents(std::ifstream&);            
 
 
@@ -129,11 +129,11 @@ int main()
 		buffer.draw(con::bgHiWhite, highlight.Y, highlight.X);
 
 		// Display stats
-		buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 21, 5);	// Key count
+		buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 22, 5);	// Key count
 		buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
-			+ to_string(player.getLocation().Y)), con::fgHiWhite, 22, 5);
+			+ to_string(player.getLocation().Y)), con::fgHiWhite, 24, 5);
 
-		buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 24, 5);	// Player hitpoints
+		buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 21, 5);	// Player hitpoints
 		
 		// Display the messages
 		log.display(buffer);
@@ -306,7 +306,8 @@ int main()
 				}
 				else
 				{
-					currentRoom.moveActors(player.getLocation());
+					//currentRoom.moveActors(player.getLocation());
+					currentRoom.moveEnemy(player.getLocation(), a);
 				}
 			}
 		}
