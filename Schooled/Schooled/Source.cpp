@@ -289,7 +289,6 @@ int main()
 				else
 				{
 					currentRoom.moveActors(player.getLocation());
-					Sleep(200);
 				}
 			}
 		}
