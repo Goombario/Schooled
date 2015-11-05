@@ -19,6 +19,9 @@ public:
 	void draw(char, WORD, int, int);
 	void draw(WORD, int, int);
 
+	// Clear the buffer
+	void clear();
+
 	// Open the buffer for writing
 	void open(HANDLE);
 

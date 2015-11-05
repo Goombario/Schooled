@@ -2,12 +2,6 @@
 
 Buffer::Buffer()
 {
-	for (int a = 0; a < schooled::SCREEN_HEIGHT; a++){
-		for (int b = 0; b < schooled::SCREEN_WIDTH; b++){
-			buffer[a][b].Char.AsciiChar = ' ';
-			buffer[a][b].Attributes = con::fgBlack | con::bgBlack;
-		}
-	}
 	dwBufferCoord = { 0, 0 };
 	rcRegion = { 0, 0, schooled::SCREEN_WIDTH - 1, 
 		schooled::SCREEN_HEIGHT - 1 };
@@ -54,5 +48,15 @@ void Buffer::close(HANDLE h)
 {
 	WriteConsoleOutput(h, (CHAR_INFO *)buffer,
 		dwBufferSize, dwBufferCoord, &rcRegion);
+}
+
+void Buffer::clear()
+{
+	for (int a = 0; a < schooled::SCREEN_HEIGHT; a++){
+		for (int b = 0; b < schooled::SCREEN_WIDTH; b++){
+			buffer[a][b].Char.AsciiChar = ' ';
+			buffer[a][b].Attributes = con::fgBlack | con::bgBlack;
+		}
+	}
 }
 
