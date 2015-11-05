@@ -32,7 +32,9 @@ public:
 	Actor& getActor(COORD);	// Get Actor in actorList
 	void removeActor(COORD); // Remove actor from actorList
 	void moveActors(COORD);	// Move all actors in actorList
+	vector<Actor> getActorList(); // Getting the entire actor list
 	void moveEnemy(COORD, Actor&);	// Move an enemy towards player
+	bool isAdjacent(COORD, Actor&); //checks if enemy is adjacent to the player
 	bool lineOfSight(COORD, Actor&);	// Determines if actor can see coordinate
 
 	int getTileInt(COORD c) { return tileArray[c.Y][c.X]; }

@@ -52,6 +52,11 @@ Actor& Room::getActor(COORD c)
 
 }
 
+vector<Actor> Room::getActorList()
+{
+	return actorList;
+}
+
 void Room::removeActor(COORD c)
 {
 	int i = findActor(c);
@@ -66,7 +71,6 @@ void Room::moveActors(COORD p)
 		moveEnemy(p, a);
 	}
 }
-
 
 bool Room::isPassable(COORD tile){
 	int mapX = tile.X;
@@ -288,4 +292,11 @@ bool Room::lineOfSight(COORD playerPos, Actor& enemy)
 		return true;
 	else
 		return false;
+}
+bool Room::isAdjacent(COORD playerPos, Actor& enemy){
+	if (enemy.getX() == playerPos.X && enemy.getY() == playerPos.Y - 1 || enemy.getX() == playerPos.X && enemy.getY() == playerPos.Y + 1 || enemy.getX() == playerPos.X - 1 && enemy.getY() == playerPos.Y || enemy.getX() == playerPos.X + 1 && enemy.getY() == playerPos.Y)
+	{
+		return true;
+	}
+	return false;
 }
