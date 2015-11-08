@@ -31,6 +31,7 @@ private:
 	// Variables
 	Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 	int tCount, keyCount;
+	bool pTurn;
 	Actor player;
 	COORD highlight, delta;
 	Log log;
@@ -44,8 +45,8 @@ private:
 	// Draw the current log
 	void displayLog(vector<string>, Buffer&);
 
-	// If turn is over return false
-	bool playerTurn(Actor);
+	// Increment the turn counter. If out of turns, switch pTurn;
+	void incrementTurn();
 
 	// Load the rooms, and set up the layout
 	void loadRooms();
