@@ -4,7 +4,6 @@
 #define NDEBUG
 #define WIN32_LEAN_AND_MEAN
 
-
 int main()
 {
 	GameEngine game;
