@@ -13,54 +13,81 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\States">
+      <UniqueIdentifier>{b0a217b9-446c-411d-95e7-bae48d7db7fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Classes">
+      <UniqueIdentifier>{c8b19e04-2083-4d38-a589-cd3bce97e3c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\States">
+      <UniqueIdentifier>{ce97604b-35fc-48f7-aae0-08a3634671ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Classes">
+      <UniqueIdentifier>{ffc96db1-fef4-44ab-a74c-0a36d7e288f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource Files\Buffer.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource Files\Item.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="Resource Files\GameEngine.cpp">
+      <Filter>Resource Files\States</Filter>
     </ClCompile>
     <ClCompile Include="Resource Files\Actor.cpp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Classes</Filter>
     </ClCompile>
-    <ClCompile Include="Resource Files\Room.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="Resource Files\Buffer.cpp">
+      <Filter>Resource Files\Classes</Filter>
     </ClCompile>
-    <ClCompile Include="Resource Files\Schooled.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="Resource Files\Item.cpp">
+      <Filter>Resource Files\Classes</Filter>
     </ClCompile>
     <ClCompile Include="Resource Files\Log.cpp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource Files\Room.cpp">
+      <Filter>Resource Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource Files\Schooled.cpp">
+      <Filter>Resource Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource Files\MenuState.cpp">
+      <Filter>Resource Files\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Console Library\Console.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Header Files\MenuState.h">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
-    <ClInclude Include="Header Files\Buffer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Header Files\GameState.h">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
-    <ClInclude Include="Header Files\Item.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header Files\Room.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header Files\Schooled.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header Files\Console_color.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Header Files\GameEngine.h">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
     <ClInclude Include="Header Files\Actor.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\Buffer.h">
+      <Filter>Header Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Console Library\Console.h">
+      <Filter>Header Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\Console_color.h">
+      <Filter>Header Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\Item.h">
+      <Filter>Header Files\Classes</Filter>
     </ClInclude>
     <ClInclude Include="Header Files\Log.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\Room.h">
+      <Filter>Header Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\Schooled.h">
+      <Filter>Header Files\Classes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

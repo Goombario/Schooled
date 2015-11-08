@@ -82,8 +82,10 @@
   <ItemGroup>
     <ClCompile Include="Resource Files\Actor.cpp" />
     <ClCompile Include="Resource Files\Buffer.cpp" />
+    <ClCompile Include="Resource Files\GameEngine.cpp" />
     <ClCompile Include="Resource Files\Item.cpp" />
     <ClCompile Include="Resource Files\Log.cpp" />
+    <ClCompile Include="Resource Files\MenuState.cpp" />
     <ClCompile Include="Resource Files\Room.cpp" />
     <ClCompile Include="Resource Files\Schooled.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -93,8 +95,11 @@
     <ClInclude Include="Header Files\Actor.h" />
     <ClInclude Include="Header Files\Buffer.h" />
     <ClInclude Include="Header Files\Console_color.h" />
+    <ClInclude Include="Header Files\GameEngine.h" />
+    <ClInclude Include="Header Files\GameState.h" />
     <ClInclude Include="Header Files\Item.h" />
     <ClInclude Include="Header Files\Log.h" />
+    <ClInclude Include="Header Files\MenuState.h" />
     <ClInclude Include="Header Files\Room.h" />
     <ClInclude Include="Header Files\Schooled.h" />
   </ItemGroup>
