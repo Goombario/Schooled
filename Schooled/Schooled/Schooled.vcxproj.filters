@@ -54,6 +54,9 @@
     <ClCompile Include="Resource Files\MenuState.cpp">
       <Filter>Resource Files\States</Filter>
     </ClCompile>
+    <ClCompile Include="Resource Files\PlayingState.cpp">
+      <Filter>Resource Files\States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header Files\MenuState.h">
@@ -88,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="Header Files\Schooled.h">
       <Filter>Header Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\PlayingState.h">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

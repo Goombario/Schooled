@@ -1,7 +1,7 @@
 #include "../Header Files/MenuState.h"
 #include "../Header Files/GameEngine.h"
 #include "../Header Files/GameState.h"
-
+#include "../Header Files/PlayingState.h"
 
 MenuState MenuState::m_MenuState;
 
@@ -39,10 +39,10 @@ void MenuState::HandleEvents(GameEngine* game)
 	KEYPRESS sKeyPress = console.WaitForKeypress();
 	switch (sKeyPress.eCode)
 	{
-	case CONSOLE_KEY_RETURN:
+	case CONSOLE_KEY_ESCAPE:
 		game->Quit();
 	default:
-		game->Quit();
+		game->PushState(PlayingState::Instance());
 	}
 }
 
@@ -57,6 +57,8 @@ void MenuState::Draw(GameEngine* game)
 
 	// Open the buffer for writing
 	buffer.open(hConsole);
+
+	buffer.clear();
 
 	buffer.draw(art, con::fgHiWhite, 5, 3);
 
@@ -85,4 +87,6 @@ string MenuState::getFileContents(std::ifstream& File)
 		return "ERROR File does not exist.";
 	}
 }
+
+
 
