@@ -11,11 +11,13 @@
 #include "Header Files\Room.h"
 #include "Header Files\Log.h"
 
-#include "Console Library/Console.h"
+#include "Header Files\GameEngine.h"
+#include "Header Files\MenuState.h"
+
+#include "Console Library\Console.h"
 
 using std::to_string;
 using std::string;
-namespace con = JadedHoboConsole;	// Used for the color
 
 #define NDEBUG
 #define WIN32_LEAN_AND_MEAN
@@ -38,18 +40,18 @@ void destroyEverything();
 void displayLog(vector<string>, Buffer&);
 
 // If turn is over return false
-bool playerTurn(Actor);
-
-//Gets file contents (NEEDS REMOVAL)
-string getFileContents(std::ifstream&);            
+bool playerTurn(Actor);           
 
 
 int main()
 {
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization
-	console.SetTitle("Schooled V0.1");
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
+
+	GameEngine game;
+
+	game.Init();
 
 	// Initialize the player's on-screen location
 	Actor player({ '8', con::fgHiWhite}, { 10, 2, 2 });
@@ -95,17 +97,14 @@ int main()
 	buffer.clear();
 	buffer.close(hConsole);
 
-	std::ifstream Reader("title.txt");             //Open file
 
-	string Art = getFileContents(Reader);       //Get file
-
-	buffer.open(hConsole);             //Print it to the screen
-	buffer.draw(Art, con::fgHiWhite, 5, 3);
-	buffer.close(hConsole);
-
-	Reader.close();                           //Close file
-
-	KEYPRESS sKeyPress = console.WaitForKeypress();
+	game.ChangeState(MenuState::Instance());
+	while (game.Running())
+	{
+		game.Update();
+		game.Draw();
+		game.HandleEvents();
+	}
 
 
 	// Main program loop
@@ -343,26 +342,4 @@ void destroyEverything()
 		
 	}*/
 	return;
-}
-
-string getFileContents(std::ifstream& File)
-{
-	string Lines = "";        //All lines
-
-	if (File)                      //Check if everything is good
-	{
-		while (File.good())
-		{
-			string TempLine;                  //Temp line
-			getline(File, TempLine);        //Get temp line
-			TempLine += "\n";                      //Add newline character
-
-			Lines += TempLine;                     //Add newline
-		}
-		return Lines;
-	}
-	else                           //Return error
-	{
-		return "ERROR File does not exist.";
-	}
 }
