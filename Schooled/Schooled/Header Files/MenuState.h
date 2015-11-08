@@ -6,6 +6,9 @@
 #include <fstream>
 using std::string;
 
+
+
+
 class MenuState : public GameState
 {
 public:
@@ -27,10 +30,11 @@ protected:
 	MenuState() { }
 
 private:
-	//Gets file contents (NEEDS REMOVAL)
-	string getFileContents(std::ifstream&);
 	static MenuState m_MenuState;
 	string art;
+
+	//Gets file contents (NEEDS REMOVAL)
+	string getFileContents(std::ifstream&);
 };
 
 
