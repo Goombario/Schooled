@@ -19,6 +19,7 @@ void PlayingState::Init()
 {
 	tCount = 0;
 	keyCount = 0;
+	pTurn = true;
 
 	loadRooms();
 	currentRoom = roomArray[1][1];
@@ -48,7 +49,7 @@ void PlayingState::Resume()
 
 void PlayingState::HandleEvents(GameEngine* game)
 {
-	if (playerTurn(player) == true)
+	if (pTurn)
 	{
 		KEYPRESS sKeyPress = console.WaitForKeypress();
 
@@ -80,7 +81,7 @@ void PlayingState::HandleEvents(GameEngine* game)
 
 			//attack things B)
 		case CONSOLE_KEY_N:
-			tCount++;
+			incrementTurn();
 			if (currentRoom.getActorInt(highlight) > 0){
 				Actor *a = &currentRoom.getActor(highlight);
 				player.attack(currentRoom.getActor(highlight));
@@ -153,7 +154,7 @@ void PlayingState::HandleEvents(GameEngine* game)
 
 			// move key pressed
 		case CONSOLE_KEY_M:
-			tCount++;
+			incrementTurn();
 			delta.X = (highlight.X - player.getX());
 			delta.Y = (highlight.Y - player.getY());
 
@@ -185,7 +186,10 @@ void PlayingState::HandleEvents(GameEngine* game)
 		}
 	}
 	else
+	{
 		enemyTurn();
+		incrementTurn();
+	}
 }
 
 void PlayingState::Update(GameEngine* game)
@@ -218,7 +222,8 @@ void PlayingState::Draw(GameEngine* game)
 	buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 22, 5);	// Key count
 	buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
 		+ to_string(player.getLocation().Y)), con::fgHiWhite, 24, 5);
-
+	string tempTurn = (pTurn) ? "Player" : "Enemy";
+	buffer.draw("Turn: " + tempTurn + " " + to_string(tCount), con::fgHiWhite, 23, 5);
 	buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 21, 5);	// Player hitpoints
 
 	// Display the messages
@@ -255,17 +260,34 @@ void PlayingState::changeRoom(Room& currentRoom, COORD change)
 
 }
 
-bool PlayingState::playerTurn(Actor a){
-	if (tCount == a.getStats().EN){
-		tCount++;
-		return false;
-	}
-	else if (tCount == a.getStats().EN + 1){
+void PlayingState::incrementTurn()
+{
+	tCount++;
+
+	// If it is the player's turn, check if they are out of turns
+	if (pTurn && tCount == player.getStats().EN)
+	{
 		tCount = 0;
-		return false;
+		pTurn = false;
 	}
-	else{
-		return true;
+	// If it is the enemies' turn
+	else if (!pTurn)
+	{
+		// Find the highest EN stat
+		int highestEN = 0;
+		for (Actor a : currentRoom.getActorList())
+		{
+			if (a.getStats().EN > highestEN)
+			{
+				highestEN = a.getStats().EN;
+			}
+		}
+		// Check if turn count is exceeding highest EN
+		if (tCount >= highestEN)
+		{
+			tCount = 0;
+			pTurn = true;
+		}
 	}
 }
 
@@ -274,22 +296,26 @@ void PlayingState::enemyTurn()
 	
 	for (Actor& a : currentRoom.getActorList())
 	{
-		if (currentRoom.isAdjacent(player.getLocation(), a))
+		if (a.getStats().EN+1 >= tCount)
 		{
-			a.attack(player);
-			log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
-			Sleep(200);
-			if (player.getStats().HP <= 0)
+			if (currentRoom.isAdjacent(player.getLocation(), a))
 			{
-				log.push_back(messages["PLAYER_DEATH"]);
-				KEYPRESS aKeyPress = console.WaitForKeypress();
+				a.attack(player);
+				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
+				Sleep(200);
+				if (player.getStats().HP <= 0)
+				{
+					log.push_back(messages["PLAYER_DEATH"]);
+					KEYPRESS aKeyPress = console.WaitForKeypress();
+				}
+			}
+			else
+			{
+				//currentRoom.moveActors(player.getLocation());
+				currentRoom.moveEnemy(player.getLocation(), a);
 			}
 		}
-		else
-		{
-			//currentRoom.moveActors(player.getLocation());
-			currentRoom.moveEnemy(player.getLocation(), a);
-		}
+		
 	}
 	
 }
