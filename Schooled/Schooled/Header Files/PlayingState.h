@@ -37,23 +37,31 @@ private:
 	Log log;
 	Room currentRoom;
 	HANDLE hConsole;
-	KEYPRESS sKeyPress;
+
+	// Handle the attack key
+	void attack();
 
 	// Changes the current room to the number of the one given.
 	void changeRoom(Room&, COORD);
 
-	// Draw the current log
-	void displayLog(vector<string>, Buffer&);
+	// The enemies take their turn
+	void enemyTurn();
 
 	// Increment the turn counter. If out of turns, switch pTurn;
 	void incrementTurn();
 
+	// Handle the interact key
+	void interact();
+
 	// Load the rooms, and set up the layout
 	void loadRooms();
 
-	// The enemies take their turn
-	void enemyTurn();
-};
+	// Move the highlight
+	void moveHighlight(KEYCODE);
 
+	// Transition to the next room
+	void transitionRoom();
+
+};
 
 #endif
