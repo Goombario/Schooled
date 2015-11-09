@@ -1,14 +1,12 @@
 #include "../Header Files/PlayingState.h"
-#include "../Header Files/GameEngine.h"
-#include "../Header Files/GameState.h"
 
 #include "../Header Files\Item.h"
 #include "../Header Files\Console_color.h"
-#include "../Header Files\Room.h"
-#include "../Header Files\Log.h"
 
 using std::string;
 using std::to_string;
+
+namespace con = JadedHoboConsole;
 
 PlayingState PlayingState::m_PlayingState;
 
@@ -19,7 +17,6 @@ void PlayingState::Init()
 	tCount = 0;
 	keyCount = 0;
 	pTurn = true;
-
 	loadRooms();
 	currentRoom = roomArray[1][1];
 

@@ -1,9 +1,43 @@
 #include "../Header Files/Room.h"
+#include "../Header Files/Actor.h"
+#include "../Header Files/Buffer.h"
+#include "../Header Files/Item.h"
+#include "../Header Files/Schooled.h"
+#include "../Header Files/Console_color.h"
 #include <fstream>
 #include <iostream>
 #include <cassert>
+namespace con = JadedHoboConsole;
 
 using std::endl;
+
+const vector<Tile> Room::tileIndex = 
+{	// symbol, colour, isPassable
+	{ ' ', con::fgBlack, true, 0 },	// (0) MAP_FLOOR
+	{ '=', con::fgHiGreen, false, 1 },	// (1) MAP_WALL_TOP
+	{ 'D', con::fgHiBlue, true, 2 },	// (2) MAP_DOOR
+	{ '|', con::fgHiGreen, false, 3 },	// (3) MAP_WALL_SIDE
+
+};
+
+const vector<ItemPtr> Room::itemIndex = 
+{
+	new Item({ ' ', con::fgBlack, true, 0 }, { 1, 1, 1 }),		// (0) NULL
+	new Item({ '~', con::fgHiWhite, true, 1 }, { 1, 1, 1 }),	// (1) KEY
+	new Item({ 'D', con::fgLoBlue, false, 2 }, { 1, 1, 1 }),	// (2) DOOR_TO_NEW_ROOM
+	new Item({ 'D', con::fgHiRed, false, 3 }, { 1, 1, 1 })		// (3) MAP_DOOR_LOCKED
+};
+
+const vector<Actor> Room::actorIndex = 
+{
+	Actor(),												// (0) NULL
+	Actor({ 'X', con::fgHiWhite, false, 1 },
+	{ 10, 2, 1 },
+	itemIndex[1],
+	"He punches you.",
+	"You punch him.")	// (1) BULLY_WEAK
+};
+
 
 void Room::display(Buffer& buffer){
 	int tile;

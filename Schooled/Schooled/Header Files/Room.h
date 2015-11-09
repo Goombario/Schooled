@@ -3,15 +3,17 @@
 
 #include <string>
 #include <vector>
-#include <Windows.h>
-#include "Buffer.h"
-#include "Actor.h"
-#include "Item.h"
 #include "Schooled.h"
 
+class Actor;
+class Room;
+class Buffer;
+class Item;
+typedef Item* ItemPtr;
 
 using std::string;
 using std::vector;
+
 
 class Room
 {
@@ -57,29 +59,12 @@ private:
 	int tileArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
 	int itemArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
 	int actorArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
+
+	static const vector<Tile> tileIndex;
+	static const vector<ItemPtr> itemIndex;
+	static const vector<Actor> actorIndex;
 };
 
-static const Tile tileIndex[] = {	// symbol, colour, isPassable
-	{ ' ', con::fgBlack, true, 0 },	// (0) MAP_FLOOR
-	{ '=', con::fgHiGreen, false, 1 },	// (1) MAP_WALL_TOP
-	{ 'D', con::fgHiBlue, true, 2 },	// (2) MAP_DOOR
-	{ '|', con::fgHiGreen, false, 3 },	// (3) MAP_WALL_SIDE
 
-};
-static const ItemPtr itemIndex[] = {
-	new Item({ ' ', con::fgBlack, true, 0 }, { 1, 1, 1 }),		// (0) NULL
-	new Item({ '~', con::fgHiWhite, true, 1 }, { 1, 1, 1 }),	// (1) KEY
-	new Item({ 'D', con::fgLoBlue, false, 2 }, { 1, 1, 1 }),	// (2) DOOR_TO_NEW_ROOM
-	new Item({ 'D', con::fgHiRed, false, 3 }, { 1, 1, 1 })		// (3) MAP_DOOR_LOCKED
-};
-
-static const Actor actorIndex[] = {
-	Actor(),												// (0) NULL
-	Actor({ 'X', con::fgHiWhite, false, 1 }, 
-			{ 10, 2, 1 },
-			itemIndex[1],
-			"He punches you.",
-			"You punch him.")	// (1) BULLY_WEAK
-};
 
 #endif

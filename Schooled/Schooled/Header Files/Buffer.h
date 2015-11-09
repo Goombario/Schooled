@@ -1,12 +1,8 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#include "Schooled.h"
-#include "Console_color.h"
 #include <string>
-#include <Windows.h>
-namespace con = JadedHoboConsole;	// Used for the color
-
+#include "Schooled.h"
 
 class Buffer
 {

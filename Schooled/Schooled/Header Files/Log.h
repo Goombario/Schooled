@@ -3,18 +3,14 @@
 
 #include <string>
 #include <vector>
-#include <map>
 #include <Windows.h>
-#include <cassert>
-#include "Schooled.h"
-#include "Console_color.h"
-#include "Buffer.h"
-#include "../Console Library/Console.h"
-namespace con = JadedHoboConsole;	// Used for the color
+#include <map>
 
 using std::map;
 using std::string;
 using std::vector;
+
+class Buffer;
 
 class Log
 {

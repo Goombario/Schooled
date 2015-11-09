@@ -1,5 +1,19 @@
 #include "../Header Files/Log.h"
 
+#include <Windows.h>
+#include <cassert>
+
+#include "../Console Library/Console.h"
+#include "../Header Files/Console_color.h"
+#include "../Header Files/Buffer.h"
+#include "../Header Files/Schooled.h"
+
+namespace con = JadedHoboConsole;	// Used for the color
+
+using std::map;
+using std::string;
+using std::vector;
+
 Log::Log()
 {
 	push_back("");
@@ -24,7 +38,7 @@ void Log::display(HANDLE hConsole)
 	int grayscale = 2;
 	row = schooled::SCREEN_HEIGHT - 3;
 	col = 23;
-	for (int i = max; i < log.size(); i++)
+	for (unsigned int i = max; i < log.size(); i++)
 	{
 		switch (grayscale)
 		{
