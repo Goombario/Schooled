@@ -1,10 +1,10 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-#include <Windows.h>
-#include <string>
 #include "Schooled.h"
-#include "Item.h"
+
+class Item;
+typedef Item* ItemPtr;
 
 class Actor
 {

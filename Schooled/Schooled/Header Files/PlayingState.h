@@ -4,6 +4,9 @@
 #include "GameState.h"
 #include "Room.h"
 #include "Log.h"
+#include "Actor.h"
+#include "Schooled.h"
+#include <Windows.h>
 
 class PlayingState : public GameState
 {

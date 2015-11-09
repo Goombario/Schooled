@@ -1,5 +1,9 @@
-#include "../Header Files/Actor.h"
 #include <fstream>
+#include <Windows.h>
+#include <string>
+#include "../Header Files/Schooled.h"
+#include "../Header Files/Actor.h"
+#include "../Header Files/Item.h"
 using std::string;
 
 Actor::Actor(Tile t, Stats s, ItemPtr i, string atk, string def) : tile(t), stats(s), item(i) 

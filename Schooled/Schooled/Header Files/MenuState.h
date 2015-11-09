@@ -3,11 +3,7 @@
 
 #include "GameState.h"
 #include <string>
-#include <fstream>
 using std::string;
-
-
-
 
 class MenuState : public GameState
 {

@@ -1,7 +1,11 @@
 #include "../Header Files/MenuState.h"
-#include "../Header Files/GameEngine.h"
 #include "../Header Files/GameState.h"
 #include "../Header Files/PlayingState.h"
+#include "../Header Files/Console_color.h"
+#include "../Console Library/Console.h"
+#include <fstream>
+
+namespace con = JadedHoboConsole;
 
 MenuState MenuState::m_MenuState;
 

@@ -1,4 +1,11 @@
 #include "../Header Files/Buffer.h"
+#include "../Header Files/Schooled.h"
+#include "../Header Files/Console_color.h"
+
+#include <Windows.h>
+
+
+namespace con = JadedHoboConsole;	// Used for the color
 
 Buffer::Buffer()
 {

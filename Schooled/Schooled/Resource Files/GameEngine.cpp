@@ -1,5 +1,7 @@
 #include "../Header Files/GameEngine.h"
 #include "../Header Files/GameState.h"
+#include "../Console Library/Console.h"
+
 
 void GameEngine::Init()
 {
