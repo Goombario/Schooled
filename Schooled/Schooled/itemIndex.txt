@@ -1,0 +1,49 @@
+name:NULL
+index:0
+symbol:' '
+colour:0U // black
+passable:true
+HP:0
+EN:0
+STR:0
+mPickup:0
+
+name:KEY
+index:1
+symbol:'~'
+colour:15U // hiWhite
+passable:true
+HP:0
+EN:0
+STR:0
+mPickup:It's a key! You picked it up.
+
+name:DOOR_TO_NEW_ROOM
+index:2
+symbol:'D'
+colour:1U //loBlue
+passable:false
+HP:0
+EN:0
+STR:0
+mPickup:0
+
+name:MAP_DOOR_LOCKED
+index:3
+symbol:'D'
+colour:12U // hiRed
+passable:false
+HP:0
+EN:0
+STR:0
+mPickup:0
+
+name:POTION
+index:4
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:5
+EN:0
+STR:0
+mPickup:0

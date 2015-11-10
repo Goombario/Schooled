@@ -1,0 +1,23 @@
+name:BULLY_WEAK
+index:1
+symbol:'x'
+colour:15U // black
+passable:false
+HP:6
+EN:1
+STR:1
+held item:KEY
+m_attack:He punches you.
+m_defend:You punch him.
+
+name:BULLY_STRONG
+index:2
+symbol:'X'
+colour:15U // black
+passable:false
+HP:12
+EN:2
+STR:1
+held item:KEY
+m_attack:He punches you.
+m_defend:You tickle him. Hehe
