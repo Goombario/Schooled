@@ -1,38 +1,37 @@
 <<<<<<< local
-﻿Build started 11/5/2015 4:47:40 PM.
+﻿Build started 11/10/2015 2:36:22 PM.
 =======
-﻿Build started 11/5/2015 2:21:17 PM.
+﻿Build started 11/10/2015 11:39:43 AM.
 >>>>>>> other
      1>Project "C:\Hg\Schooled\Schooled\Schooled\Schooled.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
 <<<<<<< local
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "Resource Files\Actor.cpp" "Resource Files\Room.cpp" Source.cpp
-         Source.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "Resource Files\Room.cpp"
          Room.cpp
-         Actor.cpp
-         Generating Code...
+     1>c:\hg\schooled\schooled\schooled\resource files\room.cpp(192): warning C4018: '<' : signed/unsigned mismatch
 =======
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source.cpp
-         Source.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "Resource Files\PlayingState.cpp"
+         PlayingState.cpp
+     1>c:\hg\schooled\schooled\schooled\resource files\playingstate.cpp(18): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
 >>>>>>> other
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Hg\Schooled\Schooled\Debug\Schooled.exe" /INCREMENTAL /NOLOGO console.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libcd.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Hg\Schooled\Schooled\Debug\Schooled.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Hg\Schooled\Schooled\Debug\Schooled.lib" /MACHINE:X86 Debug\Actor.obj
          Debug\Buffer.obj
+         Debug\GameEngine.obj
          Debug\Item.obj
          Debug\Log.obj
+         Debug\MenuState.obj
+         Debug\PlayingState.obj
          Debug\Room.obj
          Debug\Schooled.obj
          Debug\Source.obj
-     1>console.lib(Console.obj) : warning LNK4099: PDB 'vc60.pdb' was not found with 'console.lib(Console.obj)' or at 'C:\Hg\Schooled\Schooled\Debug\vc60.pdb'; linking object as if no debug info
-     1>console.lib(main.obj) : warning LNK4099: PDB 'vc60.pdb' was not found with 'console.lib(main.obj)' or at 'C:\Hg\Schooled\Schooled\Debug\vc60.pdb'; linking object as if no debug info
-     1>console.lib(Win32Console.obj) : warning LNK4099: PDB 'vc60.pdb' was not found with 'console.lib(Win32Console.obj)' or at 'C:\Hg\Schooled\Schooled\Debug\vc60.pdb'; linking object as if no debug info
          Schooled.vcxproj -> C:\Hg\Schooled\Schooled\Debug\Schooled.exe
      1>Done Building Project "C:\Hg\Schooled\Schooled\Schooled\Schooled.vcxproj" (Build target(s)).
 
 Build succeeded.
 
 <<<<<<< local
-Time Elapsed 00:00:10.14
+Time Elapsed 00:00:01.53
 =======
-Time Elapsed 00:00:03.40
+Time Elapsed 00:00:03.10
 >>>>>>> other
