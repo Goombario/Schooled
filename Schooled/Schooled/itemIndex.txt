@@ -46,4 +46,34 @@ passable:true
 HP:5
 EN:0
 STR:0
-mPickup:0
+mPickup:You found an item! Wonder what it does...
+
+name:BANDAID
+index:5
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:5
+EN:0
+STR:0
+mPickup:You found an item! Wonder what it does...
+
+name:SUGAR
+index:6
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:0
+EN:1
+STR:0
+mPickup:You found an item! Wonder what it does...
+
+name:MILK
+index:7
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:0
+EN:0
+STR:2
+mPickup:You found an item! Wonder what it does...

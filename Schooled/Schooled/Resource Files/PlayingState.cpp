@@ -15,7 +15,7 @@ PlayingState PlayingState::m_PlayingState;
 // State Handling
 void PlayingState::Init()
 {
-	srand(time(0));
+	srand((unsigned int)time(0));
 	Room::loadTileIndex("tileIndex.txt");
 	Room::loadItemIndex("itemIndex.txt");
 	Room::loadActorIndex("actorIndex.txt");
