@@ -39,3 +39,9 @@ int Actor::dropItem()
 	item = nullptr;
 	return itemInt;
 }
+
+void Actor::pickUp(ItemPtr pickUp){
+	stats.HP += pickUp->getStats().HP;
+	stats.EN += pickUp->getStats().EN;
+	stats.STR += pickUp->getStats().STR;
+}

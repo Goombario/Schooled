@@ -274,6 +274,12 @@ void PlayingState::interact()
 			log.push_back(messages["DOOR_LOCKED"]);
 		}
 		break;
+	// POTION
+	case 4:
+		log.push_back(messages["POTION"]);
+		player.pickUp(currentRoom.getItemStats(4));
+		currentRoom.setItemInt(highlight, 0);
+		break;
 
 	default:
 		break;

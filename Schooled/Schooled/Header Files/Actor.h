@@ -47,6 +47,8 @@ public:
 
 	int dropItem();
 
+	void pickUp(ItemPtr);
+
 private:
 	COORD location;
 	Stats stats;
