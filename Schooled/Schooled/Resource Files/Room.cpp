@@ -7,7 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <cassert>
-#include <cstdlib>
+
 namespace con = JadedHoboConsole;
 
 using std::endl;
@@ -49,10 +49,7 @@ void Room::loadTileIndex(string filename)
 			}
 		}
 	}
-	new Item({ '!', con::fgLoWhite, false, 4 }, {5, 0, 0}),		// (4) BANDAID
 }
-	new Item({ '!', con::fgLoWhite, false, 4 }, { 0, 1, 0 }),	// (5) SUGAR
-	new Item({ '!', con::fgLoWhite, false, 4 }, { 0, 0, 2 })	// (6) MILK
 
 void Room::loadItemIndex(string filename)
 {
