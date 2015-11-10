@@ -39,6 +39,7 @@ public:
 	bool isAdjacent(COORD, Actor&); //checks if enemy is adjacent to the player
 	bool lineOfSight(COORD, Actor&);	// Determines if actor can see coordinate
 
+	ItemPtr getItemStats(int);
 	int getTileInt(COORD c) { return tileArray[c.Y][c.X]; }
 	int getItemInt(COORD c) { return itemArray[c.Y][c.X]; }
 	int getActorInt(COORD c) { return actorArray[c.Y][c.X]; }
