@@ -152,10 +152,9 @@ void PlayingState::Draw(GameEngine* game)
 
 	// Display stats
 	buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 24, 5);	// Key count
-	buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
-		+ to_string(player.getLocation().Y)), con::fgHiWhite, 26, 5);
+	//buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
+		//+ to_string(player.getLocation().Y)), con::fgHiWhite, 25, 5);
 	string tempTurn = (pTurn) ? "Player" : "Enemy";
-	buffer.draw("Turn: " + tempTurn + " " + to_string(tCount), con::fgHiWhite, 25, 5);
 	buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 21, 5);	// Player hitpoints
 	buffer.draw(("EN: " + to_string(player.getStats().EN)), con::fgHiWhite, 22, 5); // Player endurance
 	buffer.draw(("STR: " + to_string(player.getStats().STR)), con::fgHiWhite, 23, 5); //Player strength
