@@ -40,6 +40,7 @@ public:
 	bool lineOfSight(COORD, Actor&);	// Determines if actor can see coordinate
 
 	ItemPtr getItemStats(int);
+	int randomItem();
 	int getTileInt(COORD c) { return tileArray[c.Y][c.X]; }
 	int getItemInt(COORD c) { return itemArray[c.Y][c.X]; }
 	int getActorInt(COORD c) { return actorArray[c.Y][c.X]; }
