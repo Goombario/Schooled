@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <cassert>
+#include <cstdlib>
 namespace con = JadedHoboConsole;
 
 using std::endl;
@@ -26,7 +27,9 @@ const vector<ItemPtr> Room::itemIndex =
 	new Item({ '~', con::fgHiWhite, true, 1 }, { 1, 1, 1 }),	// (1) KEY
 	new Item({ 'D', con::fgLoBlue, false, 2 }, { 1, 1, 1 }),	// (2) DOOR_TO_NEW_ROOM
 	new Item({ 'D', con::fgHiRed, false, 3 }, { 1, 1, 1 }),		// (3) MAP_DOOR_LOCKED
-	new Item({ '!', con::fgLoWhite, false, 4 }, {5, 0, 0})		// (4) POTION
+	new Item({ '!', con::fgLoWhite, false, 4 }, {5, 0, 0}),		// (4) BANDAID
+	new Item({ '!', con::fgLoWhite, false, 4 }, { 0, 1, 0 }),	// (5) SUGAR
+	new Item({ '!', con::fgLoWhite, false, 4 }, { 0, 0, 2 })	// (6) MILK
 };
 
 const vector<Actor> Room::actorIndex = 
@@ -72,6 +75,12 @@ void Room::display(Buffer& buffer){
 ItemPtr Room::getItemStats(int a)
 {
 	return itemIndex[a];
+}
+
+int Room::randomItem()
+{
+	int random = rand() % (itemIndex.size() - 4) + 4;
+	return random;
 }
 
 int Room::findActor(COORD c)
