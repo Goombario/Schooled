@@ -40,7 +40,7 @@ static map<string, string> messages =
 	{ "ATTACKABLE", "You hit that thing with " },
 	{ "ENEMY_ATTACK", "You got hit with " },
 	{ "PLAYER_DEATH", "You died..." },
-	{"POTION", "Milk? Sweet! I feel better already!"}
+	{"POTION", "You found an item! Wonder what it does..."}
 };
 
 

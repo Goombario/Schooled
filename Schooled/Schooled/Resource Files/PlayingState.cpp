@@ -2,6 +2,7 @@
 
 #include "../Header Files\Item.h"
 #include "../Header Files\Console_color.h"
+#include <ctime>
 
 using std::string;
 using std::to_string;
@@ -14,6 +15,7 @@ PlayingState PlayingState::m_PlayingState;
 // State Handling
 void PlayingState::Init()
 {
+	srand(time(0));
 	Room::loadTileIndex("tileIndex.txt");
 	Room::loadItemIndex("itemIndex.txt");
 	Room::loadActorIndex("actorIndex.txt");
@@ -149,12 +151,14 @@ void PlayingState::Draw(GameEngine* game)
 	buffer.draw(con::bgHiWhite, highlight.Y, highlight.X);
 
 	// Display stats
-	buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 22, 5);	// Key count
+	buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 24, 5);	// Key count
 	buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
-		+ to_string(player.getLocation().Y)), con::fgHiWhite, 24, 5);
+		+ to_string(player.getLocation().Y)), con::fgHiWhite, 26, 5);
 	string tempTurn = (pTurn) ? "Player" : "Enemy";
-	buffer.draw("Turn: " + tempTurn + " " + to_string(tCount), con::fgHiWhite, 23, 5);
+	buffer.draw("Turn: " + tempTurn + " " + to_string(tCount), con::fgHiWhite, 25, 5);
 	buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 21, 5);	// Player hitpoints
+	buffer.draw(("EN: " + to_string(player.getStats().EN)), con::fgHiWhite, 22, 5); // Player endurance
+	buffer.draw(("STR: " + to_string(player.getStats().STR)), con::fgHiWhite, 23, 5); //Player strength
 
 	// Display the messages
 	log.display(buffer);
@@ -281,7 +285,7 @@ void PlayingState::interact()
 	// POTION
 	case 4:
 		log.push_back(messages["POTION"]);
-		player.pickUp(Room::getItemStats(4));
+		player.pickUp(currentRoom.getItemStats(currentRoom.randomItem()));
 		currentRoom.setItemInt(highlight, 0);
 		break;
 
