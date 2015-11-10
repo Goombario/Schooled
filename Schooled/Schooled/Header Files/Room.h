@@ -39,7 +39,8 @@ public:
 	bool isAdjacent(COORD, Actor&); //checks if enemy is adjacent to the player
 	bool lineOfSight(COORD, Actor&);	// Determines if actor can see coordinate
 
-	ItemPtr getItemStats(int);
+	static ItemPtr getItemStats(int);
+	static ItemPtr getItemStats(string);
 	int getTileInt(COORD c) { return tileArray[c.Y][c.X]; }
 	int getItemInt(COORD c) { return itemArray[c.Y][c.X]; }
 	int getActorInt(COORD c) { return actorArray[c.Y][c.X]; }
@@ -52,6 +53,14 @@ public:
 	void setActorInt(COORD c, int i) { actorArray[c.Y][c.X] = i; }
 	void setLocation(COORD c) { location = c; }
 
+	static vector<const Tile> tileIndex;
+	static vector<const Item> itemIndex;
+	static vector<const Actor> actorIndex;
+
+	static void loadTileIndex(string);
+	static void loadItemIndex(string);
+	static void loadActorIndex(string);
+	
 private:
 	vector<Actor> actorList;
 	COORD location;
@@ -61,11 +70,6 @@ private:
 	int itemArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
 	int actorArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];
 
-	static const vector<Tile> tileIndex;
-	static const vector<ItemPtr> itemIndex;
-	static const vector<Actor> actorIndex;
 };
-
-
 
 #endif

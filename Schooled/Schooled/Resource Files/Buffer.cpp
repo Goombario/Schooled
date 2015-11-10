@@ -69,7 +69,8 @@ void Buffer::clear()
 {
 	for (int a = 0; a < schooled::SCREEN_HEIGHT; a++){
 		for (int b = 0; b < schooled::SCREEN_WIDTH; b++){
-			buffer[a][b].Char.AsciiChar = ' ';
+			buffer[a][b].Char.AsciiChar = 32;
+			buffer[a][b].Char.UnicodeChar = 32;
 			buffer[a][b].Attributes = con::fgBlack | con::bgBlack;
 		}
 	}

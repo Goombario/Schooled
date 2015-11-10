@@ -14,6 +14,10 @@ PlayingState PlayingState::m_PlayingState;
 // State Handling
 void PlayingState::Init()
 {
+	Room::loadTileIndex("tileIndex.txt");
+	Room::loadItemIndex("itemIndex.txt");
+	Room::loadActorIndex("actorIndex.txt");
+
 	tCount = 0;
 	keyCount = 0;
 	pTurn = true;
@@ -277,7 +281,7 @@ void PlayingState::interact()
 	// POTION
 	case 4:
 		log.push_back(messages["POTION"]);
-		player.pickUp(currentRoom.getItemStats(4));
+		player.pickUp(Room::getItemStats(4));
 		currentRoom.setItemInt(highlight, 0);
 		break;
 

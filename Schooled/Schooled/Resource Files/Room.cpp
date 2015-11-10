@@ -11,51 +11,164 @@ namespace con = JadedHoboConsole;
 
 using std::endl;
 
-const vector<Tile> Room::tileIndex = 
-{	// symbol, colour, isPassable
-	{ ' ', con::fgBlack, true, 0 },	// (0) MAP_FLOOR
-	{ '=', con::fgHiGreen, false, 1 },	// (1) MAP_WALL_TOP
-	{ 'D', con::fgHiBlue, true, 2 },	// (2) MAP_DOOR
-	{ '|', con::fgHiGreen, false, 3 },	// (3) MAP_WALL_SIDE
+vector<const Tile> Room::tileIndex;
+vector<const Item> Room::itemIndex;
+vector<const Actor> Room::actorIndex;
 
-};
-
-const vector<ItemPtr> Room::itemIndex = 
+void Room::loadTileIndex(string filename)
 {
-	new Item({ ' ', con::fgBlack, true, 0 }, { 1, 1, 1 }),		// (0) NULL
-	new Item({ '~', con::fgHiWhite, true, 1 }, { 1, 1, 1 }),	// (1) KEY
-	new Item({ 'D', con::fgLoBlue, false, 2 }, { 1, 1, 1 }),	// (2) DOOR_TO_NEW_ROOM
-	new Item({ 'D', con::fgHiRed, false, 3 }, { 1, 1, 1 }),		// (3) MAP_DOOR_LOCKED
-	new Item({ '!', con::fgLoWhite, false, 4 }, {5, 0, 0})		// (4) POTION
-};
+	{
+		string line;
+		std::ifstream stream(filename);
+		if (stream.fail())
+		{
+			std::cout << "File open failed.\n";
+			exit(1);
+		}
+		while (!stream.eof())
+		{
+			// Get the information from the file
+			getline(stream, line);
+			getline(stream, line);
+			int index = stoi(line.substr(line.find(':') + 1));
+			getline(stream, line);
+			char symbol = (line.substr(line.find('\'') + 1))[0];
+			getline(stream, line);
+			WORD colour = stoi(line.substr(line.find(':') + 1, '/'));
+			getline(stream, line);
+			bool passable = ((line.substr(line.find(':') + 1)) == "true");
 
-const vector<Actor> Room::actorIndex = 
+			// Put the tile in the vector
+			Tile temp = { symbol, colour, passable, index };
+			tileIndex.push_back(temp);
+			// If there are more lines, get the empty line
+			if (!stream.eof())
+			{
+				getline(stream, line);
+			}
+		}
+	}
+}
+
+void Room::loadItemIndex(string filename)
 {
-	Actor(),												// (0) NULL
-	Actor({ 'X', con::fgHiWhite, false, 1 },
-	{ 10, 2, 1 },
-	itemIndex[1],
-	"He punches you.",
-	"You punch him.")	// (1) BULLY_WEAK
-};
+	string line;
+	std::ifstream stream(filename);
+	if (stream.fail())
+	{
+		std::cout << "File open failed.\n";
+		exit(1);
+	}
+	while (!stream.eof())
+	{
+		// Get the information from the file
+		getline(stream, line);
+		string name = line.substr(line.find(':') + 1);
+		getline(stream, line);
+		int index = stoi(line.substr(line.find(':') + 1));
+		getline(stream, line);
+		char symbol = (line.substr(line.find('\'') + 1))[0];
+		getline(stream, line);
+		WORD colour = stoi(line.substr(line.find(':') + 1, '/'));
+		getline(stream, line);
+		bool passable = ((line.substr(line.find(':') + 1)) == "true");
+		getline(stream, line);
+		int HP = stoi(line.substr(line.find(':') + 1));
+		getline(stream, line);
+		int EN = stoi(line.substr(line.find(':') + 1));
+		getline(stream, line);
+		int STR = stoi(line.substr(line.find(':') + 1));
+		getline(stream, line);
+		string mPickup = (line.substr(line.find(':') + 1));
+
+		// Put the item in the vector
+		Item temp;
+		temp.setTile({ symbol, colour, passable, index });
+		temp.setStats({ HP, EN, STR });
+		temp.setMPickup(mPickup);
+		temp.setName(name);
+		itemIndex.push_back(temp);
+
+		// If there are more lines, get the empty line
+		if (!stream.eof())
+		{
+			getline(stream, line);
+		}
+	}
+}
+
+void Room::loadActorIndex(string filename)
+{
+	string line;
+	std::ifstream stream(filename);
+	if (stream.fail())
+	{
+		std::cout << "File open failed.\n";
+		exit(1);
+	}
+	actorIndex.push_back(Actor());
+	while (!stream.eof())
+	{
+		// Get the information from the file
+		getline(stream, line);
+		string name = line.substr(line.find(':') + 1);
+		getline(stream, line);
+		int index = stoi(line.substr(line.find(':') + 1));
+		getline(stream, line);
+		char symbol = (line.substr(line.find('\'') + 1))[0];
+		getline(stream, line);
+		WORD colour = stoi(line.substr(line.find(':') + 1, '/'));
+		getline(stream, line);
+		bool passable = ((line.substr(line.find(':') + 1)) == "true");
+		getline(stream, line);
+		int HP = stoi(line.substr(line.find(':') + 1));
+		getline(stream, line);
+		int EN = stoi(line.substr(line.find(':') + 1));
+		getline(stream, line);
+		int STR = stoi(line.substr(line.find(':') + 1));
+		getline(stream, line);
+		ItemPtr heldItem = getItemStats((line.substr(line.find(':') + 1)));
+		getline(stream, line);
+		string m_attack = (line.substr(line.find(':') + 1));
+		getline(stream, line);
+		string m_defend = (line.substr(line.find(':') + 1));
+
+
+		// Put the actor in the vector
+		Actor temp;
+		temp.setTile({ symbol, colour, passable, index });
+		temp.setStats({ HP, EN, STR });
+		temp.setHeldItem(heldItem);
+		temp.setName(name);
+		temp.setMAttack(m_attack);
+		temp.setMDefend(m_defend);
+		actorIndex.push_back(temp);
+
+		// If there are more lines, get the empty line
+		if (!stream.eof())
+		{
+			getline(stream, line);
+		}
+	}
+}
 
 
 void Room::display(Buffer& buffer){
 	int tile;
-	Actor tempA;
+	ActorPtr tempA;
 	ItemPtr tempI;
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
 			if (actorArray[a][b] > 0)
 			{
 				tile = actorArray[a][b];
-				tempA = actorIndex[tile];
-				buffer.draw(tempA.getTile().character, tempA.getTile().colorCode, a, b);
+				tempA = &actorIndex[tile];
+				buffer.draw(tempA->getTile().character, tempA->getTile().colorCode, a, b);
 			}
 			else if (itemArray[a][b] > 0)
 			{
 				tile = itemArray[a][b];
-				tempI = itemIndex[tile];
+				tempI = &itemIndex[tile];
 				buffer.draw(tempI->getTile().character, tempI->getTile().colorCode, a, b);
 
 			}
@@ -71,7 +184,19 @@ void Room::display(Buffer& buffer){
 
 ItemPtr Room::getItemStats(int a)
 {
-	return itemIndex[a];
+	return &itemIndex[a];
+}
+
+ItemPtr Room::getItemStats(string s)
+{
+	for (int i = 0; i < itemIndex.size(); i++)
+	{
+		if (itemIndex[i].getName() == s)
+		{
+			return &itemIndex[i];
+		}
+	}
+	return nullptr;
 }
 
 int Room::findActor(COORD c)
@@ -121,7 +246,7 @@ bool Room::isPassable(COORD tile){
 	int tileValue = tileArray[mapY][mapX];
 	int itemValue = itemArray[mapY][mapX];
 	int actorValue = actorArray[mapY][mapX];
-	ItemPtr tempI = itemIndex[itemValue];
+	ItemPtr tempI = &itemIndex[itemValue];
 	if (tileIndex[tileValue].isPassable && actorValue == 0 && tempI->getTile().isPassable)
 		return true;
 	return false;

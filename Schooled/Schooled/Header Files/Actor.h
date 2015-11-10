@@ -2,6 +2,8 @@
 #define ACTOR_H
 
 #include "Schooled.h"
+#include <string>
+using std::string;
 
 class Item;
 typedef Item* ItemPtr;
@@ -38,15 +40,21 @@ public:
 	Tile getTile() { return tile; }
 	std::string getMAttack() { return m_attack; }
 	std::string getMDefend() { return m_defend; }
+	std::string getName() { return name; }
 
+	void setTile(Tile t) { tile = t; }
+	void setStats(Stats s) { stats = s; }
 	void setLocation(COORD c) { location = c; }
 	void setMinX(int x){ minX = x; }
 	void setMaxX(int x){ maxX = x; }
 	void setMinY(int y){ minY = y; }
 	void setMaxY(int y){ maxY = y; }
+	void setMAttack(string s) { m_attack = s; }
+	void setMDefend(string s) { m_defend = s; }
+	void setName(string s) { name = s; }
+	void setHeldItem(ItemPtr i) { item = i; }
 
 	int dropItem();
-
 	void pickUp(ItemPtr);
 
 private:
@@ -56,9 +64,10 @@ private:
 	ItemPtr item;
 	std::string m_attack = "";
 	std::string m_defend = "";
+	std::string name = "";
 	int minX, maxX, minY, maxY;
 };
 
-
+typedef Actor* ActorPtr;
 
 #endif
