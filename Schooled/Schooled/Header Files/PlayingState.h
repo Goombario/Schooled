@@ -34,7 +34,7 @@ private:
 	// Variables
 	Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 	int tCount, keyCount;
-	bool pTurn;
+	bool pTurn, increment;
 	Actor player;
 	COORD highlight, delta;
 	Log log;

@@ -20,4 +20,4 @@ EN:2
 STR:1
 held item:KEY
 m_attack:He punches you.
-m_defend:You tickle him. Hehe
+m_defend:You tickle him. Hehe.
