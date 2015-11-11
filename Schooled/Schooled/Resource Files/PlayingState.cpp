@@ -27,7 +27,7 @@ void PlayingState::Init()
 	currentRoom = roomArray[1][1];
 
 	player = Actor({ '8', con::fgHiWhite }, { 10, 2, 2 });
-	player.setLocation({ 2, 3 });
+	player.setLocation({ 8, 7 });
 	highlight = { player.getX(), player.getY() + 1 };
 	delta = { 0, 0 };
 	
@@ -68,7 +68,8 @@ void PlayingState::HandleEvents(GameEngine* game)
 			//attack things B)
 		case CONSOLE_KEY_X:
 		case CONSOLE_KEY_N:
-			incrementTurn();
+			tCount++;
+			increment = true;
 			attack();
 			break;
 
@@ -88,7 +89,8 @@ void PlayingState::HandleEvents(GameEngine* game)
 			{
 				// If allowed, move in specified direction
 				player.setLocation(highlight);
-				incrementTurn();
+				tCount++;
+				increment = true;
 			}
 			break;
 
@@ -102,15 +104,17 @@ void PlayingState::HandleEvents(GameEngine* game)
 			break;
 		}
 	}
-	else
-	{	// The enemies move
-		enemyTurn();
-		incrementTurn();
-	}
 }
 
 void PlayingState::Update(GameEngine* game)
 {
+	// If the player is dead, quit the game
+	if (player.getStats().HP <= 0)
+	{
+		log.push_back(messages["PLAYER_DEATH"]);
+		game->Quit();
+	}
+
 	// Check if a move action has been performed, and adjusts highlight
 	if (delta.X != 0 || delta.Y != 0)
 	{
@@ -122,13 +126,20 @@ void PlayingState::Update(GameEngine* game)
 	delta.X = 0;
 	delta.Y = 0;
 
-	// If the player is dead, quit the game
-	if (player.getStats().HP <= 0)
+	// Move the enemies
+	if (!pTurn)
 	{
-		log.push_back(messages["PLAYER_DEATH"]);
-		game->Quit();
+		enemyTurn();
+		tCount++;
+		increment = true;
 	}
 
+	// If the turn counter was incremented
+	if (increment)
+	{
+		incrementTurn();
+	}
+	increment = false;
 }
 
 void PlayingState::Draw(GameEngine* game)
@@ -202,7 +213,7 @@ void PlayingState::enemyTurn()
 
 	for (Actor& a : currentRoom.getActorList())
 	{
-		if (a.getStats().EN + 1 >= tCount)
+		if (a.getStats().EN > tCount)
 		{
 			if (currentRoom.isAdjacent(player.getLocation(), a))
 			{
@@ -222,7 +233,6 @@ void PlayingState::enemyTurn()
 
 void PlayingState::incrementTurn()
 {
-	tCount++;
 
 	// If it is the player's turn, check if they are out of turns
 	if (pTurn && tCount == player.getStats().EN)
