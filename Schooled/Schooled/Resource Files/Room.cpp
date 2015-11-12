@@ -195,7 +195,7 @@ int Room::randomItem()
 }
 ItemPtr Room::getItemStats(string s)
 {
-	for (int i = 0; i < itemIndex.size(); i++)
+	for (unsigned int i = 0; i < itemIndex.size(); i++)
 	{
 		if (itemIndex[i].getName() == s)
 		{

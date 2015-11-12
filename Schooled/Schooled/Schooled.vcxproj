@@ -58,7 +58,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>console.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>console.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcd.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -89,6 +89,7 @@
     <ClCompile Include="Resource Files\PlayingState.cpp" />
     <ClCompile Include="Resource Files\Room.cpp" />
     <ClCompile Include="Resource Files\Schooled.cpp" />
+    <ClCompile Include="Resource Files\sound_effects.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -104,6 +105,7 @@
     <ClInclude Include="Header Files\PlayingState.h" />
     <ClInclude Include="Header Files\Room.h" />
     <ClInclude Include="Header Files\Schooled.h" />
+    <ClInclude Include="Header Files\sound_effects.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
