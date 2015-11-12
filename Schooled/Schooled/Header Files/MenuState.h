@@ -3,7 +3,11 @@
 
 #include "GameState.h"
 #include <string>
+#include <vector>
+using std::vector;
 using std::string;
+
+
 
 class MenuState : public GameState
 {
@@ -28,6 +32,10 @@ protected:
 private:
 	static MenuState m_MenuState;
 	string art;
+	int menuSelect;
+	vector<string> menuSelections;
+	void handleMenu();
+	bool start;
 
 	//Gets file contents (NEEDS REMOVAL)
 	string getFileContents(std::ifstream&);

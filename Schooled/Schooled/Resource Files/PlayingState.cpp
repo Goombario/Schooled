@@ -27,7 +27,7 @@ void PlayingState::Init()
 	currentRoom = roomArray[1][1];
 
 	player = Actor({ '8', con::fgHiWhite }, { 10, 2, 2 });
-	player.setLocation({ 8, 7 });
+	player.setLocation({ 4, 4 });
 	highlight = { player.getX(), player.getY() + 1 };
 	delta = { 0, 0 };
 	
