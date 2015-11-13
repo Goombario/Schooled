@@ -6,6 +6,7 @@
 #include "../Header Files/sound_effects.h"
 
 #include <fstream>
+#include <stdio.h>
 
 namespace snd
 {
@@ -29,6 +30,12 @@ void MenuState::Init()
 	art = getFileContents(Reader);			//Get file
 	Reader.close();							//Close file
 
+	// Check if settings file exists.
+	if (!std::ifstream("Settings.txt"))
+	{
+		initSettings();
+	}
+
 	// Play the music
 	//snd::title.play();
 
@@ -38,8 +45,28 @@ void MenuState::Init()
 	// Set the menu options
 	menuSelections.push_back("Start Game");
 	menuSelections.push_back("Control Options");
+	menuSelections.push_back("Quit");
+
+	// Set the control options
+	controlOptions.push_back("Classic");
+	controlOptions.push_back("Double-Tap");
 
 	start = false;
+	selectControl = false;
+	changedSettings = false;
+
+	// Get the control from the settings file
+	selectedControl = 0;
+	string sControl = getSetting("ControlScheme");
+
+	for (int i = 0; i < controlOptions.size(); i++)
+	{
+		if (controlOptions[i] == sControl)
+		{
+			selectedControl = i;
+			break;
+		}
+	}
 }
 
 void MenuState::Cleanup()
@@ -50,6 +77,10 @@ void MenuState::Cleanup()
 void MenuState::Pause()
 {
 	snd::title.stop();
+	if (changedSettings)
+	{
+		saveSetting("ControlScheme", controlOptions[selectedControl]);
+	}
 }
 
 void MenuState::Resume()
@@ -67,6 +98,7 @@ void MenuState::HandleEvents(GameEngine* game)
 		break;
 		
 	case CONSOLE_KEY_UP:
+		if (selectControl) break; // Don't move if changing controls
 		if (menuSelect > 0)
 		{
 			menuSelect--;
@@ -78,6 +110,7 @@ void MenuState::HandleEvents(GameEngine* game)
 		break;
 
 	case CONSOLE_KEY_DOWN:
+		if (selectControl) break; // Don't move if changing controls
 		if (menuSelect < menuSelections.size() - 1)
 		{
 			menuSelect++;
@@ -86,6 +119,32 @@ void MenuState::HandleEvents(GameEngine* game)
 		{
 			menuSelect = 0;
 		}
+		break;
+
+	case CONSOLE_KEY_LEFT:
+		if (!selectControl) break;
+		if (selectedControl < controlOptions.size() - 1)
+		{
+			selectedControl++;
+		}
+		else
+		{
+			selectedControl = 0;
+		}
+		changedSettings = true;
+		break;
+
+	case CONSOLE_KEY_RIGHT:
+		if (!selectControl) break;
+		if (selectedControl > 0)
+		{
+			selectedControl--;
+		}
+		else
+		{
+			selectedControl = controlOptions.size() - 1;
+		}
+		changedSettings = true;
 		break;
 
 	case CONSOLE_KEY_RETURN:
@@ -125,7 +184,7 @@ void MenuState::Draw(GameEngine* game)
 	{
 		WORD colour;
 		int col;
-		col = 30 - menuSelections[i].size() / 2;
+		col = 30 - menuSelections[i].size() / 2; // Centering the text
 
 		// Determine the colour of the text
 		if (menuSelect == i)
@@ -138,6 +197,12 @@ void MenuState::Draw(GameEngine* game)
 		}
 		buffer.draw(menuSelections[i], colour, row, col);
 		row += 2;
+	}
+
+	if (selectControl)
+	{
+		string temp = "<- " + controlOptions[selectedControl] + " ->";
+		buffer.draw(temp, con::fgHiWhite, 21, (30 - temp.size() / 2));
 	}
 
 	// Close the buffer
@@ -175,6 +240,14 @@ void MenuState::handleMenu()
 		break;
 
 	case 1:
+		if (!selectControl)
+		{
+			selectControl = true;
+		}
+		else
+		{
+			selectControl = false;
+		}
 		break;
 
 	default:
@@ -182,4 +255,74 @@ void MenuState::handleMenu()
 	}
 }
 
+string MenuState::getSetting(string a_key)
+{
+	std::ifstream stream("Settings.txt");
+	string line;
+
+	if (!stream)
+	{
+		std::cout << "File open failed.\n";
+		exit(1);
+	}
+
+	while (std::getline(stream, line))
+	{
+		if (line.substr(0, line.find(':')) == a_key)
+		{
+			return line.substr(line.find(':') + 2);
+		}
+	}
+
+	return "";
+}
+
+void MenuState::saveSetting(string a_key, string change)
+{
+	std::ifstream inStream("Settings.txt");
+	std::ofstream outStream("temp.txt");
+	string line;
+
+	if (!inStream || !outStream)
+	{
+		std::cout << "File open failed.\n";
+		exit(1);
+	}
+	while (std::getline(inStream, line))
+	{
+		if (line.substr(0, line.find(':')) == a_key)
+		{
+			line = a_key + ": " + change;
+		}
+		outStream << line << std::endl;
+	}
+	outStream.flush();
+
+	inStream.close();
+	outStream.close();
+
+	
+	if (remove("Settings.txt") != 0)
+		perror("Error deleting file");
+	else
+		puts("File successfully deleted");
+
+	int result = rename("temp.txt", "Settings.txt");
+	if (result == 0)
+		puts("File successfully renamed");
+	else
+		perror("Error renaming file");
+}
+
+void MenuState::initSettings()
+{
+	std::ofstream stream("Settings.txt");
+	if (!stream)
+	{
+		std::cout << "File open failed.\n";
+		exit(1);
+	}
+	stream << "ControlScheme: Classic" << std::endl;
+	stream.close();
+}
 

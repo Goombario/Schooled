@@ -34,8 +34,16 @@ private:
 	string art;
 	int menuSelect;
 	vector<string> menuSelections;
-	void handleMenu();
+	vector<string> controlOptions;
 	bool start;
+	bool selectControl;
+	bool changedSettings;
+	int selectedControl;
+
+	void handleMenu();
+	string getSetting(string);
+	void saveSetting(string, string);
+	void initSettings();
 
 	//Gets file contents (NEEDS REMOVAL)
 	string getFileContents(std::ifstream&);

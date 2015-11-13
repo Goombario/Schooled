@@ -24,6 +24,7 @@ public:
 private:
 	vector<string> log;
 	bool newLine;
+	const int TEXT_START=15;
 };
 
 static map<string, string> messages =
