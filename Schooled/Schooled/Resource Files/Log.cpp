@@ -37,7 +37,7 @@ void Log::display(HANDLE hConsole)
 	int row, col;
 	int grayscale = 2;
 	row = schooled::SCREEN_HEIGHT - 3;
-	col = 23;
+	col = TEXT_START;
 	for (unsigned int i = max; i < log.size(); i++)
 	{
 		switch (grayscale)
@@ -79,7 +79,7 @@ void Log::display(HANDLE hConsole)
 		}
 		grayscale--;
 		row++;
-		col = 23;
+		col = TEXT_START;
 	}
 
 }
@@ -91,7 +91,7 @@ void Log::display(Buffer& buffer)
 	int row, col;
 	int grayscale = 0;
 	row = schooled::SCREEN_HEIGHT - SIZE;
-	col = 23;
+	col = TEXT_START;
 	for (int i = log.size() - 1; i >= max; i--)
 	{
 		switch (grayscale)
@@ -110,6 +110,6 @@ void Log::display(Buffer& buffer)
 		}
 		grayscale++;
 		row++;
-		col = 23;
+		col = TEXT_START;
 	}
 }
