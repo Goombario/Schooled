@@ -1,5 +1,6 @@
 #include "../Header Files/PlayingState.h"
-
+#include "../Header Files/GameOverState.h"
+#include "../Header Files/MenuState.h"
 #include "../Header Files\Item.h"
 #include "../Header Files\Console_color.h"
 #include <ctime>
@@ -23,6 +24,7 @@ void PlayingState::Init()
 	tCount = 0;
 	keyCount = 0;
 	pTurn = true;
+	running = true;
 	loadRooms();
 	currentRoom = roomArray[1][1];
 
@@ -108,11 +110,20 @@ void PlayingState::HandleEvents(GameEngine* game)
 
 void PlayingState::Update(GameEngine* game)
 {
-	// If the player is dead, quit the game
-	if (player.getStats().HP <= 0)
+	// If the game over screen has occured, return to menu
+	if (!running)
 	{
-		log.push_back(messages["PLAYER_DEATH"]);
-		game->Quit();
+		game->PopState();
+		return;
+	}
+
+	// If the player is dead, quit the game
+	if (player.getStats().HP <= 0 && running)
+	{
+		Pause();
+		game->PushState(GameOverState::Instance());
+		running = false;
+		return;
 	}
 
 	// Check if a move action has been performed, and adjusts highlight

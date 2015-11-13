@@ -60,6 +60,9 @@
     <ClCompile Include="Resource Files\sound_effects.cpp">
       <Filter>Resource Files\Classes</Filter>
     </ClCompile>
+    <ClCompile Include="Resource Files\GameOverState.cpp">
+      <Filter>Resource Files\States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header Files\MenuState.h">
@@ -100,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="Header Files\sound_effects.h">
       <Filter>Header Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\GameOverState.h">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

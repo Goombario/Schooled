@@ -83,6 +83,7 @@
     <ClCompile Include="Resource Files\Actor.cpp" />
     <ClCompile Include="Resource Files\Buffer.cpp" />
     <ClCompile Include="Resource Files\GameEngine.cpp" />
+    <ClCompile Include="Resource Files\GameOverState.cpp" />
     <ClCompile Include="Resource Files\Item.cpp" />
     <ClCompile Include="Resource Files\Log.cpp" />
     <ClCompile Include="Resource Files\MenuState.cpp" />
@@ -98,6 +99,7 @@
     <ClInclude Include="Header Files\Buffer.h" />
     <ClInclude Include="Header Files\Console_color.h" />
     <ClInclude Include="Header Files\GameEngine.h" />
+    <ClInclude Include="Header Files\GameOverState.h" />
     <ClInclude Include="Header Files\GameState.h" />
     <ClInclude Include="Header Files\Item.h" />
     <ClInclude Include="Header Files\Log.h" />

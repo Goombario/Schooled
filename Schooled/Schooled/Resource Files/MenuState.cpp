@@ -163,6 +163,7 @@ void MenuState::Update(GameEngine* game)
 	{
 		Pause();
 		game->PushState(PlayingState::Instance());
+		start = false;
 	}
 
 }
