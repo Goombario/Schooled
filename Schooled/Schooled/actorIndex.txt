@@ -15,9 +15,93 @@ index:2
 symbol:'X'
 colour:15U // black
 passable:false
-HP:12
+HP:10
 EN:2
 STR:1
 held item:KEY
 m_attack:He punches you.
 m_defend:You tickle him. Hehe.
+
+name:BIG_BULLY_BILLY
+index:3
+symbol:'X'
+colour:12U // hiRed
+passable:false
+HP:20
+EN:1
+STR:2
+held item:0
+m_attack:This is my playground.
+m_defend:Sharing is caring.
+
+name:DRAMA_TEACHER
+index:4
+symbol:'X'
+colour:12U // hiRed
+passable:false
+HP:5
+EN:5
+STR:1
+held item:KEY
+m_attack:And you have the role of Death. So. Stop BREATHING.
+m_defend:Should've taken music.
+
+name:THIEF_BULLIES
+index:5
+symbol:'x'
+colour:15U // black
+passable:false
+HP:8
+EN:2
+STR:1
+held item:0
+m_attack:We're the ones who hid your bag NERD!
+m_defend:You like to consider myself more of a dork, actually.
+
+name:TATTLETALE
+index:6
+symbol:'t'
+colour:15U // black
+passable:false
+HP:3
+EN:1
+STR:4
+held item:KEY
+m_attack:You're in the girls room! I'm telling!
+m_defend:Oh dear.
+
+name:TEACHER
+index:7
+symbol:'T'
+colour:12U // hiRed
+passable:false
+HP:7
+EN:3
+STR:1
+held item:KEY
+m_attack:I've got eyes on the back of my head.
+m_defend:...Voldemort?
+
+name:SECRETARY
+index:8
+symbol:'S'
+colour:15U // black
+passable:false
+HP:4
+EN:1
+STR:2
+held item:0
+m_attack:*bubblegum pop*
+m_defend:You unplug something when she's not looking.
+
+name:PRINCIPLE
+index:9
+symbol:'P'
+colour:12U // hiRed
+passable:false
+HP:10
+EN:3
+STR:5
+held item:0
+m_attack:Welcome to today's assembly!
+m_defend:More like dissembly. Welp, there goes my arm.
