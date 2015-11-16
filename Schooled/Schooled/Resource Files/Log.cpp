@@ -88,12 +88,27 @@ void Log::display(Buffer& buffer)
 {
 	const int SIZE = 4;
 	int max = (log.size() >= SIZE) ? (log.size() - SIZE) : 0;	// determines the number of lines to display
-	int row, col;
+	int col, row;
+	int tempInt;
 	int grayscale = 0;
-	row = schooled::SCREEN_HEIGHT - SIZE;
+	std::string temp;
+	row = schooled::SCREEN_HEIGHT - 1;
 	col = TEXT_START;
 	for (int i = log.size() - 1; i >= max; i--)
 	{
+		// If there are newline symbols, decrease the row to fit
+		temp = log[i];
+		while (temp.find('\n') != std::string::npos)
+		{
+			tempInt = temp.find('\n');
+			temp = temp.substr(tempInt + 1);
+			row--;
+		}
+
+		// If the log entry can't fit on the screen, then break
+		if (row < schooled::SCREEN_HEIGHT - SIZE) break;
+
+		// Change the colour based on how old the line is.
 		switch (grayscale)
 		{
 		case 0:
@@ -109,7 +124,7 @@ void Log::display(Buffer& buffer)
 			break;
 		}
 		grayscale++;
-		row++;
+		row--;
 		col = TEXT_START;
 	}
 }

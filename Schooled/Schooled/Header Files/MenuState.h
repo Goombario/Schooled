@@ -35,12 +35,10 @@ private:
 	int menuSelect;
 	vector<string> menuSelections;
 	vector<string> controlOptions;
-	bool start;
-	bool selectControl;
-	bool changedSettings;
+	bool selectControl, changedSettings;
 	int selectedControl;
 
-	void handleMenu();
+	void handleMenu(GameEngine* game);
 	string getSetting(string);
 	void saveSetting(string, string);
 	void initSettings();

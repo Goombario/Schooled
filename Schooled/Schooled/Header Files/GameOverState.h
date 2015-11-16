@@ -29,6 +29,7 @@ protected:
 
 private:
 	static GameOverState m_GameOverState;
+	bool firstTime = true;	// Only draw the text slowly the first time.
 };
 
 #endif

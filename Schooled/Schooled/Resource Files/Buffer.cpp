@@ -15,9 +15,11 @@ Buffer::Buffer()
 	dwBufferSize = { schooled::SCREEN_WIDTH, schooled::SCREEN_HEIGHT };
 }
 
-void Buffer::draw(std::string s, WORD w, int row, int col)
+int Buffer::draw(std::string s, WORD w, int row, int col)
 {
-	int startCol = col;
+	int startCol = col, startRow = row;
+	std::string temp;
+
 	for (unsigned int i = 0; i < s.size(); i++)
 	{
 		if (s[i] == '\n')
@@ -40,6 +42,7 @@ void Buffer::draw(std::string s, WORD w, int row, int col)
 			}
 		}
 	}
+	return row;
 }
 
 void Buffer::draw(char c, WORD w, int row, int col)

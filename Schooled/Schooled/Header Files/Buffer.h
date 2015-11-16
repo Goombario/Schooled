@@ -11,7 +11,7 @@ public:
 	Buffer();	
 
 	// Draw to the buffer
-	void draw(std::string, WORD, int, int);
+	int draw(std::string, WORD, int, int);	// Returns the row it ends on
 	void draw(char, WORD, int, int);
 	void draw(WORD, int, int);
 

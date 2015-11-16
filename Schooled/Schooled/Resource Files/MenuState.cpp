@@ -8,11 +8,6 @@
 #include <fstream>
 #include <stdio.h>
 
-namespace snd
-{
-	Sound title(L"Sounds/schooled64.wav", true);
-}
-
 namespace con = JadedHoboConsole;
 
 MenuState MenuState::m_MenuState;
@@ -37,7 +32,7 @@ void MenuState::Init()
 	}
 
 	// Play the music
-	//snd::title.play();
+	//snd::title->play();
 
 	// Set the default location of the selection to "Start Game"
 	menuSelect = 0;
@@ -51,7 +46,6 @@ void MenuState::Init()
 	controlOptions.push_back("Classic");
 	controlOptions.push_back("Double-Tap");
 
-	start = false;
 	selectControl = false;
 	changedSettings = false;
 
@@ -59,7 +53,7 @@ void MenuState::Init()
 	selectedControl = 0;
 	string sControl = getSetting("ControlScheme");
 
-	for (int i = 0; i < controlOptions.size(); i++)
+	for (unsigned int i = 0; i < controlOptions.size(); i++)
 	{
 		if (controlOptions[i] == sControl)
 		{
@@ -71,12 +65,12 @@ void MenuState::Init()
 
 void MenuState::Cleanup()
 {
-	
+	snd::title->stop();
 }
 
 void MenuState::Pause()
 {
-	snd::title.stop();
+	snd::title->stop();
 	if (changedSettings)
 	{
 		saveSetting("ControlScheme", controlOptions[selectedControl]);
@@ -85,7 +79,8 @@ void MenuState::Pause()
 
 void MenuState::Resume()
 {
-
+	// Play the music
+	snd::title->play();
 }
 
 void MenuState::HandleEvents(GameEngine* game)
@@ -149,7 +144,7 @@ void MenuState::HandleEvents(GameEngine* game)
 
 	case CONSOLE_KEY_RETURN:
 	case CONSOLE_KEY_Z:
-		handleMenu();
+		handleMenu(game);
 		break;
 
 	default:
@@ -159,12 +154,6 @@ void MenuState::HandleEvents(GameEngine* game)
 
 void MenuState::Update(GameEngine* game)
 {
-	if (start)
-	{
-		Pause();
-		game->PushState(PlayingState::Instance());
-		start = false;
-	}
 
 }
 
@@ -181,7 +170,7 @@ void MenuState::Draw(GameEngine* game)
 
 	// Draw the menu options to the screen
 	int row = 18;
-	for (int i = 0; i < menuSelections.size(); i++)
+	for (unsigned int i = 0; i < menuSelections.size(); i++)
 	{
 		WORD colour;
 		int col;
@@ -232,12 +221,12 @@ string MenuState::getFileContents(std::ifstream& File)
 	}
 }
 
-void MenuState::handleMenu()
+void MenuState::handleMenu(GameEngine* game)
 {
 	switch (menuSelect)
 	{
 	case 0:
-		start = true;
+		game->PushState(PlayingState::Instance());
 		break;
 
 	case 1:
@@ -251,31 +240,12 @@ void MenuState::handleMenu()
 		}
 		break;
 
+	case 2:
+		game->Quit();
+
 	default:
 		break;
 	}
-}
-
-string MenuState::getSetting(string a_key)
-{
-	std::ifstream stream("Settings.txt");
-	string line;
-
-	if (!stream)
-	{
-		std::cout << "File open failed.\n";
-		exit(1);
-	}
-
-	while (std::getline(stream, line))
-	{
-		if (line.substr(0, line.find(':')) == a_key)
-		{
-			return line.substr(line.find(':') + 2);
-		}
-	}
-
-	return "";
 }
 
 void MenuState::saveSetting(string a_key, string change)
@@ -327,3 +297,25 @@ void MenuState::initSettings()
 	stream.close();
 }
 
+
+string MenuState::getSetting(string a_key)
+{
+	std::ifstream stream("Settings.txt");
+	string line;
+
+	if (!stream)
+	{
+		std::cout << "File open failed.\n";
+		exit(1);
+	}
+
+	while (std::getline(stream, line))
+	{
+		if (line.substr(0, line.find(':')) == a_key)
+		{
+			return line.substr(line.find(':') + 2);
+		}
+	}
+
+	return "";
+}

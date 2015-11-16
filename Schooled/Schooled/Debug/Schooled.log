@@ -1,13 +1,22 @@
-﻿Build started 11/13/2015 10:54:23 AM.
+﻿Build started 11/15/2015 11:18:40 PM.
      1>Project "C:\Hg\Schooled\Schooled\Schooled\Schooled.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "Resource Files\MenuState.cpp" "Resource Files\PlayingState.cpp"
-         PlayingState.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "Resource Files\Actor.cpp" "Resource Files\Buffer.cpp" "Resource Files\GameEngine.cpp" "Resource Files\GameOverState.cpp" "Resource Files\Item.cpp" "Resource Files\Log.cpp" "Resource Files\MenuState.cpp" "Resource Files\PlayingState.cpp" "Resource Files\Room.cpp" "Resource Files\Schooled.cpp" Source.cpp
+         Schooled.cpp
          MenuState.cpp
-     1>c:\hg\schooled\schooled\schooled\resource files\menustate.cpp(62): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\hg\schooled\schooled\schooled\resource files\menustate.cpp(114): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\hg\schooled\schooled\schooled\resource files\menustate.cpp(126): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\hg\schooled\schooled\schooled\resource files\menustate.cpp(184): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\hg\schooled\schooled\schooled\resource files\menustate.cpp(109): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\hg\schooled\schooled\schooled\resource files\menustate.cpp(121): warning C4018: '<' : signed/unsigned mismatch
+         Generating Code...
+         Compiling...
+         Source.cpp
+         Room.cpp
+         PlayingState.cpp
+         Log.cpp
+         Item.cpp
+         GameOverState.cpp
+         GameEngine.cpp
+         Buffer.cpp
+         Actor.cpp
          Generating Code...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Hg\Schooled\Schooled\Debug\Schooled.exe" /INCREMENTAL /NOLOGO console.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libcd.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Hg\Schooled\Schooled\Debug\Schooled.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Hg\Schooled\Schooled\Debug\Schooled.lib" /MACHINE:X86 Debug\Actor.obj
@@ -22,9 +31,12 @@
          Debug\Schooled.obj
          Debug\sound_effects.obj
          Debug\Source.obj
+     1>console.lib(Console.obj) : warning LNK4099: PDB 'vc60.pdb' was not found with 'console.lib(Console.obj)' or at 'C:\Hg\Schooled\Schooled\Debug\vc60.pdb'; linking object as if no debug info
+     1>console.lib(main.obj) : warning LNK4099: PDB 'vc60.pdb' was not found with 'console.lib(main.obj)' or at 'C:\Hg\Schooled\Schooled\Debug\vc60.pdb'; linking object as if no debug info
+     1>console.lib(Win32Console.obj) : warning LNK4099: PDB 'vc60.pdb' was not found with 'console.lib(Win32Console.obj)' or at 'C:\Hg\Schooled\Schooled\Debug\vc60.pdb'; linking object as if no debug info
          Schooled.vcxproj -> C:\Hg\Schooled\Schooled\Debug\Schooled.exe
      1>Done Building Project "C:\Hg\Schooled\Schooled\Schooled\Schooled.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:06.12
+Time Elapsed 00:00:07.05

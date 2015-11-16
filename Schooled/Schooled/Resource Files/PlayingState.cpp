@@ -120,7 +120,6 @@ void PlayingState::Update(GameEngine* game)
 	// If the player is dead, quit the game
 	if (player.getStats().HP <= 0 && running)
 	{
-		Pause();
 		game->PushState(GameOverState::Instance());
 		running = false;
 		return;

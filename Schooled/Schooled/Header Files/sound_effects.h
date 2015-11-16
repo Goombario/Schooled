@@ -14,5 +14,10 @@ public:
 	void stop();
 };
 
+typedef Sound* SndPtr;
 
+namespace snd
+{
+	const SndPtr title = new Sound(L"Sounds/schooled64.wav", true);
+}
 #endif
