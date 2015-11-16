@@ -34,12 +34,10 @@ private:
 	string art;
 	int menuSelect;
 	vector<string> menuSelections;
-	vector<string> controlOptions;
 	bool selectControl, changedSettings;
 	int selectedControl;
 
 	void handleMenu(GameEngine* game);
-	string getSetting(string);
 	void saveSetting(string, string);
 	void initSettings();
 

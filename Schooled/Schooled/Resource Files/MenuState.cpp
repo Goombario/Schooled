@@ -7,7 +7,9 @@
 
 #include <fstream>
 #include <stdio.h>
-
+using schooled::getSetting;
+using schooled::controlOptions;
+	
 namespace con = JadedHoboConsole;
 
 MenuState MenuState::m_MenuState;
@@ -32,7 +34,7 @@ void MenuState::Init()
 	}
 
 	// Play the music
-	//snd::title->play();
+	snd::title->play();
 
 	// Set the default location of the selection to "Start Game"
 	menuSelect = 0;
@@ -42,16 +44,12 @@ void MenuState::Init()
 	menuSelections.push_back("Control Options");
 	menuSelections.push_back("Quit");
 
-	// Set the control options
-	controlOptions.push_back("Classic");
-	controlOptions.push_back("Double-Tap");
-
 	selectControl = false;
 	changedSettings = false;
 
 	// Get the control from the settings file
 	selectedControl = 0;
-	string sControl = getSetting("ControlScheme");
+	string sControl = schooled::getSetting("ControlScheme");
 
 	for (unsigned int i = 0; i < controlOptions.size(); i++)
 	{
@@ -118,19 +116,6 @@ void MenuState::HandleEvents(GameEngine* game)
 
 	case CONSOLE_KEY_LEFT:
 		if (!selectControl) break;
-		if (selectedControl < controlOptions.size() - 1)
-		{
-			selectedControl++;
-		}
-		else
-		{
-			selectedControl = 0;
-		}
-		changedSettings = true;
-		break;
-
-	case CONSOLE_KEY_RIGHT:
-		if (!selectControl) break;
 		if (selectedControl > 0)
 		{
 			selectedControl--;
@@ -138,6 +123,19 @@ void MenuState::HandleEvents(GameEngine* game)
 		else
 		{
 			selectedControl = controlOptions.size() - 1;
+		}
+		changedSettings = true;
+		break;
+
+	case CONSOLE_KEY_RIGHT:
+		if (!selectControl) break;
+		if (selectedControl < controlOptions.size() - 1)
+		{
+			selectedControl++;
+		}
+		else
+		{
+			selectedControl = 0;
 		}
 		changedSettings = true;
 		break;
@@ -295,27 +293,4 @@ void MenuState::initSettings()
 	}
 	stream << "ControlScheme: Classic" << std::endl;
 	stream.close();
-}
-
-
-string MenuState::getSetting(string a_key)
-{
-	std::ifstream stream("Settings.txt");
-	string line;
-
-	if (!stream)
-	{
-		std::cout << "File open failed.\n";
-		exit(1);
-	}
-
-	while (std::getline(stream, line))
-	{
-		if (line.substr(0, line.find(':')) == a_key)
-		{
-			return line.substr(line.find(':') + 2);
-		}
-	}
-
-	return "";
 }

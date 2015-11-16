@@ -15,6 +15,9 @@ public:
 	void draw(char, WORD, int, int);
 	void draw(WORD, int, int);
 
+	// Simulate typing to the buffer
+	void type(std::string, WORD, int, int, HANDLE);
+
 	// Clear the buffer
 	void clear();
 

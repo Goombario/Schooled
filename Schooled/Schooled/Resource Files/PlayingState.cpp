@@ -34,6 +34,8 @@ void PlayingState::Init()
 	delta = { 0, 0 };
 	
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	scheme = schooled::getSetting("ControlScheme");
 }
 
 void PlayingState::Cleanup()
@@ -53,36 +55,51 @@ void PlayingState::Resume()
 
 void PlayingState::HandleEvents(GameEngine* game)
 {
-	if (pTurn)
+	if (!pTurn) return;
+	
+	KEYPRESS sKeyPress = console.WaitForKeypress();
+	switch (sKeyPress.eCode)
 	{
-		KEYPRESS sKeyPress = console.WaitForKeypress();
+		// Move the highlight
+	case CONSOLE_KEY_DOWN:
+	case CONSOLE_KEY_LEFT:
+	case CONSOLE_KEY_RIGHT:
+	case CONSOLE_KEY_UP:
+	case CONSOLE_KEY_W:
+	case CONSOLE_KEY_A:
+	case CONSOLE_KEY_S:
+	case CONSOLE_KEY_D:
+		moveHighlight(sKeyPress.eCode);
+		break;
 
-		switch (sKeyPress.eCode)
+		//attack things B)
+	case CONSOLE_KEY_X:
+	case CONSOLE_KEY_N:
+		// Check control schemes
+		if ((sKeyPress.eCode == CONSOLE_KEY_X &&
+			(scheme == "Classic" || scheme == "Double-Tap")) ||
+			sKeyPress.eCode == CONSOLE_KEY_N &&
+			(scheme == "Classic Lefty" || scheme == "Double-Tap Lefty"))
 		{
-			// Move the highlight
-		case CONSOLE_KEY_DOWN:
-		case CONSOLE_KEY_LEFT:
-		case CONSOLE_KEY_RIGHT:
-		case CONSOLE_KEY_UP:
-			moveHighlight(sKeyPress.eCode);
-			break;
-
-			//attack things B)
-		case CONSOLE_KEY_X:
-		case CONSOLE_KEY_N:
 			tCount++;
 			increment = true;
 			attack();
-			break;
+		}
 
-			//checks interactable
-		case CONSOLE_KEY_SPACE:
-			interact();
-			break;
+		break;
 
-			// move key pressed
-		case CONSOLE_KEY_Z:
-		case CONSOLE_KEY_M:
+		//checks interactable
+	case CONSOLE_KEY_SPACE:
+		interact();
+		break;
+
+		// move key pressed
+	case CONSOLE_KEY_Z:
+	case CONSOLE_KEY_M:
+		// Check control schemes
+		if (sKeyPress.eCode == CONSOLE_KEY_Z && scheme == "Classic" ||
+			sKeyPress.eCode == CONSOLE_KEY_M && scheme == "Classic Lefty")
+		{
 			delta.X = (highlight.X - player.getX());
 			delta.Y = (highlight.Y - player.getY());
 
@@ -94,17 +111,17 @@ void PlayingState::HandleEvents(GameEngine* game)
 				tCount++;
 				increment = true;
 			}
-			break;
-
-			// quit
-		case CONSOLE_KEY_ESCAPE:
-			currentRoom.save("Rooms/Room1.sav");
-			game->Quit();
-
-			// Ignore any other key
-		default:
-			break;
 		}
+		break;
+
+		// quit
+	case CONSOLE_KEY_ESCAPE:
+		currentRoom.save("Rooms/Room1.sav");
+		game->Quit();
+
+		// Ignore any other key
+	default:
+		break;
 	}
 }
 
@@ -338,28 +355,51 @@ void PlayingState::moveHighlight(KEYCODE eCode)
 	switch (eCode)
 	{
 		// down selected
+	case CONSOLE_KEY_S:
 	case CONSOLE_KEY_DOWN:
 		delta.X = 0;
 		delta.Y = 1;
 		break;
 
 		// left selected
+	case CONSOLE_KEY_A:
 	case CONSOLE_KEY_LEFT:
 		delta.X = -1;
 		delta.Y = 0;
 		break;
 
 		// right selected
+	case CONSOLE_KEY_D:
 	case CONSOLE_KEY_RIGHT:
 		delta.X = 1;
 		delta.Y = 0;
 		break;
 
 		// up selected
+	case CONSOLE_KEY_W:
 	case CONSOLE_KEY_UP:
 		delta.X = 0;
 		delta.Y = -1;
 		break;
+	}
+
+	if (eCode < 88 && scheme == "Double-Tap Lefty" ||
+		eCode > 49663 && scheme == "Double-Tap")
+	{
+		// Check if the player can move in specified direction
+		if (currentRoom.isPassable(highlight) && 
+			highlight - player.getLocation() == delta)	// and delta is highlight space
+		{
+			// If allowed, move in specified direction
+			player.setLocation(highlight);
+			tCount++;
+			increment = true;
+		}
+	}
+	else if ((scheme == "Classic" || scheme == "Double-Tap") && eCode < 88 ||
+		(scheme == "Classic Lefty" || scheme == "Double-Tap Lefty") && eCode > 49663)
+	{
+		delta = { 0, 0 };
 	}
 }
 
