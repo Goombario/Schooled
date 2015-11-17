@@ -37,6 +37,7 @@ struct Stats{
 };
 
 bool operator ==(COORD a, COORD b);
+bool operator !=(COORD a, COORD b);
 COORD operator +(COORD a, COORD b);
 COORD operator -(COORD a, COORD b);
 

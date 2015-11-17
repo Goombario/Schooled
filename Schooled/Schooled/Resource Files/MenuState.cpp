@@ -34,7 +34,7 @@ void MenuState::Init()
 	}
 
 	// Play the music
-	snd::title->play();
+	//snd::title->play();
 
 	// Set the default location of the selection to "Start Game"
 	menuSelect = 0;
@@ -78,7 +78,7 @@ void MenuState::Pause()
 void MenuState::Resume()
 {
 	// Play the music
-	snd::title->play();
+	//snd::title->play();
 }
 
 void MenuState::HandleEvents(GameEngine* game)
