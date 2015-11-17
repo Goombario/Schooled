@@ -3,7 +3,6 @@
 #include "../Header Files/MenuState.h"
 #include "../Header Files\Item.h"
 #include "../Header Files\Console_color.h"
-#include <ctime>
 
 using std::string;
 using std::to_string;
@@ -16,11 +15,6 @@ PlayingState PlayingState::m_PlayingState;
 // State Handling
 void PlayingState::Init()
 {
-	srand((unsigned int)time(0));
-	Room::loadTileIndex("tileIndex.txt");
-	Room::loadItemIndex("itemIndex.txt");
-	Room::loadActorIndex("actorIndex.txt");
-
 	tCount = 0;
 	keyCount = 0;
 	pTurn = true;
@@ -40,7 +34,14 @@ void PlayingState::Init()
 
 void PlayingState::Cleanup()
 {
-
+	log.clear();
+	for (int i = 0; i < schooled::FLOOR_HEIGHT; i++)
+	{
+		for (int e = 0; e < schooled::FLOOR_WIDTH; e++)
+		{
+			roomArray[i][e] = Room();
+		}
+	}
 }
 
 void PlayingState::Pause()
@@ -137,7 +138,7 @@ void PlayingState::Update(GameEngine* game)
 	// If the player is dead, quit the game
 	if (player.getStats().HP <= 0 && running)
 	{
-		game->PushState(GameOverState::Instance());
+		game->ChangeState(GameOverState::Instance());
 		running = false;
 		return;
 	}
@@ -191,7 +192,7 @@ void PlayingState::Draw(GameEngine* game)
 	// Display stats
 	buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 24, 5);	// Key count
 	//buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
-		//+ to_string(player.getLocation().Y)), con::fgHiWhite, 25, 5);
+	//	+ to_string(player.getLocation().Y)), con::fgHiWhite, 24, 5);
 	string tempTurn = (pTurn) ? "Player" : "Enemy";
 	buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 21, 5);	// Player hitpoints
 	buffer.draw(("EN: " + to_string(player.getStats().EN)), con::fgHiWhite, 22, 5); // Player endurance
@@ -337,15 +338,19 @@ void PlayingState::loadRooms()
 	roomOne.setLocation({ 1, 1 });
 
 	Room roomTwo("Rooms/Room2_1.txt");
-	roomTwo.setLocation({ 1, 2 });
+	roomTwo.setLocation({ 1, 0 });
 
 	Room roomThree("Rooms/Room3_1.txt");
-	roomThree.setLocation({ 1, 0 });
+	roomThree.setLocation({ 1, 2 });
+
+	Room roomFour("Rooms/Level_4.txt");
+	roomFour.setLocation({ 0, 1 });
 
 	// Puts the rooms into the floor array
 	roomArray[roomOne.getX()][roomOne.getY()] = roomOne;
 	roomArray[roomTwo.getX()][roomTwo.getY()] = roomTwo;
 	roomArray[roomThree.getX()][roomThree.getY()] = roomThree;
+	roomArray[roomFour.getX()][roomFour.getY()] = roomFour;
 
 	currentRoom = roomOne;
 }
@@ -405,20 +410,44 @@ void PlayingState::moveHighlight(KEYCODE eCode)
 
 void PlayingState::transitionRoom()
 {
-	if (player.getY() < 10)  // going up
-	{
-		changeRoom(currentRoom, { 0, 1 });
-		player.setLocation(currentRoom.getSouth());
-		highlight.Y = currentRoom.getSouth().Y - 1;
-		highlight.X = currentRoom.getSouth().X;
-	}
-	else if (player.getY() > 10)	// going down
+	COORD north = currentRoom.getNorth();
+	COORD south = currentRoom.getSouth();
+	COORD east = currentRoom.getEast();
+	COORD west = currentRoom.getWest();
+
+	if (highlight == north)			// Going up
 	{
 		changeRoom(currentRoom, { 0, -1 });
-		player.setLocation(currentRoom.getNorth());
-		highlight.Y = currentRoom.getNorth().Y + 1;
-		highlight.X = currentRoom.getNorth().X;
+		north = currentRoom.getNorth();
+		player.setLocation({ north.X, north.X - 1 });
+		highlight.Y = player.getY() - 1;
+		highlight.X = player.getX();
 	}
+	else if (highlight == south)	// Going down
+	{
+		changeRoom(currentRoom, { 0, 1 });
+		south = currentRoom.getSouth();
+		player.setLocation({ south.X, south.Y + 1 });
+		highlight.Y = player.getY() + 1;
+		highlight.X = player.getX();
+	}
+	else if (highlight == east)	// Going right
+	{
+		changeRoom(currentRoom, { 1, 0 });
+		west = currentRoom.getWest();
+		player.setLocation({ west.X + 1, west.Y });
+		highlight.Y = player.getY();
+		highlight.X = player.getX() + 1;
+	}
+	else if (highlight == west)		// Going left
+	{
+		changeRoom(currentRoom, { -1, 0 });
+		east = currentRoom.getEast();
+		player.setLocation({ east.X - 1, east.Y });
+		highlight.Y = player.getY();
+		highlight.X = player.getX() -1;
+	}
+	
 
 	log.clear();
 	log.push_back(currentRoom.getMessage());
