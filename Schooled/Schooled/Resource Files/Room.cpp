@@ -235,18 +235,19 @@ void Room::removeActor(COORD c)
 	actorList.erase(actorList.begin() + i);
 }
 
-void Room::moveActors1(COORD p)
+void Room::moveActors(COORD p, Actor& a)
 {
-	for (Actor& a : actorList)
+	if (a.getTile().tileInt == 13)
 	{
-		if (a.getTile().tileInt == 13)
-		{
-			moveCat(p, a);
-		}
-		else if (a.getTile().tileInt < 13)
-		{
-			moveEnemy1(p, a);
-		}
+		moveCat(p, a);
+	}
+	else if (a.getTile().tileInt < 13)
+	{
+		moveEnemy1(p, a);
+	}
+	else if (a.getTile().tileInt == 20)
+	{
+		moveMinion(a);
 	}
 }
 
@@ -385,7 +386,7 @@ void Room::moveEnemy1(COORD playerPos, Actor& enemy)
 	bool inRange = differenceX > -4 && differenceX < 4 && differenceY > -4 && differenceY < 4;
 
 	if (lineOfSight(playerPos, enemy) == true || inRange && lineOfSight(playerPos, enemy) == false)
-{
+	{
 		if (differenceX > -2 && differenceX < 2 && differenceY == 0 ||
 			differenceY > -2 && differenceY < 2 && differenceX == 0)
 		{
@@ -430,7 +431,6 @@ void Room::moveEnemy1(COORD playerPos, Actor& enemy)
 
 void Room::moveCat(COORD playerPos, Actor& enemy)
 {
-	// If enemy line of sight then move
 	int differenceX, differenceY, deltaX, deltaY;
 	int enemyX = enemy.getX();
 	int enemyY = enemy.getY();
@@ -441,58 +441,118 @@ void Room::moveCat(COORD playerPos, Actor& enemy)
 	differenceX = enemyX - playerX;
 	differenceY = enemyY - playerY;
 
-	if (differenceX > -2 && differenceX < 2 && differenceY > -2 && differenceY < 2){
-		deltaX = 0;
-		deltaY = 0;
-	}
-	else{
-		if (differenceX > differenceY)
-		{
-			if (enemyX > playerX)
-				deltaX = -1;
-			else if (enemyX < playerX)
-				deltaX = 1;
-			else
-				deltaX = 0;
-			if (!isPassable({ enemyX + deltaX, enemyY + deltaY }))
-			{
-				deltaX = 0;
-				if (enemyY > playerY)
-					deltaY = -1;
-				else if (enemyY < playerY)
-					deltaY = 1;
-				else
-					deltaY = 0;
-			}
+	if (lineOfSight(playerPos, enemy))
+	{
+		if (differenceX > -2 && differenceX < 2 && differenceY > -2 && differenceY < 2){
+			deltaX = 0;
+			deltaY = 0;
 		}
-		else
-		{
-			if (enemyY > playerY)
-				deltaY = -1;
-			else if (enemyY < playerY)
-				deltaY = 1;
-			else
-				deltaY = 0;
-			if (!isPassable({ enemyX + deltaX, enemyY + deltaY }))
+		else{
+			if (differenceX > differenceY)
 			{
-				deltaY = 0;
 				if (enemyX > playerX)
 					deltaX = -1;
 				else if (enemyX < playerX)
 					deltaX = 1;
 				else
 					deltaX = 0;
+				if (!isPassable({ enemyX + deltaX, enemyY + deltaY }))
+				{
+					deltaX = 0;
+					if (enemyY > playerY)
+						deltaY = -1;
+					else if (enemyY < playerY)
+						deltaY = 1;
+					else
+						deltaY = 0;
+				}
+			}
+			else
+			{
+				if (enemyY > playerY)
+					deltaY = -1;
+				else if (enemyY < playerY)
+					deltaY = 1;
+				else
+					deltaY = 0;
+				if (!isPassable({ enemyX + deltaX, enemyY + deltaY }))
+				{
+					deltaY = 0;
+					if (enemyX > playerX)
+						deltaX = -1;
+					else if (enemyX < playerX)
+						deltaX = 1;
+					else
+						deltaX = 0;
+				}
 			}
 		}
 	}
+	else
+	{
+		deltaX = 0;
+		deltaY = 0;
+	}
+	
 
 	if (isPassable({ enemyX + deltaX, enemyY + deltaY }))
 	{
 		setActorInt(enemy.getLocation(), 0);
 		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
 		setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
+		Sleep(200);
 	}
 }
+
+void Room::moveMinion(Actor& minion)
+{
+	int enemyX = minion.getX();
+	int enemyY = minion.getY();
+	int deltaX = 0;
+	int deltaY = 0;
+	bool bossDefeated = true;
+	for (int a = 0; a < schooled::MAP_HEIGHT; a++)
+	{
+		for (int b = 0; b < schooled::MAP_WIDTH; b++)
+		{
+			if (getActorInt({ b, a }) == 2 || getActorInt({ b, a }) == 3)
+			{
+				bossDefeated = false;
+			}
+		}
+	}
+	if (bossDefeated == true)
+	{
+		if (isPassable({ enemyX, enemyY - 1 }) && getTileInt({ enemyX, enemyY - 1 }) != 2)
+		{
+			deltaX = 0;
+			deltaY = -1;
+		}
+		else if (isPassable({ enemyX, enemyY + 1 }) && getTileInt({ enemyX, enemyY + 1 }) != 2)
+		{
+			deltaX = 0;
+			deltaY = 1;
+		}
+		else if (isPassable({ enemyX -1, enemyY }) && getTileInt({ enemyX -1, enemyY }) != 2)
+		{
+			deltaX = -1;
+			deltaY = 0;
+		}
+		else if (isPassable({ enemyX + 1, enemyY }) && getTileInt({ enemyX + 1, enemyY }) != 2)
+		{
+			deltaX = 1;
+			deltaY = 0;
+		}
+		if (isPassable({ enemyX + deltaX, enemyY + deltaY }))
+		{
+			setActorInt(minion.getLocation(), 0);
+			minion.setLocation({ enemyX + deltaX, enemyY + deltaY });
+			setActorInt(minion.getLocation(), 22);
+			Sleep(200);
+		}
+	}
+}
+
 bool Room::lineOfSight(COORD playerPos, Actor& enemy)
 {
 	bool isFound = false;

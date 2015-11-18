@@ -232,7 +232,7 @@ void PlayingState::enemyTurn()
 	{
 		if (a.getStats().EN > tCount)
 		{
-			if (currentRoom.isAdjacent(player.getLocation(), a) && a.getTile().tileInt != 13)
+			if (currentRoom.isAdjacent(player.getLocation(), a) && a.getTile().tileInt != 13 && a.getTile().tileInt != 20)
 			{
 				a.attack(player);
 				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
@@ -240,7 +240,7 @@ void PlayingState::enemyTurn()
 			}
 			else
 			{
-				currentRoom.moveEnemy1(player.getLocation(), a);
+				currentRoom.moveActors(player.getLocation(), a);
 			}
 		}
 
