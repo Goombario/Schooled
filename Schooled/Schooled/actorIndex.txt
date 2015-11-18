@@ -224,7 +224,7 @@ EN:0
 STR:0
 held item:KEY
 m_attack:
-m_defend:Gre- \n Will this shut you up?
+m_defend:Gree- \n Will this shut you up?
 
 name:MINION
 index:20

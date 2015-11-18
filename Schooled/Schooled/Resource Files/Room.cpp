@@ -243,7 +243,7 @@ void Room::moveActors1(COORD p)
 		{
 			moveCat(p, a);
 		}
-		else
+		else if (a.getTile().tileInt < 13)
 		{
 			moveEnemy1(p, a);
 		}
