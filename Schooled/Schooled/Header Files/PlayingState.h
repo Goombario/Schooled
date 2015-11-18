@@ -58,6 +58,9 @@ private:
 	// Handle the interact key
 	void interact();
 
+	// Get the starting location
+	void getStartLocation();
+
 	// Load the rooms, and set up the layout
 	void loadRooms();
 

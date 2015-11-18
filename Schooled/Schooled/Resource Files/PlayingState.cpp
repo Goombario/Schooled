@@ -1,8 +1,10 @@
 #include "../Header Files/PlayingState.h"
 #include "../Header Files/GameOverState.h"
 #include "../Header Files/MenuState.h"
+#include "../Header Files/ShareState.h"
 #include "../Header Files\Item.h"
 #include "../Header Files\Console_color.h"
+#include "../Header Files/sound_effects.h"
 
 using std::string;
 using std::to_string;
@@ -22,14 +24,17 @@ void PlayingState::Init()
 	loadRooms();
 	currentRoom = roomArray[1][1];
 
+	log.clear();
+	log.push_back(currentRoom.getMessage());
+
 	player = Actor({ '8', con::fgHiWhite }, { 10, 2, 2 });
-	player.setLocation({ 4, 4 });
-	highlight = { player.getX(), player.getY() + 1 };
+	getStartLocation();
 	delta = { 0, 0 };
 	
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	scheme = schooled::getSetting("ControlScheme");
+	snd::basement->play();
 }
 
 void PlayingState::Cleanup()
@@ -46,12 +51,12 @@ void PlayingState::Cleanup()
 
 void PlayingState::Pause()
 {
-
+	snd::basement->stop();
 }
 
 void PlayingState::Resume()
 {
-
+	snd::basement->play();
 }
 
 void PlayingState::HandleEvents(GameEngine* game)
@@ -138,6 +143,7 @@ void PlayingState::Update(GameEngine* game)
 	// If the player is dead, quit the game
 	if (player.getStats().HP <= 0 && running)
 	{
+		Pause();
 		game->ChangeState(GameOverState::Instance());
 		running = false;
 		return;
@@ -331,28 +337,67 @@ void PlayingState::interact()
 	}
 }
 
+void PlayingState::getStartLocation()
+{
+	COORD north = currentRoom.getNorth();
+	COORD south = currentRoom.getSouth();
+	COORD east = currentRoom.getEast();
+	COORD west = currentRoom.getWest();
+	COORD empty = { 0, 0 };
+
+	// Check which doors the player can spawn at.
+	if (north != empty)
+	{
+		player.setLocation({ north.X, north.Y + 1 });
+		highlight.Y = player.getY() + 1;
+		highlight.X = player.getX();
+	}
+	else if (south != empty)
+	{
+		player.setLocation({ south.X, south.Y - 1 });
+		highlight.Y = player.getY() - 1;
+		highlight.X = player.getX();
+	}
+	else if (east != empty)
+	{
+		player.setLocation({ east.X + 1, east.Y });
+		highlight.Y = player.getY();
+		highlight.X = player.getX() + 1;
+	}
+	else if (west != empty)
+	{
+		player.setLocation({ west.X - 1, west.Y });
+		highlight.Y = player.getY();
+		highlight.X = player.getX() - 1;
+	}
+}
+
 void PlayingState::loadRooms()
 {
-	// Load the rooms from the file
-	Room roomOne("Rooms/Room4_1.txt");
-	roomOne.setLocation({ 1, 1 });
-
-	Room roomTwo("Rooms/Room2_1.txt");
-	roomTwo.setLocation({ 1, 0 });
-
-	Room roomThree("Rooms/Room3_1.txt");
-	roomThree.setLocation({ 1, 2 });
-
-	Room roomFour("Rooms/Level_4.txt");
-	roomFour.setLocation({ 0, 1 });
-
-	// Puts the rooms into the floor array
-	roomArray[roomOne.getX()][roomOne.getY()] = roomOne;
-	roomArray[roomTwo.getX()][roomTwo.getY()] = roomTwo;
-	roomArray[roomThree.getX()][roomThree.getY()] = roomThree;
-	roomArray[roomFour.getX()][roomFour.getY()] = roomFour;
-
-	currentRoom = roomOne;
+	Room temp;
+	vector<string> roomFileList = shared::getRoomNames();
+	vector<COORD> locationList = { { 1, 1 }, { 1, 0 }, { 0, 0 }, { 0, 1 }, { 1, 2 } };
+	
+	// If the level selector has chosen a level
+	if (MenuState::levelSelected() != 0)
+	{
+		temp = Room(roomFileList[MenuState::levelSelected() - 1]);
+		temp.setLocation({ 1, 1 });
+		roomArray[1][1] = temp;
+	}
+	else
+	{	// Load the rooms from the file
+		for (unsigned int i = 0; i < locationList.size(); i++)
+		{
+			temp = Room(roomFileList[i]);
+			temp.setLocation(locationList[i]);
+			if (temp.getX() >= 0 && temp.getY() >= 0)
+			{
+				roomArray[temp.getX()][temp.getY()] = temp;
+			}
+		}
+	}
+	currentRoom = roomArray[1][1];
 }
 
 void PlayingState::moveHighlight(KEYCODE eCode)
@@ -410,6 +455,11 @@ void PlayingState::moveHighlight(KEYCODE eCode)
 
 void PlayingState::transitionRoom()
 {
+	if (MenuState::levelSelected() != 0)
+	{
+		running = false;
+		return;
+	}
 	COORD north = currentRoom.getNorth();
 	COORD south = currentRoom.getSouth();
 	COORD east = currentRoom.getEast();
@@ -418,17 +468,17 @@ void PlayingState::transitionRoom()
 	if (highlight == north)			// Going up
 	{
 		changeRoom(currentRoom, { 0, -1 });
-		north = currentRoom.getNorth();
-		player.setLocation({ north.X, north.X - 1 });
-		highlight.Y = player.getY() - 1;
+		south = currentRoom.getSouth();
+		player.setLocation({ south.X, south.Y + 1 });
+		highlight.Y = player.getY() + 1;
 		highlight.X = player.getX();
 	}
 	else if (highlight == south)	// Going down
 	{
 		changeRoom(currentRoom, { 0, 1 });
-		south = currentRoom.getSouth();
-		player.setLocation({ south.X, south.Y + 1 });
-		highlight.Y = player.getY() + 1;
+		north = currentRoom.getNorth();
+		player.setLocation({ north.X, north.Y - 1 });
+		highlight.Y = player.getY() - 1;
 		highlight.X = player.getX();
 	}
 	else if (highlight == east)	// Going right
