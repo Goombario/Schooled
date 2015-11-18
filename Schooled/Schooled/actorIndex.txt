@@ -147,7 +147,7 @@ index:13
 symbol:'o'
 colour:8U // grey
 passable:false
-HP:100
+HP:2500
 EN:2
 STR:0
 held item:0
@@ -159,7 +159,7 @@ index:14
 symbol:'O'
 colour:7U // hiWhite
 passable:false
-HP:400
+HP:1000
 EN:0
 STR:0
 held item:0
@@ -171,7 +171,7 @@ index:15
 symbol:'O'
 colour:7U // hiWhite
 passable:false
-HP:225
+HP:900
 EN:0
 STR:0
 held item:0
@@ -183,7 +183,7 @@ index:16
 symbol:'O'
 colour:7U // hiWhite
 passable:false
-HP:225
+HP:900
 EN:0
 STR:0
 held item:0
@@ -195,7 +195,7 @@ index:17
 symbol:'O'
 colour:7U // hiWhite
 passable:false
-HP:225
+HP:900
 EN:0
 STR:0
 held item:0
@@ -207,7 +207,7 @@ index:18
 symbol:'O'
 colour:7U // hiWhite
 passable:false
-HP:225
+HP:900
 EN:0
 STR:0
 held item:0
@@ -219,7 +219,7 @@ index:19
 symbol:'O'
 colour:7U // hiWhite
 passable:false
-HP:225
+HP:900
 EN:0
 STR:0
 held item:KEY
@@ -231,8 +231,8 @@ index:20
 symbol:'O'
 colour:7U // hiWhite
 passable:false
-HP:350
-EN:0
+HP:5000
+EN:1
 STR:0
 held item:0
 m_attack:
@@ -243,9 +243,21 @@ index:21
 symbol:'O'
 colour:7U // hiWhite
 passable:false
-HP:250
+HP:1000
 EN:0
 STR:0
 held item:0
 m_attack:
 m_defend:*snores* \n How does he not notice everyone's asleep?
+
+name:SCARED_MINION
+index:22
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n Wha-what Boss don't know wo-won't hurt 'em...
