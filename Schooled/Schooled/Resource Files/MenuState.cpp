@@ -48,6 +48,9 @@ void MenuState::Init()
 	menuSelections.push_back("Credits");
 	menuSelections.push_back("Quit");
 
+	// Load schemes
+	setSchemes();
+
 	// Set flags
 	selectingControl = false;
 	selectingLevel = false;
@@ -235,6 +238,40 @@ void MenuState::Draw(GameEngine* game)
 			row ++;
 		}
 	}
+	// Choosing the control scheme and show the actual changes
+	else if (selectingControl)
+	{
+		int row = 4;
+		int col;
+		string temp = "<- " + controlOptions[selectedControl] + " ->";
+		vector<string> tempScheme;
+
+		// Draw the selected control scheme
+		buffer.draw(temp, con::fgHiWhite, 21, (30 - temp.size() / 2));
+		
+		// Choose the correct scheme to display
+		switch (selectedControl)
+		{
+		case 0:
+			tempScheme = cScheme;
+			break;
+		case 1:
+			tempScheme = dScheme;
+			break;
+		case 2:
+			tempScheme = clScheme;
+			break;
+		case 3:
+			tempScheme = dlScheme;
+			break;
+		}
+		for (string s : tempScheme)
+		{
+			col = 30 - s.size() / 2;
+			buffer.draw(s, con::fgHiWhite, row, col);
+			row += 2;
+		}
+	}
 	else
 	{
 		buffer.draw(art, con::fgHiWhite, 1, 3);
@@ -258,12 +295,6 @@ void MenuState::Draw(GameEngine* game)
 			}
 			buffer.draw(menuSelections[i], colour, row, col);
 			row += 2;
-		}
-
-		if (selectingControl)
-		{
-			string temp = "<- " + controlOptions[selectedControl] + " ->";
-			buffer.draw(temp, con::fgHiWhite, 21, (30 - temp.size() / 2));
 		}
 	}
 	
@@ -331,7 +362,7 @@ void MenuState::handleMenu(GameEngine* game)
 
 	case 3:
 		break;
-
+		
 	case 4:
 		game->Quit();
 		break;
@@ -388,4 +419,43 @@ void MenuState::initSettings()
 	}
 	stream << "ControlScheme: Classic" << std::endl;
 	stream.close();
+}
+
+void MenuState::setSchemes()
+{
+	// Classic scheme
+	cScheme.push_back("FACE UP = UP");
+	cScheme.push_back("FACE DOWN = DOWN");
+	cScheme.push_back("FACE LEFT = LEFT");
+	cScheme.push_back("FACE RIGHT = RIGHT");
+	cScheme.push_back("MOVE = Z");
+	cScheme.push_back("ATTACK = X");
+	cScheme.push_back("INTERACT = SPACE");
+
+	// Double-Tap scheme
+	dScheme.push_back("FACE UP = UP");
+	dScheme.push_back("FACE DOWN = DOWN");
+	dScheme.push_back("FACE LEFT = LEFT");
+	dScheme.push_back("FACE RIGHT = RIGHT");
+	dScheme.push_back("MOVE = FACE KEYS (TAP AGAIN)");
+	dScheme.push_back("ATTACK = X");
+	dScheme.push_back("INTERACT = SPACE");
+
+	// Classic lefty scheme
+	clScheme.push_back("FACE UP = W");
+	clScheme.push_back("FACE DOWN = S");
+	clScheme.push_back("FACE LEFT = A");
+	clScheme.push_back("FACE RIGHT = D");
+	clScheme.push_back("MOVE = M");
+	clScheme.push_back("ATTACK = N");
+	clScheme.push_back("INTERACT = SPACE");
+
+	// Double-Tap lefty scheme
+	dlScheme.push_back("FACE UP = W");
+	dlScheme.push_back("FACE DOWN = S");
+	dlScheme.push_back("FACE LEFT = A");
+	dlScheme.push_back("FACE RIGHT = D");
+	dlScheme.push_back("MOVE = FACE KEYS (TAP AGAIN)");
+	dlScheme.push_back("ATTACK = N");
+	dlScheme.push_back("INTERACT = SPACE");
 }
