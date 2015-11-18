@@ -195,7 +195,7 @@ void PlayingState::attack()
 	if (currentRoom.getActorInt(highlight) > 0){
 		Actor *a = &currentRoom.getActor(highlight);
 		player.attack(currentRoom.getActor(highlight));
-		if (currentRoom.getActor(highlight).getTile().tileInt == 13)
+		if (currentRoom.getActor(highlight).getTile().tileInt >= 13)
 		{
 			log.push_back(a->getMDefend());
 		}
