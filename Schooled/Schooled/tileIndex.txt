@@ -1,0 +1,23 @@
+name:MAP_FLOOR
+index:0
+symbol:' '
+colour:15U // black
+passable:true
+
+name:MAP_WALL_TOP
+index:1
+symbol:'='
+colour:10U // hiGreen
+passable:false
+
+name:MAP_DOOR
+index:2
+symbol:'D'
+colour:9U // hiBlue
+passable:true
+
+name:MAP_WALL_TOP
+index:3
+symbol:'|'
+colour:10U // hiGreen
+passable:false

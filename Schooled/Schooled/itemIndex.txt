@@ -1,0 +1,99 @@
+name:NULL
+index:0
+symbol:' '
+colour:0U // black
+passable:true
+HP:0
+EN:0
+STR:0
+mPickup:0
+
+name:KEY
+index:1
+symbol:'~'
+colour:15U // hiWhite
+passable:true
+HP:0
+EN:0
+STR:0
+mPickup:It's a key! You picked it up.
+
+name:DOOR_TO_NEW_ROOM
+index:2
+symbol:'D'
+colour:1U //loBlue
+passable:false
+HP:0
+EN:0
+STR:0
+mPickup:0
+
+name:MAP_DOOR_LOCKED
+index:3
+symbol:'D'
+colour:12U // hiRed
+passable:false
+HP:0
+EN:0
+STR:0
+mPickup:0
+
+name:FACE_PAINT
+index:4
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:0
+EN:0
+STR:1
+mPickup:You are no longer Nate. You are now...Nate the Great!
+
+name:GOLDFISH
+index:5
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:1
+EN:1
+STR:1
+mPickup:Sweet! Your enemies won't be smiling back!
+
+name:GLASSES
+index:6
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:0
+EN:0
+STR:1
+mPickup:These make you smarter, right? +1 Fashion.
+
+name:BACKPACK
+index:7
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:1
+EN:0
+STR:1
+mPickup:You can't believe you just left it here!
+
+name:TEARS
+index:8
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:0
+EN:0
+STR:2
+mPickup:Oh no. Math class.
+
+name:BANDAID
+index:9
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:5
+EN:0
+STR:0
+mPickup:You found a bandaid. Unused too!

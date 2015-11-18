@@ -1,0 +1,251 @@
+name:BULLY_WEAK
+index:1
+symbol:'x'
+colour:15U // black
+passable:false
+HP:6
+EN:1
+STR:1
+held item:KEY
+m_attack:He punches you.
+m_defend:You punch him.
+
+name:BULLY_STRONG
+index:2
+symbol:'X'
+colour:15U // black
+passable:false
+HP:10
+EN:2
+STR:1
+held item:KEY
+m_attack:He punches you.
+m_defend:You tickle him. Hehe.
+
+name:BIG_BULLY_BILLY
+index:3
+symbol:'X'
+colour:12U // hiRed
+passable:false
+HP:20
+EN:1
+STR:2
+held item:0
+m_attack:This is my playground.
+m_defend:Sharing is caring.
+
+name:DRAMA_TEACHER
+index:4
+symbol:'T'
+colour:12U // hiRed
+passable:false
+HP:5
+EN:5
+STR:1
+held item:KEY
+m_attack:And you have the role of Death. So. Stop BREATHING.
+m_defend:Should've taken music.
+
+name:THIEF_BULLIES
+index:5
+symbol:'x'
+colour:15U // black
+passable:false
+HP:8
+EN:2
+STR:1
+held item:0
+m_attack:We're the ones who hid your bag NERD!
+m_defend:You like to consider myself more of a dork, actually.
+
+name:TATTLETALE
+index:6
+symbol:'t'
+colour:15U // black
+passable:false
+HP:3
+EN:1
+STR:4
+held item:KEY
+m_attack:You're in the girls room! I'm telling!
+m_defend:Oh dear.
+
+name:TEACHER
+index:7
+symbol:'T'
+colour:12U // hiRed
+passable:false
+HP:7
+EN:3
+STR:1
+held item:KEY
+m_attack:I've got eyes on the back of my head.
+m_defend:...Voldemort?
+
+name:SECRETARY
+index:8
+symbol:'S'
+colour:15U // black
+passable:false
+HP:4
+EN:1
+STR:2
+held item:0
+m_attack:*bubblegum pop*
+m_defend:You unplug something when she's not looking.
+
+name:PRINCIPLE
+index:9
+symbol:'P'
+colour:12U // hiRed
+passable:false
+HP:10
+EN:3
+STR:5
+held item:0
+m_attack:Welcome to today's assembly!
+m_defend:More like dissembly. Welp, there goes your arm.
+
+name:MATH_TEACHER
+index:10
+symbol:'T'
+colour:12U // hiRed
+passable:false
+HP:15
+EN:2
+STR:3
+held item:0
+m_attack:Good time for questions.
+m_defend:Can you repeat that last example?
+
+name:MUSIC_TEACHER
+index:11
+symbol:'T'
+colour:12U // hiRed
+passable:false
+HP:12
+EN:2
+STR:2
+held item:0
+m_attack:You sound like a dead walrus giving birth. Get it right before it becomes twins.
+m_defend:...Should've taken drama.
+
+name:MUSIC_STUDENT
+index:12
+symbol:'x'
+colour:15U // black
+passable:false
+HP:6
+EN:1
+STR:2
+held item:KEY
+m_attack:Don't make me use this.
+m_defend:*whale noises*
+
+name:CAT
+index:13
+symbol:'o'
+colour:8U // grey
+passable:false
+HP:100
+EN:1
+STR:0
+held item:0
+m_attack:Meow
+m_defend:You pet the cat.
+
+name:DRAMA_KID
+index:14
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:400
+EN:0
+STR:0
+held item:0
+m_attack:You made it on stage? But you're still breathing...
+m_defend:
+
+name:NERD_1
+index:15
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:225
+EN:0
+STR:0
+held item:0
+m_attack:I'm mid-game.
+m_defend:Salutations.
+
+name:NERD_2
+index:16
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:225
+EN:0
+STR:0
+held item:0
+m_attack:...
+m_defend:Hello.
+
+name:NERD_3
+index:17
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:225
+EN:0
+STR:0
+held item:0
+m_attack:Please, don't disturb me!
+m_defend:Hi.
+
+name:NERD_4
+index:18
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:225
+EN:0
+STR:0
+held item:0
+m_attack:Shhhhh!
+m_defend:Hey.
+
+name:NERD_5
+index:19
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:225
+EN:0
+STR:0
+held item:KEY
+m_attack:Will this shut you up?
+m_defend:...
+
+name:MINION
+index:20
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:350
+EN:0
+STR:0
+held item:0
+m_attack:Boss told me I can't move, so I ain't movin'.
+m_defend:Can you move please?
+
+name:ASSEMBLY_GOERS
+index:21
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:250
+EN:0
+STR:0
+held item:0
+m_attack:*snores*
+m_defend:How does he not notice everyone's asleep?
