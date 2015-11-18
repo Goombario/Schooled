@@ -34,11 +34,11 @@ private:
 	static MenuState m_MenuState;
 	string art;
 	int menuSelect, levelSelect;
-	vector<string> menuSelections, levelSelections;
+	vector<string> menuSelections, levelSelections, 
+		cScheme, dScheme, clScheme, dlScheme;
 	bool selectingControl, selectingLevel, changedSettings;
 	int selectedControl;
 	static int lSelect;
-
 
 	void handleMenu(GameEngine* game);
 	void saveSetting(string, string);
@@ -46,6 +46,9 @@ private:
 
 	//Gets file contents (NEEDS REMOVAL)
 	string getFileContents(std::ifstream&);
+
+	// Sets up the scheme displays
+	void setSchemes();
 };
 
 
