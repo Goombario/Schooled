@@ -36,7 +36,7 @@ private:
 	int menuSelect, levelSelect;
 	vector<string> menuSelections, levelSelections, 
 		cScheme, dScheme, clScheme, dlScheme;
-	bool selectingControl, selectingLevel, changedSettings;
+	bool selectingControl, selectingLevel, selectingCredits, changedSettings;
 	int selectedControl;
 	static int lSelect;
 

@@ -55,6 +55,7 @@ void MenuState::Init()
 	selectingControl = false;
 	selectingLevel = false;
 	changedSettings = false;
+	selectingCredits = false;
 
 	// Get the level list
 	levelSelections = shared::getRoomNames();
@@ -99,11 +100,13 @@ void MenuState::HandleEvents(GameEngine* game)
 	switch (sKeyPress.eCode)
 	{
 	case CONSOLE_KEY_ESCAPE:
-		if (!selectingControl && !selectingLevel)
+		if (!selectingControl && !selectingLevel && !selectingCredits)
 		{
 			game->Quit();
 		}
-		else if (selectingControl)
+	case CONSOLE_KEY_X:
+	case CONSOLE_KEY_N:
+		if (selectingControl)
 		{
 			selectingControl = false;
 			changedSettings = false;
@@ -114,9 +117,14 @@ void MenuState::HandleEvents(GameEngine* game)
 			lSelect = 0;
 			levelSelect = 0;
 		}
+		else if (selectingCredits)
+		{
+			selectingCredits = false;
+		}
 		break;
 		
 	case CONSOLE_KEY_UP:
+	case CONSOLE_KEY_W:
 		if (selectingControl) break; // Don't move if changing controls
 
 		if (selectingLevel)	// Choosing a level to play
@@ -143,6 +151,7 @@ void MenuState::HandleEvents(GameEngine* game)
 		break;
 
 	case CONSOLE_KEY_DOWN:
+	case CONSOLE_KEY_S:
 		if (selectingControl) break; // Don't move if changing controls
 		if (selectingLevel)	// Choosing a level to play
 		{
@@ -167,6 +176,7 @@ void MenuState::HandleEvents(GameEngine* game)
 		break;
 
 	case CONSOLE_KEY_LEFT:
+	case CONSOLE_KEY_A:
 		if (!selectingControl) break;
 		if (selectedControl > 0)
 		{
@@ -179,6 +189,7 @@ void MenuState::HandleEvents(GameEngine* game)
 		break;
 
 	case CONSOLE_KEY_RIGHT:
+	case CONSOLE_KEY_D:
 		if (!selectingControl) break;
 		if (selectedControl < controlOptions.size() - 1)
 		{
@@ -192,6 +203,7 @@ void MenuState::HandleEvents(GameEngine* game)
 
 	case CONSOLE_KEY_RETURN:
 	case CONSOLE_KEY_Z:
+	case CONSOLE_KEY_M:
 		handleMenu(game);
 		break;
 
@@ -272,6 +284,13 @@ void MenuState::Draw(GameEngine* game)
 			row += 2;
 		}
 	}
+	else if (selectingCredits)
+	{
+		string temp = "Robbie Savaglio\nRebecca Joly\nSam \"Lili\" Bouffard\nPavlo Salimon\nGraham Watson";
+		buffer.draw(art, con::fgHiWhite, 1, 3);
+		buffer.draw(temp, con::fgHiMagenta, 16, 23);
+		buffer.draw("PRESS ESC TO RETURN", con::fgHiWhite, 22, 23);
+	}
 	else
 	{
 		buffer.draw(art, con::fgHiWhite, 1, 3);
@@ -329,12 +348,14 @@ void MenuState::handleMenu(GameEngine* game)
 	switch (menuSelect)
 	{
 	case 0:
+		// Start game
 		snd::title->stop();
 		snd::pewpew->play();
 		game->PushState(PlayingState::Instance());
 		break;
 
 	case 1:
+		// Control settings
 		if (!selectingControl)
 		{
 			selectingControl = true;
@@ -347,6 +368,7 @@ void MenuState::handleMenu(GameEngine* game)
 		break;
 
 	case 2:
+		// Level selector
 		if (!selectingLevel)
 		{
 			selectingLevel = true;
@@ -361,9 +383,19 @@ void MenuState::handleMenu(GameEngine* game)
 		break;
 
 	case 3:
+		// Credits
+		if (!selectingCredits)
+		{
+			selectingCredits = true;
+		}
+		else
+		{
+			selectingCredits = false;
+		}
 		break;
 		
 	case 4:
+		// Quit game
 		game->Quit();
 		break;
 

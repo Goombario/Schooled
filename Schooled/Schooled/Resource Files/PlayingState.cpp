@@ -40,13 +40,6 @@ void PlayingState::Init()
 void PlayingState::Cleanup()
 {
 	log.clear();
-	for (int i = 0; i < schooled::FLOOR_HEIGHT; i++)
-	{
-		for (int e = 0; e < schooled::FLOOR_WIDTH; e++)
-		{
-			roomArray[i][e] = Room();
-		}
-	}
 }
 
 void PlayingState::Pause()
