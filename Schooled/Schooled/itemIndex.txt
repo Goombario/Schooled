@@ -77,3 +77,23 @@ HP:1
 EN:0
 STR:1
 mPickup:You can't believe you just left it here!
+
+name:TEARS
+index:8
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:0
+EN:0
+STR:2
+mPickup:Oh no. Math class.
+
+name:BANDAID
+index:9
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:5
+EN:0
+STR:0
+mPickup:You found a bandaid. Unused too!

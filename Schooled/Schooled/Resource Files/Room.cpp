@@ -235,11 +235,11 @@ void Room::removeActor(COORD c)
 	actorList.erase(actorList.begin() + i);
 }
 
-void Room::moveActors(COORD p)
+void Room::moveActors1(COORD p)
 {
 	for (Actor& a : actorList)
 	{
-		moveEnemy(p, a);
+		moveEnemy1(p, a);
 	}
 }
 
@@ -364,7 +364,7 @@ void Room::save(string fileName)
 	stream.close();
 }
 
-void Room::moveEnemy(COORD playerPos, Actor& enemy)
+void Room::moveEnemy1(COORD playerPos, Actor& enemy)
 {
 	int differenceX, differenceY, deltaX, deltaY;
 	int enemyX = enemy.getX();

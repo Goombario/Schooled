@@ -233,7 +233,7 @@ void PlayingState::enemyTurn()
 			}
 			else
 			{
-				currentRoom.moveEnemy(player.getLocation(), a);
+				currentRoom.moveEnemy1(player.getLocation(), a);
 			}
 		}
 
@@ -301,10 +301,45 @@ void PlayingState::interact()
 			log.push_back(messages["DOOR_LOCKED"]);
 		}
 		break;
-	// POTION
+	// FACE_PAINT
 	case 4:
-		log.push_back(messages["POTION"]);
-		player.pickUp(currentRoom.getItemStats(currentRoom.randomItem()));
+		log.push_back(currentRoom.itemIndex[4].getMPickup());
+		player.pickUp(currentRoom.getItemStats(4));
+		currentRoom.setItemInt(highlight, 0);
+		break;
+
+	// GOLDFISH
+	case 5:
+		log.push_back(currentRoom.itemIndex[5].getMPickup());
+		player.pickUp(currentRoom.getItemStats(5));
+		currentRoom.setItemInt(highlight, 0);
+		break;
+
+	// GLASSES
+	case 6:
+		log.push_back(currentRoom.itemIndex[6].getMPickup());
+		player.pickUp(currentRoom.getItemStats(6));
+		currentRoom.setItemInt(highlight, 0);
+		break;
+
+	// BACKPACK
+	case 7:
+		log.push_back(currentRoom.itemIndex[7].getMPickup());
+		player.pickUp(currentRoom.getItemStats(7));
+		currentRoom.setItemInt(highlight, 0);
+		break;
+
+	// TEARS
+	case 8:
+		log.push_back(currentRoom.itemIndex[8].getMPickup());
+		player.pickUp(currentRoom.getItemStats(8));
+		currentRoom.setItemInt(highlight, 0);
+		break;
+
+	// BANDAID
+	case 9:
+		log.push_back(currentRoom.itemIndex[9].getMPickup());
+		player.pickUp(currentRoom.getItemStats(9));
 		currentRoom.setItemInt(highlight, 0);
 		break;
 

@@ -32,7 +32,7 @@ void MenuState::Init()
 	}
 
 	// Play the music
-	//snd::title->play();
+	snd::title->play();
 
 	// Set the default location of the selection to "Start Game"
 	menuSelect = 0;
