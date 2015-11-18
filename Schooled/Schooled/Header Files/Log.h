@@ -33,7 +33,7 @@ static map<string, string> messages =
 	{ "GET_KEY", "It's a key! You picked it up." },
 	{ "DOOR_LOCKED", "The door is locked, you need a key." },
 	{ "USE_KEY", "You used a key!" },
-	{ "Q_USE_KEY", "The door is locked, use a key?" },
+	{ "RECIEVE_KEY", "You got a key!" },
 	{ "Q_NEXT_ROOM", "Go to next room?" },
 	{ "NEW_ROOM", "New room." },
 	{ "ENEMY_DEATH", "It died..." },
@@ -41,7 +41,7 @@ static map<string, string> messages =
 	{ "ATTACKABLE", "You hit that thing with " },
 	{ "ENEMY_ATTACK", "You got hit with " },
 	{ "PLAYER_DEATH", "You died..." },
-	{"POTION", "You found an item! Wonder what it does..."}
+	{"ENEMY_INTERACT", "What d'you think this is? The Talk? Fight me!"}
 };
 
 
