@@ -64,7 +64,7 @@ public:
 	
 private:
 	vector<Actor> actorList;
-	COORD location;
+	COORD location, startPoint;
 	string message;
 	COORD entrances[4];
 	int tileArray[schooled::MAP_HEIGHT][schooled::MAP_WIDTH];

@@ -4,6 +4,7 @@
 #include "../Header Files/Console_color.h"
 #include "../Console Library/Console.h"
 #include "../Header Files/sound_effects.h"
+#include "../Header Files/ShareState.h"
 
 #include <fstream>
 #include <stdio.h>
@@ -13,6 +14,7 @@ using schooled::controlOptions;
 namespace con = JadedHoboConsole;
 
 MenuState MenuState::m_MenuState;
+int MenuState::lSelect = 0;
 
 void MenuState::Init()
 {
@@ -34,7 +36,7 @@ void MenuState::Init()
 	}
 
 	// Play the music
-	//snd::title->play();
+	snd::title->play();
 
 	// Set the default location of the selection to "Start Game"
 	menuSelect = 0;
@@ -42,10 +44,17 @@ void MenuState::Init()
 	// Set the menu options
 	menuSelections.push_back("Start Game");
 	menuSelections.push_back("Control Options");
+	menuSelections.push_back("Level Select");
+	menuSelections.push_back("Credits");
 	menuSelections.push_back("Quit");
 
-	selectControl = false;
+	// Set flags
+	selectingControl = false;
+	selectingLevel = false;
 	changedSettings = false;
+
+	// Get the level list
+	levelSelections = shared::getRoomNames();
 
 	// Get the control from the settings file
 	selectedControl = 0;
@@ -78,7 +87,7 @@ void MenuState::Pause()
 void MenuState::Resume()
 {
 	// Play the music
-	//snd::title->play();
+	snd::title->play();
 }
 
 void MenuState::HandleEvents(GameEngine* game)
@@ -87,11 +96,39 @@ void MenuState::HandleEvents(GameEngine* game)
 	switch (sKeyPress.eCode)
 	{
 	case CONSOLE_KEY_ESCAPE:
-		game->Quit();
+		if (!selectingControl && !selectingLevel)
+		{
+			game->Quit();
+		}
+		else if (selectingControl)
+		{
+			selectingControl = false;
+			changedSettings = false;
+		}
+		else if (selectingLevel)
+		{
+			selectingLevel = false;
+			lSelect = 0;
+			levelSelect = 0;
+		}
 		break;
 		
 	case CONSOLE_KEY_UP:
-		if (selectControl) break; // Don't move if changing controls
+		if (selectingControl) break; // Don't move if changing controls
+
+		if (selectingLevel)	// Choosing a level to play
+		{
+			if (levelSelect > 0)
+			{
+				levelSelect--;
+			}
+			else
+			{
+				levelSelect = levelSelections.size() - 1;
+			}
+			break;
+		}
+
 		if (menuSelect > 0)
 		{
 			menuSelect--;
@@ -103,7 +140,19 @@ void MenuState::HandleEvents(GameEngine* game)
 		break;
 
 	case CONSOLE_KEY_DOWN:
-		if (selectControl) break; // Don't move if changing controls
+		if (selectingControl) break; // Don't move if changing controls
+		if (selectingLevel)	// Choosing a level to play
+		{
+			if (levelSelect < levelSelections.size() - 1)
+			{
+				levelSelect++;
+			}
+			else
+			{
+				levelSelect = 0;
+			}
+			break;
+		}
 		if (menuSelect < menuSelections.size() - 1)
 		{
 			menuSelect++;
@@ -115,7 +164,7 @@ void MenuState::HandleEvents(GameEngine* game)
 		break;
 
 	case CONSOLE_KEY_LEFT:
-		if (!selectControl) break;
+		if (!selectingControl) break;
 		if (selectedControl > 0)
 		{
 			selectedControl--;
@@ -124,11 +173,10 @@ void MenuState::HandleEvents(GameEngine* game)
 		{
 			selectedControl = controlOptions.size() - 1;
 		}
-		changedSettings = true;
 		break;
 
 	case CONSOLE_KEY_RIGHT:
-		if (!selectControl) break;
+		if (!selectingControl) break;
 		if (selectedControl < controlOptions.size() - 1)
 		{
 			selectedControl++;
@@ -137,7 +185,6 @@ void MenuState::HandleEvents(GameEngine* game)
 		{
 			selectedControl = 0;
 		}
-		changedSettings = true;
 		break;
 
 	case CONSOLE_KEY_RETURN:
@@ -164,35 +211,62 @@ void MenuState::Draw(GameEngine* game)
 
 	buffer.clear();
 
-	buffer.draw(art, con::fgHiWhite, 1, 3);
-
-	// Draw the menu options to the screen
-	int row = 18;
-	for (unsigned int i = 0; i < menuSelections.size(); i++)
+	// Level select screen
+	if (selectingLevel)
 	{
+		buffer.draw("Choose a level (ESC to go back)", con::fgHiWhite, 1, 20);
+		int row = 3;
 		WORD colour;
 		int col;
-		col = 30 - menuSelections[i].size() / 2; // Centering the text
+		for (unsigned int i = 0; i < levelSelections.size(); i++)
+		{
+			col = 30 - levelSelections[i].size() / 2;	// Centering the text
 
-		// Determine the colour of the text
-		if (menuSelect == i)
-		{
-			colour = con::fgHiWhite;
+			// Determine the colour of the text
+			if (levelSelect == i)
+			{
+				colour = con::fgHiWhite;
+			}
+			else
+			{
+				colour = con::fgLoWhite;
+			}
+			buffer.draw(levelSelections[i], colour, row, col);
+			row ++;
 		}
-		else
-		{
-			colour = con::fgLoWhite;
-		}
-		buffer.draw(menuSelections[i], colour, row, col);
-		row += 2;
 	}
-
-	if (selectControl)
+	else
 	{
-		string temp = "<- " + controlOptions[selectedControl] + " ->";
-		buffer.draw(temp, con::fgHiWhite, 21, (30 - temp.size() / 2));
-	}
+		buffer.draw(art, con::fgHiWhite, 1, 3);
 
+		// Draw the menu options to the screen
+		int row = 16;
+		WORD colour;
+		int col;
+		for (unsigned int i = 0; i < menuSelections.size(); i++)
+		{
+			col = 30 - menuSelections[i].size() / 2; // Centering the text
+
+			// Determine the colour of the text
+			if (menuSelect == i)
+			{
+				colour = con::fgHiWhite;
+			}
+			else
+			{
+				colour = con::fgLoWhite;
+			}
+			buffer.draw(menuSelections[i], colour, row, col);
+			row += 2;
+		}
+
+		if (selectingControl)
+		{
+			string temp = "<- " + controlOptions[selectedControl] + " ->";
+			buffer.draw(temp, con::fgHiWhite, 21, (30 - temp.size() / 2));
+		}
+	}
+	
 	// Close the buffer
 	buffer.close(hConsole);
 }
@@ -224,22 +298,43 @@ void MenuState::handleMenu(GameEngine* game)
 	switch (menuSelect)
 	{
 	case 0:
+		snd::title->stop();
+		snd::pewpew->play();
 		game->PushState(PlayingState::Instance());
 		break;
 
 	case 1:
-		if (!selectControl)
+		if (!selectingControl)
 		{
-			selectControl = true;
+			selectingControl = true;
 		}
 		else
 		{
-			selectControl = false;
+			selectingControl = false;
+			changedSettings = true;
 		}
 		break;
 
 	case 2:
+		if (!selectingLevel)
+		{
+			selectingLevel = true;
+		}
+		else
+		{
+			lSelect = levelSelect;
+			snd::title->stop();
+			snd::pewpew->play();
+			game->PushState(PlayingState::Instance());
+		}
+		break;
+
+	case 3:
+		break;
+
+	case 4:
 		game->Quit();
+		break;
 
 	default:
 		break;
