@@ -36,6 +36,7 @@ public:
 	void moveActors1(COORD);	// Move all actors in actorList
 	vector<Actor>& getActorList(); // Getting the entire actor list
 	void moveEnemy1(COORD, Actor&);	// Move an enemy towards player
+	void moveCat(COORD, Actor&);	// Move a cat towards player
 	bool isAdjacent(COORD, Actor&); //checks if enemy is adjacent to the player
 	bool lineOfSight(COORD, Actor&);	// Determines if actor can see coordinate
 

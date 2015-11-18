@@ -148,11 +148,11 @@ symbol:'o'
 colour:8U // grey
 passable:false
 HP:100
-EN:1
+EN:2
 STR:0
 held item:0
-m_attack:Meow
-m_defend:You pet the cat.
+m_attack:
+m_defend:Meow. \n You pet the cat.
 
 name:DRAMA_KID
 index:14
@@ -163,8 +163,8 @@ HP:400
 EN:0
 STR:0
 held item:0
-m_attack:You made it on stage? But you're still breathing...
-m_defend:
+m_attack:
+m_defend:You made it on stage? But you're still breathing... \n Uhh...
 
 name:NERD_1
 index:15
@@ -175,8 +175,8 @@ HP:225
 EN:0
 STR:0
 held item:0
-m_attack:I'm mid-game.
-m_defend:Salutations.
+m_attack:
+m_defend:Salutations. \n I'm mid-game.
 
 name:NERD_2
 index:16
@@ -187,8 +187,8 @@ HP:225
 EN:0
 STR:0
 held item:0
-m_attack:...
-m_defend:Hello.
+m_attack:
+m_defend:Hello. \n ...
 
 name:NERD_3
 index:17
@@ -199,8 +199,8 @@ HP:225
 EN:0
 STR:0
 held item:0
-m_attack:Please, don't disturb me!
-m_defend:Hi.
+m_attack:
+m_defend:Hi. \n Please, don't disturb me!
 
 name:NERD_4
 index:18
@@ -211,8 +211,8 @@ HP:225
 EN:0
 STR:0
 held item:0
-m_attack:Shhhhh!
-m_defend:Hey.
+m_attack:
+m_defend:Hey. \n Shhhhh!
 
 name:NERD_5
 index:19
@@ -223,8 +223,8 @@ HP:225
 EN:0
 STR:0
 held item:KEY
-m_attack:Will this shut you up?
-m_defend:...
+m_attack:
+m_defend:Gre- \n Will this shut you up?
 
 name:MINION
 index:20
@@ -235,8 +235,8 @@ HP:350
 EN:0
 STR:0
 held item:0
-m_attack:Boss told me I can't move, so I ain't movin'.
-m_defend:Can you move please?
+m_attack:
+m_defend:Can you move please? \n Boss told me I can't move, so I ain't movin'.
 
 name:ASSEMBLY_GOERS
 index:21
@@ -247,5 +247,5 @@ HP:250
 EN:0
 STR:0
 held item:0
-m_attack:*snores*
-m_defend:How does he not notice everyone's asleep?
+m_attack:
+m_defend:*snores* \n How does he not notice everyone's asleep?
