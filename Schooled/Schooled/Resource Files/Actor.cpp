@@ -35,9 +35,30 @@ void Actor::attack(Actor& defender){
 
 int Actor::dropItem()
 {
+	if (item == 0)
+	{
+		return 0;
+	}
 	int itemInt = item->getTile().tileInt;
 	item = nullptr;
 	return itemInt;
+}
+
+bool Actor::holdItem()
+{
+	if (item == 0)
+	{
+		return false;
+	}
+	int itemInt = item->getTile().tileInt;
+	if (itemInt > 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void Actor::pickUp(ItemPtr pickUp){

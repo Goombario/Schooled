@@ -54,7 +54,9 @@ public:
 	void setName(string s) { name = s; }
 	void setHeldItem(ItemPtr i) { item = i; }
 
+	bool holdItem();
 	int dropItem();
+	int giveItem();
 	void pickUp(ItemPtr);
 
 private:

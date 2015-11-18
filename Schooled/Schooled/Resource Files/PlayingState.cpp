@@ -280,79 +280,109 @@ void PlayingState::incrementTurn()
 
 void PlayingState::interact()
 {
-	switch (currentRoom.getItemInt(highlight))
-		//basically if the object is interactable
+	if (currentRoom.getActorInt(highlight) != 0)
 	{
-		// KEY
-	case 1:
-		log.push_back(messages["GET_KEY"]);
-		keyCount++;
-		currentRoom.setItemInt(highlight, 0);
-		break;
-
-	case 2:
-		//room transition
-		transitionRoom();
-		break;
-
-		// MAP_DOOR_LOCKED
-	case 3:
-		if (keyCount > 0)
+		if (currentRoom.getActor(highlight).getStats().STR == 0)
 		{
-			log.push_back(messages["USE_KEY"]);
-			keyCount--;
-			currentRoom.setItemInt(highlight, 0);
+			log.push_back(currentRoom.getActor(highlight).getMDefend());
+			if (currentRoom.getActor(highlight).holdItem())
+			{
+				int temp = currentRoom.getActor(highlight).dropItem();
+				if (temp == 1)
+				{
+					log.push_back(messages["RECIEVE_KEY"]);
+					keyCount++;
+				}
+				else
+				{
+					log.push_back(currentRoom.itemIndex[temp].getMPickup());
+					player.pickUp(currentRoom.getItemStats(temp));
+				}
+			}
 		}
 		else
 		{
-			log.push_back(messages["DOOR_LOCKED"]);
+			log.push_back(messages["ENEMY_INTERACT"]);
 		}
-		break;
-	// FACE_PAINT
-	case 4:
-		log.push_back(currentRoom.itemIndex[4].getMPickup());
-		player.pickUp(currentRoom.getItemStats(4));
-		currentRoom.setItemInt(highlight, 0);
-		break;
-
-	// GOLDFISH
-	case 5:
-		log.push_back(currentRoom.itemIndex[5].getMPickup());
-		player.pickUp(currentRoom.getItemStats(5));
-		currentRoom.setItemInt(highlight, 0);
-		break;
-
-	// GLASSES
-	case 6:
-		log.push_back(currentRoom.itemIndex[6].getMPickup());
-		player.pickUp(currentRoom.getItemStats(6));
-		currentRoom.setItemInt(highlight, 0);
-		break;
-
-	// BACKPACK
-	case 7:
-		log.push_back(currentRoom.itemIndex[7].getMPickup());
-		player.pickUp(currentRoom.getItemStats(7));
-		currentRoom.setItemInt(highlight, 0);
-		break;
-
-	// TEARS
-	case 8:
-		log.push_back(currentRoom.itemIndex[8].getMPickup());
-		player.pickUp(currentRoom.getItemStats(8));
-		currentRoom.setItemInt(highlight, 0);
-		break;
-
-	// BANDAID
-	case 9:
-		log.push_back(currentRoom.itemIndex[9].getMPickup());
-		player.pickUp(currentRoom.getItemStats(9));
-		currentRoom.setItemInt(highlight, 0);
-		break;
-
-	default:
-		break;
+		
 	}
+	else
+	{
+		switch (currentRoom.getItemInt(highlight))
+			//basically if the object is interactable
+		{
+			// KEY
+		case 1:
+			log.push_back(messages["GET_KEY"]);
+			keyCount++;
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+		case 2:
+			//room transition
+			transitionRoom();
+			break;
+
+			// MAP_DOOR_LOCKED
+		case 3:
+			if (keyCount > 0)
+			{
+				log.push_back(messages["USE_KEY"]);
+				keyCount--;
+				currentRoom.setItemInt(highlight, 0);
+			}
+			else
+			{
+				log.push_back(messages["DOOR_LOCKED"]);
+			}
+			break;
+			// FACE_PAINT
+		case 4:
+			log.push_back(currentRoom.itemIndex[4].getMPickup());
+			player.pickUp(currentRoom.getItemStats(4));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+			// GOLDFISH
+		case 5:
+			log.push_back(currentRoom.itemIndex[5].getMPickup());
+			player.pickUp(currentRoom.getItemStats(5));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+			// GLASSES
+		case 6:
+			log.push_back(currentRoom.itemIndex[6].getMPickup());
+			player.pickUp(currentRoom.getItemStats(6));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+			// BACKPACK
+		case 7:
+			log.push_back(currentRoom.itemIndex[7].getMPickup());
+			player.pickUp(currentRoom.getItemStats(7));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+			// TEARS
+		case 8:
+			log.push_back(currentRoom.itemIndex[8].getMPickup());
+			player.pickUp(currentRoom.getItemStats(8));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+			// BANDAID
+		case 9:
+			log.push_back(currentRoom.itemIndex[9].getMPickup());
+			player.pickUp(currentRoom.getItemStats(9));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+		default:
+			break;
+		}
+	}
+	
 }
 
 void PlayingState::loadRooms()
