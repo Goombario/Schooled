@@ -239,7 +239,14 @@ void Room::moveActors1(COORD p)
 {
 	for (Actor& a : actorList)
 	{
-		moveEnemy1(p, a);
+		if (a.getTile().tileInt == 13)
+		{
+			moveCat(p, a);
+		}
+		else
+		{
+			moveEnemy1(p, a);
+		}
 	}
 }
 
@@ -418,6 +425,72 @@ void Room::moveEnemy1(COORD playerPos, Actor& enemy)
 		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
 		setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
 		Sleep(200);
+	}
+}
+
+void Room::moveCat(COORD playerPos, Actor& enemy)
+{
+	// If enemy line of sight then move
+	int differenceX, differenceY, deltaX, deltaY;
+	int enemyX = enemy.getX();
+	int enemyY = enemy.getY();
+	int playerX = playerPos.X;
+	int playerY = playerPos.Y;
+	deltaX = 0;
+	deltaY = 0;
+	differenceX = enemyX - playerX;
+	differenceY = enemyY - playerY;
+
+	if (differenceX > -2 && differenceX < 2 && differenceY > -2 && differenceY < 2){
+		deltaX = 0;
+		deltaY = 0;
+	}
+	else{
+		if (differenceX > differenceY)
+		{
+			if (enemyX > playerX)
+				deltaX = -1;
+			else if (enemyX < playerX)
+				deltaX = 1;
+			else
+				deltaX = 0;
+			if (!isPassable({ enemyX + deltaX, enemyY + deltaY }))
+			{
+				deltaX = 0;
+				if (enemyY > playerY)
+					deltaY = -1;
+				else if (enemyY < playerY)
+					deltaY = 1;
+				else
+					deltaY = 0;
+			}
+		}
+		else
+		{
+			if (enemyY > playerY)
+				deltaY = -1;
+			else if (enemyY < playerY)
+				deltaY = 1;
+			else
+				deltaY = 0;
+			if (!isPassable({ enemyX + deltaX, enemyY + deltaY }))
+			{
+				deltaY = 0;
+				if (enemyX > playerX)
+					deltaX = -1;
+				else if (enemyX < playerX)
+					deltaX = 1;
+				else
+					deltaX = 0;
+			}
+		}
+	}
+
+	if (isPassable({ enemyX + deltaX, enemyY + deltaY }))
+	{
+		setActorInt(enemy.getLocation(), 0);
+		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
+		setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
 	}
 }
 bool Room::lineOfSight(COORD playerPos, Actor& enemy)

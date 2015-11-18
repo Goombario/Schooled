@@ -195,7 +195,14 @@ void PlayingState::attack()
 	if (currentRoom.getActorInt(highlight) > 0){
 		Actor *a = &currentRoom.getActor(highlight);
 		player.attack(currentRoom.getActor(highlight));
-		log.push_back(a->getMDefend() + " Deal " + to_string(player.getStats().STR) + " damage! Wow!");
+		if (currentRoom.getActor(highlight).getTile().tileInt == 13)
+		{
+			log.push_back(a->getMDefend());
+		}
+		else
+		{
+			log.push_back(a->getMDefend() + " Deal " + to_string(player.getStats().STR) + " damage! Wow!");
+		}
 
 		// If the actor died
 		if (a->getStats().HP <= 0)
@@ -225,7 +232,7 @@ void PlayingState::enemyTurn()
 	{
 		if (a.getStats().EN > tCount)
 		{
-			if (currentRoom.isAdjacent(player.getLocation(), a))
+			if (currentRoom.isAdjacent(player.getLocation(), a) && a.getTile().tileInt != 13)
 			{
 				a.attack(player);
 				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
