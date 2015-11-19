@@ -33,8 +33,8 @@ void MenuState::Init()
 		initSettings();
 	}
 
-	// Play the music
-	//snd::title->play();
+	//Play the music
+	snd::title->play();
 
 	// Set the default location of the selection to "Start Game"
 	menuSelect = 0;
@@ -78,7 +78,7 @@ void MenuState::Pause()
 void MenuState::Resume()
 {
 	// Play the music
-	//snd::title->play();
+	snd::title->play();
 }
 
 void MenuState::HandleEvents(GameEngine* game)
@@ -92,6 +92,7 @@ void MenuState::HandleEvents(GameEngine* game)
 		
 	case CONSOLE_KEY_UP:
 		if (selectControl) break; // Don't move if changing controls
+		snd::menuHighlight->play();
 		if (menuSelect > 0)
 		{
 			menuSelect--;
@@ -104,6 +105,7 @@ void MenuState::HandleEvents(GameEngine* game)
 
 	case CONSOLE_KEY_DOWN:
 		if (selectControl) break; // Don't move if changing controls
+		snd::menuHighlight->play();
 		if (menuSelect < menuSelections.size() - 1)
 		{
 			menuSelect++;
@@ -116,6 +118,7 @@ void MenuState::HandleEvents(GameEngine* game)
 
 	case CONSOLE_KEY_LEFT:
 		if (!selectControl) break;
+		snd::menuHighlight->play();
 		if (selectedControl > 0)
 		{
 			selectedControl--;
@@ -129,6 +132,7 @@ void MenuState::HandleEvents(GameEngine* game)
 
 	case CONSOLE_KEY_RIGHT:
 		if (!selectControl) break;
+		snd::menuHighlight->play();
 		if (selectedControl < controlOptions.size() - 1)
 		{
 			selectedControl++;

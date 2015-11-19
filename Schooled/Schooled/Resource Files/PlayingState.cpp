@@ -3,6 +3,7 @@
 #include "../Header Files/MenuState.h"
 #include "../Header Files\Item.h"
 #include "../Header Files\Console_color.h"
+#include "../Header Files/sound_effects.h"
 
 using std::string;
 using std::to_string;
@@ -22,6 +23,8 @@ void PlayingState::Init()
 	loadRooms();
 	currentRoom = roomArray[1][1];
 
+	snd::dungeonMusic->play();
+
 	player = Actor({ '8', con::fgHiWhite }, { 10, 2, 2 });
 	player.setLocation({ 4, 4 });
 	highlight = { player.getX(), player.getY() + 1 };
@@ -34,6 +37,7 @@ void PlayingState::Init()
 
 void PlayingState::Cleanup()
 {
+	snd::menuHighlight->stop();
 	log.clear();
 	for (int i = 0; i < schooled::FLOOR_HEIGHT; i++)
 	{
@@ -46,12 +50,12 @@ void PlayingState::Cleanup()
 
 void PlayingState::Pause()
 {
-
+	snd::menuHighlight->stop();
 }
 
 void PlayingState::Resume()
 {
-
+	snd::menuHighlight->play();
 }
 
 void PlayingState::HandleEvents(GameEngine* game)
@@ -73,7 +77,7 @@ void PlayingState::HandleEvents(GameEngine* game)
 		moveHighlight(sKeyPress.eCode);
 		break;
 
-		//attack things B)
+		
 	case CONSOLE_KEY_X:
 	case CONSOLE_KEY_N:
 		// Check control schemes
@@ -213,6 +217,7 @@ void PlayingState::attack()
 	if (currentRoom.getActorInt(highlight) > 0){
 		Actor *a = &currentRoom.getActor(highlight);
 		player.attack(currentRoom.getActor(highlight));
+		snd::attack1->play();
 		log.push_back(a->getMDefend() + " Deal " + to_string(player.getStats().STR) + " damage! Wow!");
 
 		// If the actor died
@@ -245,6 +250,7 @@ void PlayingState::enemyTurn()
 		{
 			if (currentRoom.isAdjacent(player.getLocation(), a))
 			{
+				snd::attack2->play();
 				a.attack(player);
 				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
 				Sleep(200);
@@ -296,6 +302,7 @@ void PlayingState::interact()
 	{
 		// KEY
 	case 1:
+		snd::key->play();
 		log.push_back(messages["GET_KEY"]);
 		keyCount++;
 		currentRoom.setItemInt(highlight, 0);
@@ -303,6 +310,7 @@ void PlayingState::interact()
 
 	case 2:
 		//room transition
+		snd::nextRoom->play();
 		transitionRoom();
 		break;
 
@@ -316,6 +324,7 @@ void PlayingState::interact()
 		}
 		else
 		{
+			snd::lockedDoor->play();
 			log.push_back(messages["DOOR_LOCKED"]);
 		}
 		break;
