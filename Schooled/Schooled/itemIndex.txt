@@ -96,4 +96,24 @@ passable:true
 HP:5
 EN:0
 STR:0
-mPickup:You found a bandaid. Unused too!
+mPickup:Unused too!
+
+name:SUPPORT
+index:10
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:2
+EN:0
+STR:0
+mPickup:You feel less alone now.
+
+name:PEN
+index:11
+symbol:'!'
+colour:7U // loWhite
+passable:true
+HP:0
+EN:0
+STR:1
+mPickup:The pen is mightier than the sword afterall.

@@ -379,7 +379,7 @@ void MenuState::handleMenu(GameEngine* game)
 		}
 		else
 		{
-			lSelect = levelSelect;
+			lSelect = levelSelect+1;
 			snd::title->stop();
 			snd::startGame->play();
 			game->PushState(PlayingState::Instance());
