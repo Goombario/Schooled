@@ -4,3 +4,8 @@ syntax: glob
 *.sdf
 *.suo
 *.user
+*.obj
+*/Schooled/Debug
+*.tlog
+*.idb
+*.pdb
