@@ -546,16 +546,16 @@ void PlayingState::transitionRoom()
 	{
 		changeRoom(currentRoom, { 0, -1 });
 		south = currentRoom.getSouth();
-		player.setLocation({ south.X, south.Y + 1 });
-		highlight.Y = player.getY() + 1;
+		player.setLocation({ south.X, south.Y - 1 });
+		highlight.Y = player.getY() - 1;
 		highlight.X = player.getX();
 	}
 	else if (highlight == south)	// Going down
 	{
 		changeRoom(currentRoom, { 0, 1 });
 		north = currentRoom.getNorth();
-		player.setLocation({ north.X, north.Y - 1 });
-		highlight.Y = player.getY() - 1;
+		player.setLocation({ north.X, north.Y + 1 });
+		highlight.Y = player.getY() + 1;
 		highlight.X = player.getX();
 	}
 	else if (highlight == east)	// Going right
