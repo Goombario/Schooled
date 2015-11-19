@@ -354,7 +354,7 @@ void MenuState::handleMenu(GameEngine* game)
 	case 0:
 		// Start game
 		snd::title->stop();
-		snd::pewpew->play();
+		snd::startGame->play();
 		game->PushState(PlayingState::Instance());
 		break;
 
@@ -381,7 +381,7 @@ void MenuState::handleMenu(GameEngine* game)
 		{
 			lSelect = levelSelect;
 			snd::title->stop();
-			snd::pewpew->play();
+			snd::startGame->play();
 			game->PushState(PlayingState::Instance());
 		}
 		break;

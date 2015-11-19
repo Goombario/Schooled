@@ -36,7 +36,7 @@ void PlayingState::Init()
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	scheme = schooled::getSetting("ControlScheme");
-	snd::basement->play();
+	snd::dungeonMusic->play();
 }
 
 void PlayingState::Cleanup()
@@ -48,13 +48,13 @@ void PlayingState::Cleanup()
 void PlayingState::Pause()
 {
 	snd::menuHighlight->stop();
-	snd::basement->stop();
+	snd::dungeonMusic->stop();
 }
 
 void PlayingState::Resume()
 {
 	snd::menuHighlight->play();
-	snd::basement->play();
+	snd::dungeonMusic->play();
 }
 
 void PlayingState::HandleEvents(GameEngine* game)
