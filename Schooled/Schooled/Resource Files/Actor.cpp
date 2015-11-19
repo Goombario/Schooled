@@ -35,6 +35,10 @@ void Actor::attack(Actor& defender){
 
 int Actor::dropItem()
 {
+	if (item == 0)
+	{
+		return 0;
+	}
 	int itemInt = item->getTile().tileInt;
 	item = nullptr;
 	return itemInt;

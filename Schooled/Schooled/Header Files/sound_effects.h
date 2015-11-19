@@ -7,9 +7,10 @@ class Sound
 private:
 	LPCTSTR fileLocation;
 	bool loop;
+	bool async;
 public:
 	Sound();
-	Sound(LPCTSTR, bool);
+	Sound(LPCTSTR, bool, bool=true);
 	void play();
 	void stop();
 };
