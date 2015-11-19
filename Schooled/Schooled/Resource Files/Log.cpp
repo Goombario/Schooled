@@ -84,17 +84,30 @@ void Log::display(HANDLE hConsole)
 
 }
 
-void Log::display(Buffer& buffer)
+void Log::display(Buffer& buffer, int row)
 {
 	const int SIZE = 4;
-	int max = (log.size() >= SIZE) ? (log.size() - SIZE) : 0;	// determines the number of lines to display
-	int col, row;
-	int tempInt;
+	// determines the number of lines to display
+	int max = (log.size() >= SIZE) ? (log.size() - SIZE) : 0;	
+
+	int col, tempInt, iModifier;
 	int grayscale = 0;
 	std::string temp;
-	row = schooled::SCREEN_HEIGHT - 1;
 	col = TEXT_START;
-	for (int i = log.size() - 1; i >= max; i--)
+
+	// Modify the start if the row is given
+	if (row == 0)
+	{
+		row = schooled::SCREEN_HEIGHT - 1;
+		iModifier = 1;
+	}
+	else
+	{
+		iModifier = 2;
+	}
+
+	// Output the log
+	for (int i = log.size() - iModifier; i >= max; i--)
 	{
 		// If there are newline symbols, decrease the row to fit
 		temp = log[i];

@@ -34,12 +34,14 @@ private:
 	// Variables
 	Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 	int tCount, keyCount;
+	string scheme;
 	bool pTurn, increment, running;
 	Actor player;
 	COORD highlight, delta;
 	Log log;
 	Room currentRoom;
 	HANDLE hConsole;
+
 
 	// Handle the attack key
 	void attack();
@@ -56,6 +58,9 @@ private:
 	// Handle the interact key
 	void interact();
 
+	// Get the starting location
+	void getStartLocation();
+
 	// Load the rooms, and set up the layout
 	void loadRooms();
 
@@ -65,6 +70,7 @@ private:
 	// Transition to the next room
 	void transitionRoom();
 
+	
 };
 
 #endif

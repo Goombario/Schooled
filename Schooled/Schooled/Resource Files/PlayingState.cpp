@@ -1,9 +1,10 @@
 #include "../Header Files/PlayingState.h"
 #include "../Header Files/GameOverState.h"
 #include "../Header Files/MenuState.h"
+#include "../Header Files/ShareState.h"
 #include "../Header Files\Item.h"
 #include "../Header Files\Console_color.h"
-#include <ctime>
+#include "../Header Files/sound_effects.h"
 
 using std::string;
 using std::to_string;
@@ -16,11 +17,6 @@ PlayingState PlayingState::m_PlayingState;
 // State Handling
 void PlayingState::Init()
 {
-	srand((unsigned int)time(0));
-	Room::loadTileIndex("tileIndex.txt");
-	Room::loadItemIndex("itemIndex.txt");
-	Room::loadActorIndex("actorIndex.txt");
-
 	tCount = 0;
 	keyCount = 0;
 	pTurn = true;
@@ -28,61 +24,86 @@ void PlayingState::Init()
 	loadRooms();
 	currentRoom = roomArray[1][1];
 
+	snd::dungeonMusic->play();
+
+	log.clear();
+	log.push_back(currentRoom.getMessage());
+
 	player = Actor({ '8', con::fgHiWhite }, { 10, 2, 2 });
-	player.setLocation({ 4, 4 });
-	highlight = { player.getX(), player.getY() + 1 };
+	getStartLocation();
 	delta = { 0, 0 };
 	
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	scheme = schooled::getSetting("ControlScheme");
+	snd::dungeonMusic->play();
 }
 
 void PlayingState::Cleanup()
 {
-
+	snd::menuHighlight->stop();
+	log.clear();
 }
 
 void PlayingState::Pause()
 {
-
+	snd::menuHighlight->stop();
+	snd::dungeonMusic->stop();
 }
 
 void PlayingState::Resume()
 {
-
+	snd::menuHighlight->play();
+	snd::dungeonMusic->play();
 }
 
 void PlayingState::HandleEvents(GameEngine* game)
 {
-	if (pTurn)
+	if (!pTurn) return;
+	
+	KEYPRESS sKeyPress = console.WaitForKeypress();
+	switch (sKeyPress.eCode)
 	{
-		KEYPRESS sKeyPress = console.WaitForKeypress();
+		// Move the highlight
+	case CONSOLE_KEY_DOWN:
+	case CONSOLE_KEY_LEFT:
+	case CONSOLE_KEY_RIGHT:
+	case CONSOLE_KEY_UP:
+	case CONSOLE_KEY_W:
+	case CONSOLE_KEY_A:
+	case CONSOLE_KEY_S:
+	case CONSOLE_KEY_D:
+		moveHighlight(sKeyPress.eCode);
+		break;
 
-		switch (sKeyPress.eCode)
+		
+	case CONSOLE_KEY_X:
+	case CONSOLE_KEY_N:
+		// Check control schemes
+		if ((sKeyPress.eCode == CONSOLE_KEY_X &&
+			(scheme == "Classic" || scheme == "Double-Tap")) ||
+			sKeyPress.eCode == CONSOLE_KEY_N &&
+			(scheme == "Classic Lefty" || scheme == "Double-Tap Lefty"))
 		{
-			// Move the highlight
-		case CONSOLE_KEY_DOWN:
-		case CONSOLE_KEY_LEFT:
-		case CONSOLE_KEY_RIGHT:
-		case CONSOLE_KEY_UP:
-			moveHighlight(sKeyPress.eCode);
-			break;
-
-			//attack things B)
-		case CONSOLE_KEY_X:
-		case CONSOLE_KEY_N:
 			tCount++;
 			increment = true;
 			attack();
-			break;
+		}
 
-			//checks interactable
-		case CONSOLE_KEY_SPACE:
-			interact();
-			break;
+		break;
 
-			// move key pressed
-		case CONSOLE_KEY_Z:
-		case CONSOLE_KEY_M:
+		//checks interactable
+	case CONSOLE_KEY_SPACE:
+		interact();
+		break;
+
+		// move key pressed
+	case CONSOLE_KEY_Z:
+	case CONSOLE_KEY_M:
+		// Check control schemes
+		if (sKeyPress.eCode == CONSOLE_KEY_Z && scheme == "Classic" ||
+			sKeyPress.eCode == CONSOLE_KEY_M && scheme == "Classic Lefty")
+		{
 			delta.X = (highlight.X - player.getX());
 			delta.Y = (highlight.Y - player.getY());
 
@@ -94,17 +115,17 @@ void PlayingState::HandleEvents(GameEngine* game)
 				tCount++;
 				increment = true;
 			}
-			break;
-
-			// quit
-		case CONSOLE_KEY_ESCAPE:
-			currentRoom.save("Rooms/Room1.sav");
-			game->Quit();
-
-			// Ignore any other key
-		default:
-			break;
 		}
+		break;
+
+		// quit
+	case CONSOLE_KEY_ESCAPE:
+		currentRoom.save("Rooms/Room1.sav");
+		game->Quit();
+
+		// Ignore any other key
+	default:
+		break;
 	}
 }
 
@@ -120,7 +141,8 @@ void PlayingState::Update(GameEngine* game)
 	// If the player is dead, quit the game
 	if (player.getStats().HP <= 0 && running)
 	{
-		game->PushState(GameOverState::Instance());
+		Pause();
+		game->ChangeState(GameOverState::Instance());
 		running = false;
 		return;
 	}
@@ -174,7 +196,7 @@ void PlayingState::Draw(GameEngine* game)
 	// Display stats
 	buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 24, 5);	// Key count
 	//buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
-		//+ to_string(player.getLocation().Y)), con::fgHiWhite, 25, 5);
+	//	+ to_string(player.getLocation().Y)), con::fgHiWhite, 24, 5);
 	string tempTurn = (pTurn) ? "Player" : "Enemy";
 	buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 21, 5);	// Player hitpoints
 	buffer.draw(("EN: " + to_string(player.getStats().EN)), con::fgHiWhite, 22, 5); // Player endurance
@@ -195,8 +217,11 @@ void PlayingState::attack()
 	if (currentRoom.getActorInt(highlight) > 0){
 		Actor *a = &currentRoom.getActor(highlight);
 		player.attack(currentRoom.getActor(highlight));
+		
 		if (currentRoom.getActor(highlight).getTile().tileInt >= 13)
 		{
+		snd::attack1->play();
+
 			log.push_back(a->getMDefend());
 		}
 		else
@@ -234,6 +259,7 @@ void PlayingState::enemyTurn()
 		{
 			if (currentRoom.isAdjacent(player.getLocation(), a) && a.getTile().tileInt != 13 && a.getTile().tileInt != 20)
 			{
+				snd::attack2->play();
 				a.attack(player);
 				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
 				Sleep(200);
@@ -313,6 +339,7 @@ void PlayingState::interact()
 		{
 			// KEY
 		case 1:
+		snd::key->play();
 			log.push_back(messages["GET_KEY"]);
 			keyCount++;
 			currentRoom.setItemInt(highlight, 0);
@@ -320,6 +347,7 @@ void PlayingState::interact()
 
 		case 2:
 			//room transition
+		snd::nextRoom->play();
 			transitionRoom();
 			break;
 
@@ -333,6 +361,7 @@ void PlayingState::interact()
 			}
 			else
 			{
+			snd::lockedDoor->play();
 				log.push_back(messages["DOOR_LOCKED"]);
 			}
 			break;
@@ -385,24 +414,67 @@ void PlayingState::interact()
 	
 }
 
+void PlayingState::getStartLocation()
+{
+	COORD north = currentRoom.getNorth();
+	COORD south = currentRoom.getSouth();
+	COORD east = currentRoom.getEast();
+	COORD west = currentRoom.getWest();
+	COORD empty = { 0, 0 };
+
+	// Check which doors the player can spawn at.
+	if (north != empty)
+	{
+		player.setLocation({ north.X, north.Y + 1 });
+		highlight.Y = player.getY() + 1;
+		highlight.X = player.getX();
+	}
+	else if (south != empty)
+	{
+		player.setLocation({ south.X, south.Y - 1 });
+		highlight.Y = player.getY() - 1;
+		highlight.X = player.getX();
+	}
+	else if (east != empty)
+	{
+		player.setLocation({ east.X + 1, east.Y });
+		highlight.Y = player.getY();
+		highlight.X = player.getX() + 1;
+	}
+	else if (west != empty)
+	{
+		player.setLocation({ west.X - 1, west.Y });
+		highlight.Y = player.getY();
+		highlight.X = player.getX() - 1;
+	}
+}
+
 void PlayingState::loadRooms()
 {
-	// Load the rooms from the file
-	Room roomOne("Rooms/Room4_1.txt");
-	roomOne.setLocation({ 1, 1 });
-
-	Room roomTwo("Rooms/Room2_1.txt");
-	roomTwo.setLocation({ 1, 2 });
-
-	Room roomThree("Rooms/Room3_1.txt");
-	roomThree.setLocation({ 1, 0 });
-
-	// Puts the rooms into the floor array
-	roomArray[roomOne.getX()][roomOne.getY()] = roomOne;
-	roomArray[roomTwo.getX()][roomTwo.getY()] = roomTwo;
-	roomArray[roomThree.getX()][roomThree.getY()] = roomThree;
-
-	currentRoom = roomOne;
+	Room temp;
+	vector<string> roomFileList = shared::getRoomNames();
+	vector<COORD> locationList = { { 1, 1 }, { 1, 0 }, { 0, 0 }, { 0, 1 }, { 1, 2 } };
+	
+	// If the level selector has chosen a level
+	if (MenuState::levelSelected() != 0)
+	{
+		temp = Room(roomFileList[MenuState::levelSelected() - 1]);
+		temp.setLocation({ 1, 1 });
+		roomArray[1][1] = temp;
+	}
+	else
+	{	// Load the rooms from the file
+		for (unsigned int i = 0; i < locationList.size(); i++)
+		{
+			temp = Room(roomFileList[i]);
+			temp.setLocation(locationList[i]);
+			if (temp.getX() >= 0 && temp.getY() >= 0)
+			{
+				roomArray[temp.getX()][temp.getY()] = temp;
+			}
+		}
+	}
+	currentRoom = roomArray[1][1];
 }
 
 void PlayingState::moveHighlight(KEYCODE eCode)
@@ -410,47 +482,99 @@ void PlayingState::moveHighlight(KEYCODE eCode)
 	switch (eCode)
 	{
 		// down selected
+	case CONSOLE_KEY_S:
 	case CONSOLE_KEY_DOWN:
 		delta.X = 0;
 		delta.Y = 1;
 		break;
 
 		// left selected
+	case CONSOLE_KEY_A:
 	case CONSOLE_KEY_LEFT:
 		delta.X = -1;
 		delta.Y = 0;
 		break;
 
 		// right selected
+	case CONSOLE_KEY_D:
 	case CONSOLE_KEY_RIGHT:
 		delta.X = 1;
 		delta.Y = 0;
 		break;
 
 		// up selected
+	case CONSOLE_KEY_W:
 	case CONSOLE_KEY_UP:
 		delta.X = 0;
 		delta.Y = -1;
 		break;
 	}
+
+	if (eCode < 88 && scheme == "Double-Tap Lefty" ||
+		eCode > 49663 && scheme == "Double-Tap")
+	{
+		// Check if the player can move in specified direction
+		if (currentRoom.isPassable(highlight) && 
+			highlight - player.getLocation() == delta)	// and delta is highlight space
+		{
+			// If allowed, move in specified direction
+			player.setLocation(highlight);
+			tCount++;
+			increment = true;
+		}
+	}
+	else if ((scheme == "Classic" || scheme == "Double-Tap") && eCode < 88 ||
+		(scheme == "Classic Lefty" || scheme == "Double-Tap Lefty") && eCode > 49663)
+	{
+		delta = { 0, 0 };
+	}
 }
 
 void PlayingState::transitionRoom()
 {
-	if (player.getY() < 10)  // going up
+	if (MenuState::levelSelected() != 0)
 	{
-		changeRoom(currentRoom, { 0, 1 });
-		player.setLocation(currentRoom.getSouth());
-		highlight.Y = currentRoom.getSouth().Y - 1;
-		highlight.X = currentRoom.getSouth().X;
+		running = false;
+		return;
 	}
-	else if (player.getY() > 10)	// going down
+	COORD north = currentRoom.getNorth();
+	COORD south = currentRoom.getSouth();
+	COORD east = currentRoom.getEast();
+	COORD west = currentRoom.getWest();
+
+	if (highlight == north)			// Going up
 	{
 		changeRoom(currentRoom, { 0, -1 });
-		player.setLocation(currentRoom.getNorth());
-		highlight.Y = currentRoom.getNorth().Y + 1;
-		highlight.X = currentRoom.getNorth().X;
+		south = currentRoom.getSouth();
+		player.setLocation({ south.X, south.Y + 1 });
+		highlight.Y = player.getY() + 1;
+		highlight.X = player.getX();
 	}
+	else if (highlight == south)	// Going down
+	{
+		changeRoom(currentRoom, { 0, 1 });
+		north = currentRoom.getNorth();
+		player.setLocation({ north.X, north.Y - 1 });
+		highlight.Y = player.getY() - 1;
+		highlight.X = player.getX();
+	}
+	else if (highlight == east)	// Going right
+	{
+		changeRoom(currentRoom, { 1, 0 });
+		west = currentRoom.getWest();
+		player.setLocation({ west.X + 1, west.Y });
+		highlight.Y = player.getY();
+		highlight.X = player.getX() + 1;
+	}
+	else if (highlight == west)		// Going left
+	{
+		changeRoom(currentRoom, { -1, 0 });
+		east = currentRoom.getEast();
+		player.setLocation({ east.X - 1, east.Y });
+		highlight.Y = player.getY();
+		highlight.X = player.getX() -1;
+	}
+	
 
 	log.clear();
 	log.push_back(currentRoom.getMessage());

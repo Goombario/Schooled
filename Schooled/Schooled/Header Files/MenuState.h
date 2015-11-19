@@ -25,6 +25,7 @@ public:
 	static MenuState* Instance() {
 		return &m_MenuState;
 	}
+	static int levelSelected() { return lSelect; }
 
 protected:
 	MenuState() { }
@@ -32,19 +33,22 @@ protected:
 private:
 	static MenuState m_MenuState;
 	string art;
-	int menuSelect;
-	vector<string> menuSelections;
-	vector<string> controlOptions;
-	bool selectControl, changedSettings;
+	int menuSelect, levelSelect;
+	vector<string> menuSelections, levelSelections, 
+		cScheme, dScheme, clScheme, dlScheme;
+	bool selectingControl, selectingLevel, selectingCredits, changedSettings;
 	int selectedControl;
+	static int lSelect;
 
 	void handleMenu(GameEngine* game);
-	string getSetting(string);
 	void saveSetting(string, string);
 	void initSettings();
 
 	//Gets file contents (NEEDS REMOVAL)
 	string getFileContents(std::ifstream&);
+
+	// Sets up the scheme displays
+	void setSchemes();
 };
 
 

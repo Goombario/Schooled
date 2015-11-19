@@ -79,3 +79,36 @@ void Buffer::clear()
 	}
 }
 
+void Buffer::type(std::string s, WORD w, int row, int col, HANDLE hConsole)
+{
+	int startCol = col, startRow = row;
+	std::string temp;
+
+	for (unsigned int i = 0; i < s.size(); i++)
+	{
+		if (s[i] == '\n')
+		{
+			col = startCol;
+			row++;
+		}
+		else
+		{
+			open(hConsole);
+			buffer[row][col].Char.AsciiChar = s[i];
+			buffer[row][col].Attributes = w;
+			Sleep(100);
+			close(hConsole);
+
+			if (col < schooled::SCREEN_WIDTH - 1)
+			{
+				col++;
+			}
+			else
+			{
+				col = startCol;
+				row++;
+			}
+		}
+	}
+}
+
