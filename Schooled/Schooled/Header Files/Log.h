@@ -17,8 +17,10 @@ class Log
 public:
 	Log();
 	void push_back(string);
+
+	// Output the log
 	void display(HANDLE);
-	void display(Buffer&);
+	void display(Buffer&, int row=0);
 	void clear();
 
 private:

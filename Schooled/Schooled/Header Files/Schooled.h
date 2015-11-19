@@ -2,6 +2,10 @@
 #define SCHOOLED_H
 
 #include <Windows.h>
+#include <string>
+#include <vector>
+using std::string;
+using std::vector;
 
 namespace schooled
 {
@@ -12,7 +16,10 @@ namespace schooled
 	int const FLOOR_WIDTH = 3;
 	int const FLOOR_HEIGHT = 3;
 	int const ITEM_INDEX_SIZE = 2;
+	const vector<string> controlOptions = { "Classic", "Double-Tap", "Classic Lefty", "Double-Tap Lefty" };
 
+	// Return the setting that the key is attached to
+	string getSetting(string);
 }
 
 struct Tile
@@ -30,6 +37,8 @@ struct Stats{
 };
 
 bool operator ==(COORD a, COORD b);
+bool operator !=(COORD a, COORD b);
 COORD operator +(COORD a, COORD b);
+COORD operator -(COORD a, COORD b);
 
 #endif

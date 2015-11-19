@@ -7,21 +7,26 @@ Sound::Sound()
 	fileLocation = NULL;
 }
 
-Sound::Sound(LPCTSTR file, bool l)
+Sound::Sound(LPCTSTR file, bool l, bool a)
 {
 	fileLocation = file;
 	loop = l;
+	async = a;
 }
 
 void Sound::play()
 {
-	if (loop)
+	if (loop && async)
 	{
 		PlaySound(fileLocation, NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 	}
-	else
+	else if (async)
 	{
 		PlaySound(fileLocation, NULL, SND_FILENAME | SND_ASYNC);
+	}
+	else
+	{
+		PlaySound(fileLocation, NULL, SND_FILENAME);
 	}
 }
 

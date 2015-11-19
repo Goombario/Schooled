@@ -1,5 +1,6 @@
 #include "../Header Files/PlayingState.h"
-
+#include "../Header Files/GameOverState.h"
+#include "../Header Files/MenuState.h"
 #include "../Header Files\Item.h"
 #include "../Header Files\Console_color.h"
 #include <ctime>
@@ -15,22 +16,20 @@ PlayingState PlayingState::m_PlayingState;
 // State Handling
 void PlayingState::Init()
 {
-<<<<<<< local
+	srand((unsigned int)time(0));
 	Room::loadTileIndex("tileIndex.txt");
 	Room::loadItemIndex("itemIndex.txt");
 	Room::loadActorIndex("actorIndex.txt");
 
-=======
-	srand(time(0));
->>>>>>> other
 	tCount = 0;
 	keyCount = 0;
 	pTurn = true;
+	running = true;
 	loadRooms();
 	currentRoom = roomArray[1][1];
 
 	player = Actor({ '8', con::fgHiWhite }, { 10, 2, 2 });
-	player.setLocation({ 2, 3 });
+	player.setLocation({ 4, 4 });
 	highlight = { player.getX(), player.getY() + 1 };
 	delta = { 0, 0 };
 	
@@ -71,7 +70,8 @@ void PlayingState::HandleEvents(GameEngine* game)
 			//attack things B)
 		case CONSOLE_KEY_X:
 		case CONSOLE_KEY_N:
-			incrementTurn();
+			tCount++;
+			increment = true;
 			attack();
 			break;
 
@@ -91,7 +91,8 @@ void PlayingState::HandleEvents(GameEngine* game)
 			{
 				// If allowed, move in specified direction
 				player.setLocation(highlight);
-				incrementTurn();
+				tCount++;
+				increment = true;
 			}
 			break;
 
@@ -105,15 +106,25 @@ void PlayingState::HandleEvents(GameEngine* game)
 			break;
 		}
 	}
-	else
-	{	// The enemies move
-		enemyTurn();
-		incrementTurn();
-	}
 }
 
 void PlayingState::Update(GameEngine* game)
 {
+	// If the game over screen has occured, return to menu
+	if (!running)
+	{
+		game->PopState();
+		return;
+	}
+
+	// If the player is dead, quit the game
+	if (player.getStats().HP <= 0 && running)
+	{
+		game->PushState(GameOverState::Instance());
+		running = false;
+		return;
+	}
+
 	// Check if a move action has been performed, and adjusts highlight
 	if (delta.X != 0 || delta.Y != 0)
 	{
@@ -125,13 +136,20 @@ void PlayingState::Update(GameEngine* game)
 	delta.X = 0;
 	delta.Y = 0;
 
-	// If the player is dead, quit the game
-	if (player.getStats().HP <= 0)
+	// Move the enemies
+	if (!pTurn)
 	{
-		log.push_back(messages["PLAYER_DEATH"]);
-		game->Quit();
+		enemyTurn();
+		tCount++;
+		increment = true;
 	}
 
+	// If the turn counter was incremented
+	if (increment)
+	{
+		incrementTurn();
+	}
+	increment = false;
 }
 
 void PlayingState::Draw(GameEngine* game)
@@ -155,10 +173,9 @@ void PlayingState::Draw(GameEngine* game)
 
 	// Display stats
 	buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 24, 5);	// Key count
-	buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
-		+ to_string(player.getLocation().Y)), con::fgHiWhite, 26, 5);
+	//buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
+		//+ to_string(player.getLocation().Y)), con::fgHiWhite, 25, 5);
 	string tempTurn = (pTurn) ? "Player" : "Enemy";
-	buffer.draw("Turn: " + tempTurn + " " + to_string(tCount), con::fgHiWhite, 25, 5);
 	buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 21, 5);	// Player hitpoints
 	buffer.draw(("EN: " + to_string(player.getStats().EN)), con::fgHiWhite, 22, 5); // Player endurance
 	buffer.draw(("STR: " + to_string(player.getStats().STR)), con::fgHiWhite, 23, 5); //Player strength
@@ -178,7 +195,14 @@ void PlayingState::attack()
 	if (currentRoom.getActorInt(highlight) > 0){
 		Actor *a = &currentRoom.getActor(highlight);
 		player.attack(currentRoom.getActor(highlight));
-		log.push_back(a->getMDefend() + " Deal " + to_string(player.getStats().STR) + " damage! Wow!");
+		if (currentRoom.getActor(highlight).getTile().tileInt >= 13)
+		{
+			log.push_back(a->getMDefend());
+		}
+		else
+		{
+			log.push_back(a->getMDefend() + " Deal " + to_string(player.getStats().STR) + " damage! Wow!");
+		}
 
 		// If the actor died
 		if (a->getStats().HP <= 0)
@@ -206,9 +230,9 @@ void PlayingState::enemyTurn()
 
 	for (Actor& a : currentRoom.getActorList())
 	{
-		if (a.getStats().EN + 1 >= tCount)
+		if (a.getStats().EN > tCount)
 		{
-			if (currentRoom.isAdjacent(player.getLocation(), a))
+			if (currentRoom.isAdjacent(player.getLocation(), a) && a.getTile().tileInt != 13 && a.getTile().tileInt != 20)
 			{
 				a.attack(player);
 				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
@@ -216,7 +240,7 @@ void PlayingState::enemyTurn()
 			}
 			else
 			{
-				currentRoom.moveEnemy(player.getLocation(), a);
+				currentRoom.moveActors(player.getLocation(), a);
 			}
 		}
 
@@ -226,7 +250,6 @@ void PlayingState::enemyTurn()
 
 void PlayingState::incrementTurn()
 {
-	tCount++;
 
 	// If it is the player's turn, check if they are out of turns
 	if (pTurn && tCount == player.getStats().EN)
@@ -257,48 +280,109 @@ void PlayingState::incrementTurn()
 
 void PlayingState::interact()
 {
-	switch (currentRoom.getItemInt(highlight))
-		//basically if the object is interactable
+	if (currentRoom.getActorInt(highlight) != 0)
 	{
-		// KEY
-	case 1:
-		log.push_back(messages["GET_KEY"]);
-		keyCount++;
-		currentRoom.setItemInt(highlight, 0);
-		break;
-
-	case 2:
-		//room transition
-		transitionRoom();
-		break;
-
-		// MAP_DOOR_LOCKED
-	case 3:
-		if (keyCount > 0)
+		if (currentRoom.getActor(highlight).getStats().STR == 0)
 		{
-			log.push_back(messages["USE_KEY"]);
-			keyCount--;
-			currentRoom.setItemInt(highlight, 0);
+			log.push_back(currentRoom.getActor(highlight).getMDefend());
+			if (currentRoom.getActor(highlight).holdItem())
+			{
+				int temp = currentRoom.getActor(highlight).dropItem();
+				if (temp == 1)
+				{
+					log.push_back(messages["RECIEVE_KEY"]);
+					keyCount++;
+				}
+				else
+				{
+					log.push_back(currentRoom.itemIndex[temp].getMPickup());
+					player.pickUp(currentRoom.getItemStats(temp));
+				}
+			}
 		}
 		else
 		{
-			log.push_back(messages["DOOR_LOCKED"]);
+			log.push_back(messages["ENEMY_INTERACT"]);
 		}
-		break;
-	// POTION
-	case 4:
-		log.push_back(messages["POTION"]);
-<<<<<<< local
-		player.pickUp(Room::getItemStats(4));
-=======
-		player.pickUp(currentRoom.getItemStats(currentRoom.randomItem()));
->>>>>>> other
-		currentRoom.setItemInt(highlight, 0);
-		break;
-
-	default:
-		break;
+		
 	}
+	else
+	{
+		switch (currentRoom.getItemInt(highlight))
+			//basically if the object is interactable
+		{
+			// KEY
+		case 1:
+			log.push_back(messages["GET_KEY"]);
+			keyCount++;
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+		case 2:
+			//room transition
+			transitionRoom();
+			break;
+
+			// MAP_DOOR_LOCKED
+		case 3:
+			if (keyCount > 0)
+			{
+				log.push_back(messages["USE_KEY"]);
+				keyCount--;
+				currentRoom.setItemInt(highlight, 0);
+			}
+			else
+			{
+				log.push_back(messages["DOOR_LOCKED"]);
+			}
+			break;
+			// FACE_PAINT
+		case 4:
+			log.push_back(currentRoom.itemIndex[4].getMPickup());
+			player.pickUp(currentRoom.getItemStats(4));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+			// GOLDFISH
+		case 5:
+			log.push_back(currentRoom.itemIndex[5].getMPickup());
+			player.pickUp(currentRoom.getItemStats(5));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+			// GLASSES
+		case 6:
+			log.push_back(currentRoom.itemIndex[6].getMPickup());
+			player.pickUp(currentRoom.getItemStats(6));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+			// BACKPACK
+		case 7:
+			log.push_back(currentRoom.itemIndex[7].getMPickup());
+			player.pickUp(currentRoom.getItemStats(7));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+			// TEARS
+		case 8:
+			log.push_back(currentRoom.itemIndex[8].getMPickup());
+			player.pickUp(currentRoom.getItemStats(8));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+			// BANDAID
+		case 9:
+			log.push_back(currentRoom.itemIndex[9].getMPickup());
+			player.pickUp(currentRoom.getItemStats(9));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
+		default:
+			break;
+		}
+	}
+	
 }
 
 void PlayingState::loadRooms()
