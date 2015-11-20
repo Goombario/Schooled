@@ -111,9 +111,9 @@ void Log::display(Buffer& buffer, int row)
 	{
 		// If there are newline symbols, decrease the row to fit
 		temp = log[i];
-		while (temp.find('\n') != std::string::npos)
+		while (temp.find('#') != std::string::npos)
 		{
-			tempInt = temp.find('\n');
+			tempInt = temp.find('#');
 			temp = temp.substr(tempInt + 1);
 			row--;
 		}

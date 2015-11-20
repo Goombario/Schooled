@@ -13,8 +13,8 @@ namespace schooled
 	int const MAP_HEIGHT = 20;
 	int const SCREEN_WIDTH = 80;
 	int const SCREEN_HEIGHT = 25;
-	int const FLOOR_WIDTH = 3;
-	int const FLOOR_HEIGHT = 3;
+	int const FLOOR_WIDTH = 5;
+	int const FLOOR_HEIGHT = 7;
 	int const ITEM_INDEX_SIZE = 2;
 	const vector<string> controlOptions = { "Classic", "Double-Tap", "Classic Lefty", "Double-Tap Lefty" };
 
