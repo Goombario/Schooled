@@ -22,7 +22,7 @@ int Buffer::draw(std::string s, WORD w, int row, int col)
 
 	for (unsigned int i = 0; i < s.size(); i++)
 	{
-		if (s[i] == '\n')
+		if (s[i] == '\n' || s[i] == '#')
 		{
 			col = startCol;
 			row++;
