@@ -70,7 +70,6 @@ private:
 	// Transition to the next room
 	void transitionRoom();
 
-	
 };
 
 #endif
