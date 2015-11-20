@@ -189,17 +189,32 @@ void PlayingState::Draw(GameEngine* game)
 	currentRoom.display(buffer);
 
 	// Display the character
-	buffer.draw('8', con::fgHiWhite, player.getY(), player.getX());
+	buffer.draw('8', con::fgHiWhite, player.getY()+1, player.getX());
 
 	// Display the highlight
-	buffer.draw(con::bgHiWhite, highlight.Y, highlight.X);
+	buffer.draw(con::bgHiWhite, highlight.Y+1, highlight.X);
 
 	// Display stats
 	buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 24, 5);	// Key count
 	//buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
 	//	+ to_string(player.getLocation().Y)), con::fgHiWhite, 24, 5);
 	string tempTurn = (pTurn) ? "Player" : "Enemy";
+	WORD turnColor;
+	if (tempTurn == "Player")
+	{
+		turnColor = con::fgHiBlue;
+	}
+	else
+	{
+		turnColor = con::fgHiRed;
+	}
+	buffer.draw("Turn: ", con::fgHiWhite, 0, 3);
+	buffer.draw(tempTurn, turnColor, 0, 9);
+
 	buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 21, 5);	// Player hitpoints
+
+	int tempCol = 30 - currentRoom.getMessage().length() / 2;
+	buffer.draw(currentRoom.getMessage(), con::fgHiWhite, 0, tempCol);
 	buffer.draw(("EN: " + to_string(player.getStats().EN)), con::fgHiWhite, 22, 5); // Player endurance
 	buffer.draw(("STR: " + to_string(player.getStats().STR)), con::fgHiWhite, 23, 5); //Player strength
 
@@ -262,13 +277,17 @@ void PlayingState::enemyTurn()
 				snd::attack2->play();
 				a.attack(player);
 				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
-				Sleep(200);
 			}
 			else
 			{
 				currentRoom.moveActors(player.getLocation(), a);
 			}
 			
+		}
+		if (a.hasActed())
+		{
+			Sleep(300);
+			a.setActed(false);
 		}
 	}
 	
@@ -469,6 +488,7 @@ void PlayingState::loadRooms()
 		temp = Room(roomFileList[MenuState::levelSelected() - 1]);
 		temp.setLocation({ 1, 1 });
 		roomArray[1][1] = temp;
+		currentRoom = roomArray[1][1];
 	}
 	else
 	{	
@@ -491,10 +511,11 @@ void PlayingState::loadRooms()
 			roomArray[tempCoord.X][tempCoord.Y] = temp;
 		}
 		stream.close();
+		// Set first room
+		currentRoom = roomArray[3][7];
 	}
 
-	// Set first room
-	currentRoom = roomArray[3][7];
+
 }
 
 void PlayingState::moveHighlight(KEYCODE eCode)
