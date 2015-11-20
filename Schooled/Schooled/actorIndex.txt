@@ -1,0 +1,455 @@
+name:BULLY_WEAK
+index:1
+symbol:'x'
+colour:15U // black
+passable:false
+HP:6
+EN:1
+STR:1
+held item:KEY
+m_attack:He punches you.
+m_defend:You punch him.
+
+name:BULLY_STRONG
+index:2
+symbol:'X'
+colour:15U // black
+passable:false
+HP:10
+EN:2
+STR:1
+held item:KEY
+m_attack:He punches you.
+m_defend:You tickle him. Hehe.
+
+name:BIG_BULLY_BILLY
+index:3
+symbol:'X'
+colour:12U // hiRed
+passable:false
+HP:20
+EN:1
+STR:2
+held item:0
+m_attack:This is my playground.
+m_defend:Sharing is caring.
+
+name:DRAMA_TEACHER
+index:4
+symbol:'T'
+colour:12U // hiRed
+passable:false
+HP:5
+EN:5
+STR:1
+held item:KEY
+m_attack:And you have the role of Death. So. Stop BREATHING.
+m_defend:Should've taken music.
+
+name:THIEF_BULLIES
+index:5
+symbol:'x'
+colour:15U // black
+passable:false
+HP:8
+EN:2
+STR:1
+held item:0
+m_attack:We're the ones who hid your bag NERD!
+m_defend:You like to consider myself more of a dork, actually.
+
+name:TATTLETALE
+index:6
+symbol:'t'
+colour:15U // black
+passable:false
+HP:5
+EN:1
+STR:4
+held item:KEY
+m_attack:You're in the girls room! I'm telling!
+m_defend:Oh dear.
+
+name:TEACHER
+index:7
+symbol:'T'
+colour:12U // hiRed
+passable:false
+HP:7
+EN:3
+STR:1
+held item:KEY
+m_attack:I've got eyes on the back of my head.
+m_defend:...Voldemort?
+
+name:SECRETARY_ENEMY
+index:8
+symbol:'S'
+colour:15U // black
+passable:false
+HP:3000
+EN:0
+STR:0
+held item:0
+m_attack:*bubblegum pop*
+m_defend:You unplug something when she's not looking.
+
+name:PRINCIPLE
+index:9
+symbol:'P'
+colour:12U // hiRed
+passable:false
+HP:10
+EN:3
+STR:5
+held item:0
+m_attack:Welcome to today's assembly!
+m_defend:More like dissembly. Welp, there goes your arm.
+
+name:MATH_TEACHER
+index:10
+symbol:'T'
+colour:12U // hiRed
+passable:false
+HP:15
+EN:2
+STR:3
+held item:0
+m_attack:Good time for questions.
+m_defend:Can you repeat that last example?
+
+name:MUSIC_TEACHER
+index:11
+symbol:'T'
+colour:12U // hiRed
+passable:false
+HP:12
+EN:2
+STR:2
+held item:0
+m_attack:You sound like a dead walrus giving birth. Get it right before it becomes twins.
+m_defend:...Should've taken drama.
+
+name:MUSIC_STUDENT
+index:12
+symbol:'x'
+colour:15U // black
+passable:false
+HP:6
+EN:1
+STR:2
+held item:KEY
+m_attack:Don't make me use this.
+m_defend:*whale noises*
+
+name:CAT
+index:13
+symbol:'o'
+colour:8U // grey
+passable:false
+HP:2500
+EN:2
+STR:0
+held item:0
+m_attack:
+m_defend:Meow. \n You pet the cat.
+
+name:DRAMA_KID
+index:14
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:1000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:You made it on stage? But you're still breathing... \n Uhh...
+
+name:NERD_1
+index:15
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:900
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:Salutations. \n I'm mid-game.
+
+name:NERD_2
+index:16
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:900
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:Hello. \n ...
+
+name:NERD_3
+index:17
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:900
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:Hi. \n Please, don't disturb me!
+
+name:NERD_4
+index:18
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:900
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:Hey. \n Shhhhh!
+
+name:NERD_5
+index:19
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:900
+EN:0
+STR:0
+held item:KEY
+m_attack:
+m_defend:Gree- \n Will this shut you up?
+
+name:MINION
+index:20
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:1
+STR:0
+held item:0
+m_attack:
+m_defend:Can you move please? \n Boss told me I can't move, so I ain't movin'.
+
+name:ASSEMBLY_GOERS
+index:21
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:1000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:*snores* \n How does he not notice everyone's asleep?
+
+name:SCARED_MINION
+index:22
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n Wha-what Boss don't know wo-won't hurt 'em...
+
+name:TUT_ROOM1_NPC1
+index:23
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:KEY
+m_attack:
+m_defend:? \n Hey there! Can't get through? Did you try hitting space? It's locked? Whoops, my bad.
+
+name:TUT_ROOM1_NPC2
+index:24
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:KEY
+m_attack:
+m_defend:? \n Don't be afriad to talk to us, but be nice and hit space. You just might get something.
+
+name:TUT_ROOM2_NPC1
+index:25
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n A key? Nah, I got nothing. You'll have to find one. (Hit space to pick up items)
+
+name:TUT_ROOM3_NPC1
+index:26
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n I wouldn't go in there if I were you, if that guy sees you, he'll attack.
+
+name:TUT_ROOM3_NPC2
+index:27
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n The guy in there got detention for stealing the teacher's key.
+
+name:TUT_ROOM3_NPC3
+index:28
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n My endurance is so low I can't move. If it was higher maybe I move longer without taking a break...
+
+name:TUT_ROOM3_NPC4
+index:29
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n You can defend yourself from bullies using your attack key!
+
+name:TUT_ROOM3_NPC5
+index:30
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n The bully attacked me so I used a bandaid to cover my wounds.
+
+name:TUT_ROOM4_NPC1
+index:31
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:KEY
+m_attack:
+m_defend:Uuhh \n I-I-I'm not watching anything! Please don't tell the teacher!
+
+name:TUT_ROOM4_NPC2
+index:32
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:10
+m_attack:
+m_defend:? \n Hey, you're new right? I remember being in your shoes.
+
+name:TUT_ROOM4_NPC3
+index:33
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n Bully? Pfft, enemies come in all shapes and sizes. The bigger the badder.
+
+name:TUT_ROOM5_NPC1
+index:34
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n The teacher lit my project on fire...
+
+name:TUT_ROOM5_NPC2
+index:35
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n The teacher locked the door and won't let anyone leave...
+
+name:TUT_ROOM5_NPC3
+index:36
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n You wanna battle the teacher!? But red enemies are the strongest ones!
+
+name:JANITOR
+index:37
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n Sorry, Kid, seems I lost my key. Or they were stolen. Some of these teachers are out to get me, I swear...
+
+name:SECRETARY
+index:38
+symbol:'S'
+colour:15U // black
+passable:false
+HP:3000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:? \n The Principal? Nah, he locked himself in his office this morning. Only way to get in there is through the janitor's key.
