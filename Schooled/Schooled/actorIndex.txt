@@ -82,14 +82,14 @@ held item:KEY
 m_attack:I've got eyes on the back of my head.
 m_defend:...Voldemort?
 
-name:SECRETARY_ENEMY
+name:SECRETARY
 index:8
 symbol:'S'
 colour:15U // black
 passable:false
-HP:3000
-EN:0
-STR:0
+HP:4
+EN:1
+STR:2
 held item:0
 m_attack:*bubblegum pop*
 m_defend:You unplug something when she's not looking.
@@ -152,7 +152,7 @@ EN:2
 STR:0
 held item:0
 m_attack:
-m_defend:Meow. \n You pet the cat.
+m_defend:Meow.#You pet the cat.
 
 name:DRAMA_KID
 index:14
@@ -164,7 +164,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:You made it on stage? But you're still breathing... \n Uhh...
+m_defend:You made it on stage? But you're still breathing...#Uhh...
 
 name:NERD_1
 index:15
@@ -176,7 +176,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Salutations. \n I'm mid-game.
+m_defend:Salutations.#I'm mid-game.
 
 name:NERD_2
 index:16
@@ -188,7 +188,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Hello. \n ...
+m_defend:Hello.#...
 
 name:NERD_3
 index:17
@@ -200,7 +200,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Hi. \n Please, don't disturb me!
+m_defend:Hi.#Please, don't disturb me!
 
 name:NERD_4
 index:18
@@ -212,7 +212,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Hey. \n Shhhhh!
+m_defend:Hey.#Shhhhh!
 
 name:NERD_5
 index:19
@@ -224,7 +224,7 @@ EN:0
 STR:0
 held item:KEY
 m_attack:
-m_defend:Gree- \n Will this shut you up?
+m_defend:Gree-#Will this shut you up?
 
 name:MINION
 index:20
@@ -236,7 +236,7 @@ EN:1
 STR:0
 held item:0
 m_attack:
-m_defend:Can you move please? \n Boss told me I can't move, so I ain't movin'.
+m_defend:Can you move please?#Boss told me I can't move, so I ain't movin'.
 
 name:ASSEMBLY_GOERS
 index:21
@@ -248,7 +248,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:*snores* \n How does he not notice everyone's asleep?
+m_defend:*snores*#How does he not notice everyone's asleep?
 
 name:SCARED_MINION
 index:22
@@ -260,7 +260,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:? \n Wha-what Boss don't know wo-won't hurt 'em...
+m_defend:?#Wha-what Boss don't know wo-won't hurt 'em...
 
 name:TUT_ROOM1_NPC1
 index:23
@@ -272,7 +272,7 @@ EN:0
 STR:0
 held item:KEY
 m_attack:
-m_defend:? \n Hey there! Can't get through? Did you try hitting space? It's locked? Whoops, my bad.
+m_defend:?#Hey there! Can't get through? Did you try hitting space? It's locked? Whoops, my bad.
 
 name:TUT_ROOM1_NPC2
 index:24
@@ -284,7 +284,7 @@ EN:0
 STR:0
 held item:KEY
 m_attack:
-m_defend:? \n Don't be afriad to talk to us, but be nice and hit space. You just might get something.
+m_defend:?#Don't be afriad to talk to us, but be nice and hit space. You just might get something.
 
 name:TUT_ROOM2_NPC1
 index:25
@@ -296,7 +296,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:? \n A key? Nah, I got nothing. You'll have to find one. (Hit space to pick up items)
+m_defend:?#A key? Nah, I got nothing. You'll have to find one. (Hit space to pick up items)
 
 name:TUT_ROOM3_NPC1
 index:26
@@ -308,7 +308,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:? \n I wouldn't go in there if I were you, if that guy sees you, he'll attack.
+m_defend:?#I wouldn't go in there if I were you, if that guy sees you, he'll attack.
 
 name:TUT_ROOM3_NPC2
 index:27
@@ -320,7 +320,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:? \n The guy in there got detention for stealing the teacher's key.
+m_defend:?#The guy in there got detention for stealing the teacher's key.
 
 name:TUT_ROOM3_NPC3
 index:28
@@ -332,7 +332,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:? \n My endurance is so low I can't move. If it was higher maybe I move longer without taking a break...
+m_defend:?#My endurance is so low I can't move. If it was higher maybe I move longer without taking a break...
 
 name:TUT_ROOM3_NPC4
 index:29
@@ -344,7 +344,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:? \n You can defend yourself from bullies using your attack key!
+m_defend:?#You can defend yourself from bullies using your attack key!
 
 name:TUT_ROOM3_NPC5
 index:30
@@ -356,7 +356,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:? \n The bully attacked me so I used a bandaid to cover my wounds.
+m_defend:?#The bully attacked me so I used a bandaid to cover my wounds.
 
 name:TUT_ROOM4_NPC1
 index:31
@@ -368,7 +368,7 @@ EN:0
 STR:0
 held item:KEY
 m_attack:
-m_defend:Uuhh \n I-I-I'm not watching anything! Please don't tell the teacher!
+m_defend:Uuhh#I-I-I'm not watching anything! Please don't tell the teacher!
 
 name:TUT_ROOM4_NPC2
 index:32
@@ -380,7 +380,7 @@ EN:0
 STR:0
 held item:10
 m_attack:
-m_defend:? \n Hey, you're new right? I remember being in your shoes.
+m_defend:?#Hey, you're new right? I remember being in your shoes.
 
 name:TUT_ROOM4_NPC3
 index:33
@@ -392,7 +392,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:? \n Bully? Pfft, enemies come in all shapes and sizes. The bigger the badder.
+m_defend:?#Bully? Pfft, enemies come in all shapes and sizes. The bigger the badder.
 
 name:TUT_ROOM5_NPC1
 index:34
@@ -404,7 +404,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:? \n The teacher lit my project on fire...
+m_defend:?#The teacher lit my project on fire...
 
 name:TUT_ROOM5_NPC2
 index:35
@@ -416,7 +416,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:? \n The teacher locked the door and won't let anyone leave...
+m_defend:?#The teacher locked the door and won't let anyone leave...
 
 name:TUT_ROOM5_NPC3
 index:36
@@ -428,28 +428,4 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:? \n You wanna battle the teacher!? But red enemies are the strongest ones!
-
-name:JANITOR
-index:37
-symbol:'O'
-colour:7U // hiWhite
-passable:false
-HP:5000
-EN:0
-STR:0
-held item:0
-m_attack:
-m_defend:? \n Sorry, Kid, seems I lost my key. Or they were stolen. Some of these teachers are out to get me, I swear...
-
-name:SECRETARY
-index:38
-symbol:'S'
-colour:15U // black
-passable:false
-HP:3000
-EN:0
-STR:0
-held item:0
-m_attack:
-m_defend:? \n The Principal? Nah, he locked himself in his office this morning. Only way to get in there is through the janitor's key.
+m_defend:?#You wanna battle the teacher!? But red enemies are the strongest ones!

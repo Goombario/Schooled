@@ -6,6 +6,8 @@
 #include "../Header Files\Console_color.h"
 #include "../Header Files/sound_effects.h"
 
+#include <fstream>
+
 using std::string;
 using std::to_string;
 
@@ -252,7 +254,6 @@ void PlayingState::changeRoom(Room& cRoom, COORD change)
 
 void PlayingState::enemyTurn()
 {
-
 	for (Actor& a : currentRoom.getActorList())
 	{
 		if (a.getStats().EN > tCount)
@@ -268,9 +269,10 @@ void PlayingState::enemyTurn()
 			{
 				currentRoom.moveActors(player.getLocation(), a);
 			}
+			
 		}
-
 	}
+	
 
 }
 
@@ -453,7 +455,6 @@ void PlayingState::loadRooms()
 {
 	Room temp;
 	vector<string> roomFileList = shared::getRoomNames();
-	vector<COORD> locationList = { { 1, 1 }, { 1, 0 }, { 0, 0 }, { 0, 1 }, { 1, 2 } };
 	
 	// If the level selector has chosen a level
 	if (MenuState::levelSelected() != 0)
@@ -463,17 +464,29 @@ void PlayingState::loadRooms()
 		roomArray[1][1] = temp;
 	}
 	else
-	{	// Load the rooms from the file
-		for (unsigned int i = 0; i < locationList.size(); i++)
+	{	
+		// Load floor from the file
+		std::ifstream stream("Rooms/Floor_1.txt");
+		if (!stream)
 		{
-			temp = Room(roomFileList[i]);
-			temp.setLocation(locationList[i]);
-			if (temp.getX() >= 0 && temp.getY() >= 0)
-			{
-				roomArray[temp.getX()][temp.getY()] = temp;
-			}
+			std::cout << "File open failed.\n";
+			exit(1);
 		}
+		string line;
+		COORD tempCoord;
+
+		while (stream.good())
+		{
+			stream >> line;
+			temp = Room("Rooms/" + line + ".txt");
+			stream >> tempCoord.X >> tempCoord.Y;
+			temp.setLocation(tempCoord);
+			roomArray[temp.getX()][temp.getY()] = temp;
+		}
+		stream.close();
 	}
+
+	// Set first room
 	currentRoom = roomArray[1][1];
 }
 
