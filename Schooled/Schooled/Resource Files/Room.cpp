@@ -248,6 +248,11 @@ void Room::moveActors(COORD p, Actor& a)
 	else if (a.getTile().tileInt == 20)
 	{
 		moveMinion(a);
+		if (a.getIsFinished())
+		{
+			a = actorIndex[22];
+
+		}
 	}
 }
 
@@ -558,6 +563,7 @@ void Room::moveMinion(Actor& minion)
 			minion.setLocation({ enemyX + deltaX, enemyY + deltaY });
 			setActorInt(minion.getLocation(), 22);
 			Sleep(200);
+			minion.setIsFinished(true);
 		}
 	}
 }
