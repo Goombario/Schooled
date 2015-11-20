@@ -164,19 +164,19 @@ void Room::display(Buffer& buffer){
 			{
 				tile = actorArray[a][b];
 				tempA = &actorIndex[tile];
-				buffer.draw(tempA->getTile().character, tempA->getTile().colorCode, a, b);
+				buffer.draw(tempA->getTile().character, tempA->getTile().colorCode, a+1, b);
 			}
 			else if (itemArray[a][b] > 0)
 			{
 				tile = itemArray[a][b];
 				tempI = &itemIndex[tile];
-				buffer.draw(tempI->getTile().character, tempI->getTile().colorCode, a, b);
+				buffer.draw(tempI->getTile().character, tempI->getTile().colorCode, a+1, b);
 
 			}
 			else
 			{
 				tile = tileArray[a][b];
-				buffer.draw(tileIndex[tile].character, tileIndex[tile].colorCode, a, b);
+				buffer.draw(tileIndex[tile].character, tileIndex[tile].colorCode, a+1, b);
 			}
 		}
 	}
@@ -250,8 +250,9 @@ void Room::moveActors(COORD p, Actor& a)
 		moveMinion(a);
 		if (a.getIsFinished())
 		{
+			COORD tempLocation = a.getLocation();
 			a = actorIndex[22];
-
+			a.setLocation(tempLocation);
 		}
 	}
 }
@@ -439,7 +440,7 @@ void Room::moveEnemy1(COORD playerPos, Actor& enemy)
 		setActorInt(enemy.getLocation(), 0);
 		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
 		setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
-		Sleep(200);
+		enemy.setActed(true);
 	}
 }
 
@@ -514,7 +515,7 @@ void Room::moveCat(COORD playerPos, Actor& enemy)
 		setActorInt(enemy.getLocation(), 0);
 		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
 		setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
-		Sleep(200);
+		enemy.setActed(true);
 	}
 }
 
@@ -562,7 +563,7 @@ void Room::moveMinion(Actor& minion)
 			setActorInt(minion.getLocation(), 0);
 			minion.setLocation({ enemyX + deltaX, enemyY + deltaY });
 			setActorInt(minion.getLocation(), 22);
-			Sleep(200);
+			minion.setActed(true);
 			minion.setIsFinished(true);
 		}
 	}
