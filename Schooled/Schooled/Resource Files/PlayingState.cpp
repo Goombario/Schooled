@@ -328,7 +328,8 @@ void PlayingState::interact()
 {
 	if (currentRoom.getActorInt(highlight) != 0)
 	{
-		if (currentRoom.getActor(highlight).getStats().STR == 0)
+		Actor tempActor = currentRoom.getActor(highlight);
+		if (tempActor.getStats().STR == 0)
 		{
 			log.push_back(currentRoom.getActor(highlight).getMDefend());
 			if (currentRoom.getActor(highlight).holdItem())
@@ -513,9 +514,8 @@ void PlayingState::loadRooms()
 		stream.close();
 		// Set first room
 		currentRoom = roomArray[3][7];
+
 	}
-
-
 }
 
 void PlayingState::moveHighlight(KEYCODE eCode)

@@ -29,8 +29,8 @@ int Buffer::draw(std::string s, WORD w, int row, int col)
 		}
 		else
 		{
-			buffer[row][col].Char.AsciiChar = s[i];
-			buffer[row][col].Attributes = w;
+			buffer[row+1][col].Char.AsciiChar = s[i];
+			buffer[row+1][col].Attributes = w;
 			if (col < schooled::SCREEN_WIDTH - 1)
 			{
 				col++;
@@ -47,13 +47,13 @@ int Buffer::draw(std::string s, WORD w, int row, int col)
 
 void Buffer::draw(char c, WORD w, int row, int col)
 {
-	buffer[row][col].Char.AsciiChar = c;
-	buffer[row][col].Attributes = w;
+	buffer[row+1][col].Char.AsciiChar = c;
+	buffer[row+1][col].Attributes = w;
 }
 
 void Buffer::draw(WORD w, int row, int col)
 {
-	buffer[row][col].Attributes = w;
+	buffer[row+1][col].Attributes = w;
 }
 
 void Buffer::open(HANDLE h)
