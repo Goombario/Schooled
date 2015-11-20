@@ -24,7 +24,6 @@ void PlayingState::Init()
 	pTurn = true;
 	running = true;
 	loadRooms();
-	currentRoom = roomArray[1][1];
 
 	snd::dungeonMusic->play();
 
@@ -422,10 +421,18 @@ void PlayingState::getStartLocation()
 	COORD south = currentRoom.getSouth();
 	COORD east = currentRoom.getEast();
 	COORD west = currentRoom.getWest();
+	int start = 1;
 	COORD empty = { 0, 0 };
 
 	// Check which doors the player can spawn at.
-	if (north != empty)
+	if (start == 1)
+	{
+		player.setLocation({ 29 , 12 });
+		highlight.Y = player.getY() + 1;
+		highlight.X = player.getX();
+		start--;
+	}
+	else if (north != empty)
 	{
 		player.setLocation({ north.X, north.Y + 1 });
 		highlight.Y = player.getY() + 1;
@@ -481,13 +488,13 @@ void PlayingState::loadRooms()
 			temp = Room("Rooms/" + line + ".txt");
 			stream >> tempCoord.X >> tempCoord.Y;
 			temp.setLocation(tempCoord);
-			roomArray[temp.getX()][temp.getY()] = temp;
+			roomArray[tempCoord.X][tempCoord.Y] = temp;
 		}
 		stream.close();
 	}
 
 	// Set first room
-	currentRoom = roomArray[1][1];
+	currentRoom = roomArray[3][7];
 }
 
 void PlayingState::moveHighlight(KEYCODE eCode)

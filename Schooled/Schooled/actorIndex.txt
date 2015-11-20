@@ -88,8 +88,8 @@ symbol:'S'
 colour:15U // black
 passable:false
 HP:4
-EN:1
-STR:2
+EN:0
+STR:0
 held item:0
 m_attack:*bubblegum pop*
 m_defend:You unplug something when she's not looking.
@@ -99,7 +99,7 @@ index:9
 symbol:'P'
 colour:12U // hiRed
 passable:false
-HP:10
+HP:30
 EN:3
 STR:5
 held item:0
@@ -429,3 +429,27 @@ STR:0
 held item:0
 m_attack:
 m_defend:?#You wanna battle the teacher!? But red enemies are the strongest ones!
+
+name:JANITOR
+index:37
+symbol:'O'
+colour:7U // hiWhite
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:?#Sorry, Kid, seems I lost my key. Or they were stolen. Some of these teachers are out to get me, I swear...
+
+name:SECRETARY
+index:38
+symbol:'S'
+colour:15U // black
+passable:false
+HP:3000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:?#The Principal? Nah, he locked himself in his office this morning. Only way to get in there is through the janitor's key.
