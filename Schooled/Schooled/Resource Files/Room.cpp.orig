@@ -18,37 +18,36 @@ vector<const Actor> Room::actorIndex;
 
 void Room::loadTileIndex(string filename)
 {
+	string line;
+	std::ifstream stream(filename);
+	if (stream.fail())
 	{
-		string line;
-		std::ifstream stream(filename);
-		if (stream.fail())
-		{
-			std::cout << "File open failed.\n";
-			exit(1);
-		}
-		while (!stream.eof())
-		{
-			// Get the information from the file
-			getline(stream, line);
-			getline(stream, line);
-			int index = stoi(line.substr(line.find(':') + 1));
-			getline(stream, line);
-			char symbol = (line.substr(line.find('\'') + 1))[0];
-			getline(stream, line);
-			WORD colour = stoi(line.substr(line.find(':') + 1, '/'));
-			getline(stream, line);
-			bool passable = ((line.substr(line.find(':') + 1)) == "true");
+		std::cout << "File open failed.\n";
+		exit(1);
+	}
+	while (!stream.eof())
+	{
+		// Get the information from the file
+		getline(stream, line);
+		getline(stream, line);
+		int index = stoi(line.substr(line.find(':') + 1));
+		getline(stream, line);
+		char symbol = (line.substr(line.find('\'') + 1))[0];
+		getline(stream, line);
+		WORD colour = stoi(line.substr(line.find(':') + 1, '/'));
+		getline(stream, line);
+		bool passable = ((line.substr(line.find(':') + 1)) == "true");
 
-			// Put the tile in the vector
-			Tile temp = { symbol, colour, passable, index };
-			tileIndex.push_back(temp);
-			// If there are more lines, get the empty line
-			if (!stream.eof())
-			{
-				getline(stream, line);
-			}
+		// Put the tile in the vector
+		Tile temp = { symbol, colour, passable, index };
+		tileIndex.push_back(temp);
+		// If there are more lines, get the empty line
+		if (!stream.eof())
+		{
+			getline(stream, line);
 		}
 	}
+	stream.close();
 }
 
 void Room::loadItemIndex(string filename)
@@ -96,6 +95,7 @@ void Room::loadItemIndex(string filename)
 			getline(stream, line);
 		}
 	}
+	stream.close();
 }
 
 void Room::loadActorIndex(string filename)
@@ -151,8 +151,8 @@ void Room::loadActorIndex(string filename)
 			getline(stream, line);
 		}
 	}
+	stream.close();
 }
-
 
 void Room::display(Buffer& buffer){
 	int tile;
@@ -164,20 +164,19 @@ void Room::display(Buffer& buffer){
 			{
 				tile = actorArray[a][b];
 				tempA = &actorIndex[tile];
-				buffer.draw(tempA->getTile().character, tempA->getTile().colorCode, a, b);
+				buffer.draw(tempA->getTile().character, tempA->getTile().colorCode, a+1, b);
 			}
 			else if (itemArray[a][b] > 0)
 			{
 				tile = itemArray[a][b];
 				tempI = &itemIndex[tile];
-				buffer.draw(tempI->getTile().character, tempI->getTile().colorCode, a, b);
+				buffer.draw(tempI->getTile().character, tempI->getTile().colorCode, a+1, b);
 
 			}
 			else
 			{
 				tile = tileArray[a][b];
-				buffer.draw(tileIndex[tile].character, tileIndex[tile].colorCode, a, b);
-
+				buffer.draw(tileIndex[tile].character, tileIndex[tile].colorCode, a+1, b);
 			}
 		}
 	}
@@ -193,6 +192,7 @@ int Room::randomItem()
 	int random = rand() % (itemIndex.size() - 4) + 4;
 	return random;
 }
+
 ItemPtr Room::getItemStats(string s)
 {
 	for (unsigned int i = 0; i < itemIndex.size(); i++)
@@ -248,6 +248,17 @@ void Room::moveActors(COORD p, Actor& a)
 	else if (a.getTile().tileInt == 20)
 	{
 		moveMinion(a);
+		if (a.getIsFinished())
+		{
+			COORD tempLocation = a.getLocation();
+			a = actorIndex[22];
+<<<<<<< local
+			a.setLocation(tempLocation);
+=======
+			a.setLocation(tempLocation);
+
+>>>>>>> other
+		}
 	}
 }
 
@@ -319,6 +330,15 @@ Room::Room(string fileName)
 		}
 	}
 	stream.close();
+
+	COORD temp = { 0, 0 };
+	for (COORD c : entrances)
+	{
+		if (c != temp)
+		{	
+			itemArray[c.Y][c.X] = 2;
+		}
+	}
 }
 
 string Room::getMessage() { return message; }
@@ -425,7 +445,7 @@ void Room::moveEnemy1(COORD playerPos, Actor& enemy)
 		setActorInt(enemy.getLocation(), 0);
 		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
 		setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
-		Sleep(200);
+		enemy.setActed(true);
 	}
 }
 
@@ -500,7 +520,7 @@ void Room::moveCat(COORD playerPos, Actor& enemy)
 		setActorInt(enemy.getLocation(), 0);
 		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
 		setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
-		Sleep(200);
+		enemy.setActed(true);
 	}
 }
 
@@ -548,7 +568,8 @@ void Room::moveMinion(Actor& minion)
 			setActorInt(minion.getLocation(), 0);
 			minion.setLocation({ enemyX + deltaX, enemyY + deltaY });
 			setActorInt(minion.getLocation(), 22);
-			Sleep(200);
+			minion.setActed(true);
+			minion.setIsFinished(true);
 		}
 	}
 }
@@ -600,6 +621,7 @@ bool Room::lineOfSight(COORD playerPos, Actor& enemy)
 	else
 		return false;
 }
+
 bool Room::isAdjacent(COORD playerPos, Actor& enemy){
 	if (enemy.getX() == playerPos.X && enemy.getY() == playerPos.Y - 1 || 
 		enemy.getX() == playerPos.X && enemy.getY() == playerPos.Y + 1 || 
