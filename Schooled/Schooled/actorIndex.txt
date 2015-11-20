@@ -79,20 +79,20 @@ HP:7
 EN:3
 STR:1
 held item:KEY
-m_attack:I've got eyes on the back of my head.
+m_attack:I've got eyes on the back of my head.#
 m_defend:...Voldemort?
 
-name:SECRETARY
+name:HALL_MONITOR
 index:8
-symbol:'S'
+symbol:'H'
 colour:15U // black
 passable:false
-HP:4
-EN:0
-STR:0
+HP:10
+EN:3
+STR:1
 held item:0
-m_attack:*bubblegum pop*
-m_defend:You unplug something when she's not looking.
+m_attack:Where's your hallpass?!?
+m_defend:He is crazy!
 
 name:PRINCIPLE
 index:9
@@ -127,7 +127,7 @@ HP:12
 EN:2
 STR:2
 held item:0
-m_attack:You sound like a dead walrus giving birth. Get it right before it becomes twins.
+m_attack:You sound like a dead walrus giving birth. Get#it right before it becomes twins.
 m_defend:...Should've taken drama.
 
 name:MUSIC_STUDENT
@@ -272,7 +272,7 @@ EN:0
 STR:0
 held item:KEY
 m_attack:
-m_defend:?#Hey there! Can't get through? Did you try hitting space? It's locked? Whoops, my bad.
+m_defend:?#Hey there! Can't get through? Did you try#hitting space? It's locked? Whoops, my bad.
 
 name:TUT_ROOM1_NPC2
 index:24
@@ -282,9 +282,9 @@ passable:false
 HP:5000
 EN:0
 STR:0
-held item:KEY
+held item:0
 m_attack:
-m_defend:?#Don't be afriad to talk to us, but be nice and hit space. You just might get something.
+m_defend:?#Don't be afriad to talk to us, but be nice and#hit space. You just might get something.
 
 name:TUT_ROOM2_NPC1
 index:25
@@ -296,7 +296,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#A key? Nah, I got nothing. You'll have to find one. (Hit space to pick up items)
+m_defend:?#A key? Nah, I got nothing. You'll have to find#one. (Hit space to pick up items)
 
 name:TUT_ROOM3_NPC1
 index:26
@@ -308,7 +308,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#I wouldn't go in there if I were you, if that guy sees you, he'll attack.
+m_defend:?#I wouldn't go in there if I were you. If that#guy sees you, he'll attack.
 
 name:TUT_ROOM3_NPC2
 index:27
@@ -320,7 +320,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The guy in there got detention for stealing the teacher's key.
+m_defend:?#The guy in there got detention for stealing the#teacher's key.
 
 name:TUT_ROOM3_NPC3
 index:28
@@ -332,7 +332,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#My endurance is so low I can't move. If it was higher maybe I move longer without taking a break...
+m_defend:?#My endurance is so low I can't move. If it was#higher maybe I could get another turn...
 
 name:TUT_ROOM3_NPC4
 index:29
@@ -344,7 +344,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#You can defend yourself from bullies using your attack key!
+m_defend:?#You can defend yourself from bullies using your#attack key! (Press X or N to attack)
 
 name:TUT_ROOM3_NPC5
 index:30
@@ -356,7 +356,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The bully attacked me so I used a bandaid to cover my wounds.
+m_defend:?#The bully attacked me so I used a bandaid to#cover my wounds.
 
 name:TUT_ROOM4_NPC1
 index:31
@@ -368,7 +368,7 @@ EN:0
 STR:0
 held item:KEY
 m_attack:
-m_defend:Uuhh#I-I-I'm not watching anything! Please don't tell the teacher!
+m_defend:Uuhh#I-I-I'm not watching anything! Please don't tell#the teacher!
 
 name:TUT_ROOM4_NPC2
 index:32
@@ -378,9 +378,9 @@ passable:false
 HP:5000
 EN:0
 STR:0
-held item:10
+held item:SUPPORT
 m_attack:
-m_defend:?#Hey, you're new right? I remember being in your shoes.
+m_defend:?#Hey, you're new right? I remember being in your#shoes.
 
 name:TUT_ROOM4_NPC3
 index:33
@@ -392,7 +392,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#Bully? Pfft, enemies come in all shapes and sizes. The bigger the badder.
+m_defend:?#Bully? Pfft, enemies come in all shapes and#sizes. The bigger the badder.
 
 name:TUT_ROOM5_NPC1
 index:34
@@ -416,7 +416,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The teacher locked the door and won't let anyone leave...
+m_defend:?#The teacher locked the door and won't let anyone#leave...
 
 name:TUT_ROOM5_NPC3
 index:36
@@ -428,7 +428,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#You wanna battle the teacher!? But red enemies are the strongest ones!
+m_defend:?#You wanna battle the teacher!? But red enemies#are the strongest ones!
 
 name:JANITOR
 index:37
@@ -440,16 +440,112 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#Sorry, Kid, seems I lost my key. Or they were stolen. Some of these teachers are out to get me, I swear...
+m_defend:?#Sorry, Kid, seems I lost my key. Or they were#stolen. Some of these teachers are out to get#me, I swear...
 
 name:SECRETARY
 index:38
 symbol:'S'
-colour:15U // black
+colour:7U // hiWhite
 passable:false
 HP:3000
 EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The Principal? Nah, he locked himself in his office this morning. Only way to get in there is through the janitor's key.
+m_defend:?#The Principal? Nah, he locked himself in his#office this morning. Only way to get in there is#with the janitor's key.
+
+name:MAIN_HALL_NPC1
+index:39
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:4000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:?#The Principle is acting really strange lately...#the teachers too now that I think of it...
+
+name:MAIN_HALL_NPC2
+index:40
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:4000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:?#Goin' after the Principal? You got a lot of guts.#And organs, probably. And blood...
+
+name:MAIN_HALL_NPC3
+index:41
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:4000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:?#The Principal's office is to the left. Why? You#getting suspended too?
+
+name:WEST_HALL_NPC1
+index:42
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:SUPPORT
+m_attack:
+m_defend:?#I am very much hurt...go get 'em...
+
+name:EAST_HALL_NPC1
+index:43
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:KEY
+m_attack:
+m_defend:?#The Hall Monitor's gone crazy! I don't even want#this anymore!
+
+name:EAST_HALL_NPC2
+index:44
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:?#The bullies won't let anyone enter the washrooms#and I really have to pee!
+
+name:EAST_HALL_NPC3
+index:45
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:?#I'm in so much trouble, I dropped my key in the#washroom...
+
+name:EAST_HALL_NPC4
+index:46
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:?#I'm so late right now...

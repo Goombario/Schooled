@@ -408,6 +408,12 @@ void PlayingState::interact()
 			currentRoom.setItemInt(highlight, 0);
 			break;
 
+		case 11:
+			log.push_back(currentRoom.itemIndex[11].getMPickup());
+			player.pickUp(currentRoom.getItemStats(11));
+			currentRoom.setItemInt(highlight, 0);
+			break;
+
 		default:
 			break;
 		}
