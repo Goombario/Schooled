@@ -24,7 +24,6 @@ void PlayingState::Init()
 	pTurn = true;
 	running = true;
 	loadRooms();
-	currentRoom = roomArray[1][1];
 
 	snd::dungeonMusic->play();
 
@@ -310,7 +309,8 @@ void PlayingState::interact()
 {
 	if (currentRoom.getActorInt(highlight) != 0)
 	{
-		if (currentRoom.getActor(highlight).getStats().STR == 0)
+		Actor tempActor = currentRoom.getActor(highlight);
+		if (tempActor.getStats().STR == 0)
 		{
 			log.push_back(currentRoom.getActor(highlight).getMDefend());
 			if (currentRoom.getActor(highlight).holdItem())
@@ -462,6 +462,7 @@ void PlayingState::loadRooms()
 		temp = Room(roomFileList[MenuState::levelSelected() - 1]);
 		temp.setLocation({ 1, 1 });
 		roomArray[1][1] = temp;
+		currentRoom = roomArray[1][1];
 	}
 	else
 	{	
@@ -484,10 +485,9 @@ void PlayingState::loadRooms()
 			roomArray[temp.getX()][temp.getY()] = temp;
 		}
 		stream.close();
+		// Set first room
+		currentRoom = roomArray[1][0];
 	}
-
-	// Set first room
-	currentRoom = roomArray[1][1];
 }
 
 void PlayingState::moveHighlight(KEYCODE eCode)

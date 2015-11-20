@@ -250,7 +250,9 @@ void Room::moveActors(COORD p, Actor& a)
 		moveMinion(a);
 		if (a.getIsFinished())
 		{
+			COORD tempLocation = a.getLocation();
 			a = actorIndex[22];
+			a.setLocation(tempLocation);
 
 		}
 	}
