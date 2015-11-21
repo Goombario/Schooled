@@ -25,7 +25,7 @@ m_defend:You tickle him. Hehe.
 name:BIG_BULLY_BILLY
 index:3
 symbol:'X'
-colour:12U // hiRed
+colour:4U // loRed
 passable:false
 HP:20
 EN:1
@@ -37,7 +37,7 @@ m_defend:Sharing is caring.
 name:DRAMA_TEACHER
 index:4
 symbol:'T'
-colour:12U // hiRed
+colour:4U // loRed
 passable:false
 HP:5
 EN:5
@@ -73,7 +73,7 @@ m_defend:Oh dear.
 name:TEACHER
 index:7
 symbol:'T'
-colour:12U // hiRed
+colour:4U // loRed
 passable:false
 HP:7
 EN:3
@@ -97,7 +97,7 @@ m_defend:He is crazy!
 name:PRINCIPLE
 index:9
 symbol:'P'
-colour:12U // hiRed
+colour:4U // loRed
 passable:false
 HP:30
 EN:3
@@ -109,7 +109,7 @@ m_defend:More like dissembly. Welp, there goes your arm.
 name:MATH_TEACHER
 index:10
 symbol:'T'
-colour:12U // hiRed
+colour:4U // loRed
 passable:false
 HP:15
 EN:2
@@ -121,7 +121,7 @@ m_defend:Can you repeat that last example?
 name:MUSIC_TEACHER
 index:11
 symbol:'T'
-colour:12U // hiRed
+colour:4U // loRed
 passable:false
 HP:12
 EN:2
@@ -176,7 +176,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Salutations.#I'm mid-game.
+m_defend:I'm mid-game.
 
 name:NERD_2
 index:16
@@ -188,7 +188,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Hello.#...
+m_defend:...
 
 name:NERD_3
 index:17
@@ -200,7 +200,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Hi.#Please, don't disturb me!
+m_defend:Please, don't disturb me!
 
 name:NERD_4
 index:18
@@ -212,7 +212,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Hey.#Shhhhh!
+m_defend:Shhhhh!
 
 name:NERD_5
 index:19
@@ -224,7 +224,7 @@ EN:0
 STR:0
 held item:KEY
 m_attack:
-m_defend:Gree-#Will this shut you up?
+m_defend:Will this shut you up?
 
 name:MINION
 index:20
@@ -236,7 +236,7 @@ EN:1
 STR:0
 held item:0
 m_attack:
-m_defend:Can you move please?#Boss told me I can't move, so I ain't movin'.
+m_defend:Boss told me I can't move, so I ain't movin'.
 
 name:ASSEMBLY_GOERS
 index:21
@@ -248,7 +248,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:*snores*#How does he not notice everyone's asleep?
+m_defend:*snores*
 
 name:SCARED_MINION
 index:22
@@ -260,7 +260,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#Wha-what Boss don't know wo-won't hurt 'em...
+m_defend:Wha-what Boss don't know wo-won't hurt 'em...
 
 name:TUT_ROOM1_NPC1
 index:23
@@ -272,7 +272,7 @@ EN:0
 STR:0
 held item:KEY
 m_attack:
-m_defend:?#Hey there! Can't get through? Did you try#hitting space? It's locked? Whoops, my bad.
+m_defend:Hey there! Can't get through? Did you try#hitting space? It's locked? Whoops, my bad.
 
 name:TUT_ROOM1_NPC2
 index:24
@@ -284,7 +284,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#Don't be afriad to talk to us, but be nice and#hit space. You just might get something.
+m_defend:Don't be afriad to talk to us, but be nice and#hit space. You just might get something.
 
 name:TUT_ROOM2_NPC1
 index:25
@@ -296,7 +296,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#A key? Nah, I got nothing. You'll have to find#one. (Hit space to pick up items)
+m_defend:A key? Nah, I got nothing. You'll have to find#one. (Hit space to pick up items)
 
 name:TUT_ROOM3_NPC1
 index:26
@@ -308,7 +308,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#I wouldn't go in there if I were you. If that#guy sees you, he'll attack.
+m_defend:I wouldn't go in there if I were you. If that#guy sees you, he'll attack.
 
 name:TUT_ROOM3_NPC2
 index:27
@@ -320,7 +320,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The guy in there got detention for stealing the#teacher's key.
+m_defend:The guy in there got detention for stealing the#teacher's key.
 
 name:TUT_ROOM3_NPC3
 index:28
@@ -332,7 +332,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#My endurance is so low I can't move. If it was#higher maybe I could get another turn...
+m_defend:My endurance is so low I can't move. If it was#higher maybe I could get another turn...
 
 name:TUT_ROOM3_NPC4
 index:29
@@ -344,7 +344,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#You can defend yourself from bullies using your#attack key! (Press X or N to attack)
+m_defend:You can defend yourself from bullies using your#attack key! (Press X or N to attack)
 
 name:TUT_ROOM3_NPC5
 index:30
@@ -356,7 +356,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The bully attacked me so I used a bandaid to#cover my wounds.
+m_defend:The bully attacked me so I used a bandaid to#cover my wounds.
 
 name:TUT_ROOM4_NPC1
 index:31
@@ -368,7 +368,7 @@ EN:0
 STR:0
 held item:KEY
 m_attack:
-m_defend:Uuhh#I-I-I'm not watching anything! Please don't tell#the teacher!
+m_defend:I-I-I'm not watching anything! Please don't tell#the teacher!
 
 name:TUT_ROOM4_NPC2
 index:32
@@ -380,7 +380,7 @@ EN:0
 STR:0
 held item:SUPPORT
 m_attack:
-m_defend:?#Hey, you're new right? I remember being in your#shoes.
+m_defend:Hey, you're new right? I remember being in your#shoes.
 
 name:TUT_ROOM4_NPC3
 index:33
@@ -392,7 +392,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#Bully? Pfft, enemies come in all shapes and#sizes. The bigger the badder.
+m_defend:Bully? Pfft, enemies come in all shapes and#sizes. The bigger the badder.
 
 name:TUT_ROOM5_NPC1
 index:34
@@ -404,7 +404,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The teacher lit my project on fire...
+m_defend:The teacher lit my project on fire...
 
 name:TUT_ROOM5_NPC2
 index:35
@@ -416,7 +416,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The teacher locked the door and won't let anyone#leave...
+m_defend:The teacher locked the door and won't let anyone#leave...
 
 name:TUT_ROOM5_NPC3
 index:36
@@ -428,7 +428,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#You wanna battle the teacher!? But red enemies#are the strongest ones!
+m_defend:You wanna battle the teacher!? But red enemies#are the strongest ones!
 
 name:JANITOR
 index:37
@@ -440,7 +440,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#Sorry, Kid, seems I lost my key. Or they were#stolen. Some of these teachers are out to get#me, I swear...
+m_defend:Sorry, Kid, seems I lost my key. Or they were#stolen. Some of these teachers are out to get#me, I swear...
 
 name:SECRETARY
 index:38
@@ -452,7 +452,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The Principal? Nah, he locked himself in his#office this morning. Only way to get in there is#with the janitor's key.
+m_defend:The Principal? Nah, he locked himself in his#office this morning. Only way to get in there is#with the janitor's key.
 
 name:MAIN_HALL_NPC1
 index:39
@@ -464,7 +464,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The Principle is acting really strange lately...#the teachers too now that I think of it...
+m_defend:The Principle is acting really strange lately...#the teachers too now that I think of it...
 
 name:MAIN_HALL_NPC2
 index:40
@@ -476,7 +476,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#Goin' after the Principal? You got a lot of guts.#And organs, probably. And blood...
+m_defend:Goin' after the Principal? You got a lot of guts.#And organs, probably. And blood...
 
 name:MAIN_HALL_NPC3
 index:41
@@ -488,7 +488,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The Principal's office is to the left. Why? You#getting suspended too?
+m_defend:The Principal's office is to the left. Why? You#getting suspended too?
 
 name:WEST_HALL_NPC1
 index:42
@@ -500,7 +500,7 @@ EN:0
 STR:0
 held item:SUPPORT
 m_attack:
-m_defend:?#I am very much hurt...go get 'em...
+m_defend:I am very much hurt...go get 'em...
 
 name:EAST_HALL_NPC1
 index:43
@@ -512,7 +512,7 @@ EN:0
 STR:0
 held item:KEY
 m_attack:
-m_defend:?#The Hall Monitor's gone crazy! I don't even want#this anymore!
+m_defend:The Hall Monitor's gone crazy! I don't even want#this anymore!
 
 name:EAST_HALL_NPC2
 index:44
@@ -524,7 +524,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#The bullies won't let anyone enter the washrooms#and I really have to pee!
+m_defend:The bullies won't let anyone enter the washrooms#and I really have to pee!
 
 name:EAST_HALL_NPC3
 index:45
@@ -536,7 +536,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#I'm in so much trouble, I dropped my key in the#washroom...
+m_defend:I'm in so much trouble, I dropped my key in the#washroom...
 
 name:EAST_HALL_NPC4
 index:46
@@ -548,7 +548,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:?#I'm so late right now...
+m_defend:I'm so late right now...
 
 name:GYM_TEACHER
 index:47

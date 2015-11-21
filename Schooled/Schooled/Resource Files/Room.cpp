@@ -143,6 +143,7 @@ void Room::loadActorIndex(string filename)
 		temp.setName(name);
 		temp.setMAttack(m_attack);
 		temp.setMDefend(m_defend);
+		temp.setLocation({ -1, -1 });
 		actorIndex.push_back(temp);
 
 		// If there are more lines, get the empty line
@@ -163,20 +164,20 @@ void Room::display(Buffer& buffer){
 			if (actorArray[a][b] > 0)
 			{
 				tile = actorArray[a][b];
-				tempA = &actorIndex[tile];
-				buffer.draw(tempA->getTile().character, tempA->getTile().colorCode, a, b);
+				tempA = &getActor({ b, a });
+				buffer.draw(tempA->getTile().character, tempA->getTile().colorCode, a+1, b);
 			}
 			else if (itemArray[a][b] > 0)
 			{
 				tile = itemArray[a][b];
 				tempI = &itemIndex[tile];
-				buffer.draw(tempI->getTile().character, tempI->getTile().colorCode, a, b);
+				buffer.draw(tempI->getTile().character, tempI->getTile().colorCode, a+1, b);
 
 			}
 			else
 			{
 				tile = tileArray[a][b];
-				buffer.draw(tileIndex[tile].character, tileIndex[tile].colorCode, a, b);
+				buffer.draw(tileIndex[tile].character, tileIndex[tile].colorCode, a+1, b);
 			}
 		}
 	}
@@ -250,8 +251,9 @@ void Room::moveActors(COORD p, Actor& a)
 		moveMinion(a);
 		if (a.getIsFinished())
 		{
+			COORD tempLocation = a.getLocation();
 			a = actorIndex[22];
-
+			a.setLocation(tempLocation);
 		}
 	}
 }
@@ -439,7 +441,7 @@ void Room::moveEnemy1(COORD playerPos, Actor& enemy)
 		setActorInt(enemy.getLocation(), 0);
 		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
 		setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
-		Sleep(200);
+		enemy.setActed(true);
 	}
 }
 
@@ -514,7 +516,7 @@ void Room::moveCat(COORD playerPos, Actor& enemy)
 		setActorInt(enemy.getLocation(), 0);
 		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
 		setActorInt(enemy.getLocation(), enemy.getTile().tileInt);
-		Sleep(200);
+		enemy.setActed(true);
 	}
 }
 
@@ -562,7 +564,7 @@ void Room::moveMinion(Actor& minion)
 			setActorInt(minion.getLocation(), 0);
 			minion.setLocation({ enemyX + deltaX, enemyY + deltaY });
 			setActorInt(minion.getLocation(), 22);
-			Sleep(200);
+			minion.setActed(true);
 			minion.setIsFinished(true);
 		}
 	}
@@ -571,49 +573,48 @@ void Room::moveMinion(Actor& minion)
 bool Room::lineOfSight(COORD playerPos, Actor& enemy)
 {
 	bool isFound = false;
+	int counter = 1;
 
-	for (int a = 1; isFound == false; a++)
+	// Check the boundary to the left
+	while (isPassable({ enemy.getX() - counter, enemy.getY() }))
 	{
-		if (!isPassable({ enemy.getX() - a, enemy.getY() }))
-		{
-			enemy.setMinX(enemy.getX() - a);
-			isFound = true;
-		}
+		counter++;
 	}
-	isFound = false;
-	for (int a = 1; isFound == false; a++)
-	{
-		if (!isPassable({ enemy.getX() + a, enemy.getY() }))
-		{
-			enemy.setMaxX(enemy.getX() + a);
-			isFound = true;
-		}
-	}
-	isFound = false;
-	for (int a = 1; isFound == false; a++)
-	{
-		if (!isPassable({ enemy.getX(), enemy.getY() - a }))
-		{
-			enemy.setMinY(enemy.getY() - a);
-			isFound = true;
-		}
+	enemy.setMinX(enemy.getX() - counter);
+	counter = 1;
 
-	}
-	isFound = false;
-	for (int a = 1; isFound == false; a++)
+	// Check the boundary to the right
+	while (isPassable({ enemy.getX() + counter, enemy.getY() }))
 	{
-		if (!isPassable({ enemy.getX(), enemy.getY() + a }))
-		{
-			enemy.setMaxY(enemy.getY() + a);
-			isFound = true;
-		}
-
+		counter++;
 	}
-	if (playerPos.X >= enemy.getMinX() && playerPos.Y >= enemy.getMinY() && 
+	enemy.setMaxX(enemy.getX() + counter);
+	counter = 1;
+
+	// Check the boundary to the up
+	while (isPassable({ enemy.getX(), enemy.getY() - counter }))
+	{
+		counter++;
+	}
+	enemy.setMaxY(enemy.getY() - counter);
+	counter = 1;
+
+	// Check the boundary to the down
+	while (isPassable({ enemy.getX(), enemy.getY() + counter }))
+	{
+		counter++;
+	}
+	enemy.setMaxY(enemy.getY() + counter);
+	counter = 1;
+
+	if (playerPos.X >= enemy.getMinX() && playerPos.Y >= enemy.getMinY() &&
 		playerPos.X <= enemy.getMaxX() && playerPos.Y <= enemy.getMaxY())
+	{
+		enemy.setAggro(true);
 		return true;
-	else
-		return false;
+	}
+	enemy.setAggro(false);
+	return false;
 }
 
 bool Room::isAdjacent(COORD playerPos, Actor& enemy){

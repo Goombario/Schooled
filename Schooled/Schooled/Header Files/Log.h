@@ -25,6 +25,7 @@ public:
 
 private:
 	vector<string> log;
+	vector<WORD> colours;
 	bool newLine;
 	const int TEXT_START=15;
 };

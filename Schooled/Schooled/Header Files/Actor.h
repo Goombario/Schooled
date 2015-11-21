@@ -42,6 +42,7 @@ public:
 	std::string getMDefend() { return m_defend; }
 	std::string getName() { return name; }
 	bool getIsFinished() { return isFinished; }
+	bool hasActed() { return acted; }
 
 	void setTile(Tile t) { tile = t; }
 	void setStats(Stats s) { stats = s; }
@@ -55,6 +56,8 @@ public:
 	void setName(string s) { name = s; }
 	void setHeldItem(ItemPtr i) { item = i; }
 	void setIsFinished(bool b) { isFinished = b; }
+	void setActed(bool b) { acted = b; }
+	void setAggro(bool);
 
 	bool holdItem();
 	int dropItem();
@@ -71,6 +74,8 @@ private:
 	std::string name = "";
 	int minX, maxX, minY, maxY;
 	bool isFinished=false;
+	bool acted=false;
+	WORD colour;
 };
 
 typedef Actor* ActorPtr;

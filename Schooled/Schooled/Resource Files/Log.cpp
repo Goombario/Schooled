@@ -16,8 +16,7 @@ using std::vector;
 
 Log::Log()
 {
-	push_back("");
-	push_back("");
+
 }
 
 void Log::push_back(string s)
