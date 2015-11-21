@@ -46,7 +46,7 @@ passable:true
 HP:0
 EN:0
 STR:1
-mPickup:You found face paint! You are no longer Nate. You are now...Nate the Great!
+mPickup:You found face paint! You are no longer Nate.#You are now...Nate the Great!
 
 name:GOLDFISH
 index:5

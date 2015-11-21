@@ -1,0 +1,6 @@
+-attack sound effect not working well
+-Gym teacher should stay put
+-flashes between player and enemy turn when a button is held down
+-slow down combat
+-East Hall LOS is messed
+-says it's the Janitor's key twice

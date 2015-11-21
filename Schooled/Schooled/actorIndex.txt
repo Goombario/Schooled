@@ -22,16 +22,16 @@ held item:KEY
 m_attack:He punches you.
 m_defend:You tickle him. Hehe.
 
-name:BIG_BULLY_BILLY
+name:LUNCH_LADY
 index:3
 symbol:'X'
 colour:4U // loRed
 passable:false
-HP:20
+HP:23
 EN:1
 STR:2
 held item:0
-m_attack:This is my playground.
+m_attack:Naughty child, this is my playground.
 m_defend:Sharing is caring.
 
 name:DRAMA_TEACHER
@@ -39,7 +39,7 @@ index:4
 symbol:'T'
 colour:4U // loRed
 passable:false
-HP:5
+HP:7
 EN:5
 STR:1
 held item:KEY
@@ -56,7 +56,7 @@ EN:2
 STR:1
 held item:0
 m_attack:You're not allowed here, Nerd!
-m_defend:You like to consider myself more of a dork, actually.
+m_defend:You like to consider myself more of a dork,#actually.
 
 name:TATTLETALE
 index:6
@@ -91,7 +91,7 @@ HP:10
 EN:3
 STR:1
 held item:0
-m_attack:Where's your hallpass?!?
+m_attack:YOU SHALL NOT PASS!
 m_defend:He is crazy!
 
 name:PRINCIPLE
@@ -101,10 +101,10 @@ colour:4U // loRed
 passable:false
 HP:30
 EN:3
-STR:5
+STR:3
 held item:0
-m_attack:Welcome to today's assembly!
-m_defend:More like dissembly. Welp, there goes your arm.
+m_attack:Welcome Nate! You've come to stop me?
+m_defend:This ends today!
 
 name:MATH_TEACHER
 index:10
@@ -284,7 +284,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Don't be afriad to talk to us, but be nice and#hit space. You just might get something.
+m_defend:Don't be afraid to talk to us, but be nice and#hit space. You just might get something.
 
 name:TUT_ROOM2_NPC1
 index:25
@@ -561,3 +561,159 @@ STR:3
 held item:BANDAID
 m_attack:What are you doing in my assembly?
 m_defend:Fighting you?
+
+name:BACKSTAGE_NPC1
+index:48
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:KEY
+m_attack:
+m_defend:T-Thank you...
+
+name:BACKSTAGE_NPC2
+index:49
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:FACE_PAINT
+m_attack:
+m_defend:Wait! You can't go out looking like that, the Drama teacher will go crazy!
+
+name:BACKSTAGE_NPC3
+index:50
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:How did those guys get past the hallmonitor?
+
+name:BACKSTAGE_NPC3
+index:51
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:Can't believe that guy got the lead part, he's#never acted before!
+
+name:MUSIC_NPC1
+index:52
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:I...I don't even play the flute!
+
+name:MUSIC_NPC2
+index:53
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:What's up with the teachers today?!
+
+name:MUSIC_NPC3
+index:54
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:For some reason the Conductor's making us use#different instruments. 
+
+name:MUSIC_NPC4
+index:55
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:SUPPORT
+m_attack:
+m_defend:Yo-you beat him? Thank you so much! I can play#my flute again! ...Where is my flute again?
+
+name:BACKYARD_NPC1
+index:56
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:The Lunchlady has been locking everyone away#somewhere! Oh gods, what if she gets me too?
+
+name:BACKYARD_NPC2
+index:57
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:The Janitor's key? I thought I saw someone pick#it up, couldn't catch their face though.
+
+name:BACKYARD_NPC3
+index:58
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:BANDAID
+m_attack:
+m_defend:Hey, you okay there? You look a little hurt.
+
+name:BACKYARD_NPC4
+index:59
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:The Lunchlady put us all in detention, I didn't#know she could do that...
+
+name:BACKYARD_NPC5
+index:60
+symbol:'O'
+colout:7U // hiWhite
+passable:false
+HP:2000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:We were just playing tag!
