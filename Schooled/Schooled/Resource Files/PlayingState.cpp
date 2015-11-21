@@ -20,12 +20,13 @@ PlayingState PlayingState::m_PlayingState;
 void PlayingState::Init()
 {
 	tCount = 0;
+	masterKey = false;
 	keyCount = 0;
 	pTurn = true;
 	running = true;
 	loadRooms();
 
-	snd::dungeonMusic->play();
+	//snd::dungeonMusic->play();
 
 	log.clear();
 	log.push_back(currentRoom.getMessage());
@@ -195,7 +196,10 @@ void PlayingState::Draw(GameEngine* game)
 	buffer.draw(con::bgHiWhite, highlight.Y, highlight.X);
 
 	// Display stats
-	buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 24, 5);	// Key count
+	if (masterKey == true)
+		buffer.draw("JAN. KEY", con::fgHiRed, 24, 5);					// Masterkey in effect
+	else
+		buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 24, 5);	// Key count
 	//buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
 	//	+ to_string(player.getLocation().Y)), con::fgHiWhite, 24, 5);
 	string tempTurn = (pTurn) ? "Player" : "Enemy";
@@ -340,7 +344,7 @@ void PlayingState::interact()
 		{
 			// KEY
 		case 1:
-		snd::key->play();
+			snd::key->play();
 			log.push_back(messages["GET_KEY"]);
 			keyCount++;
 			currentRoom.setItemInt(highlight, 0);
@@ -348,13 +352,18 @@ void PlayingState::interact()
 
 		case 2:
 			//room transition
-		snd::nextRoom->play();
+			snd::nextRoom->play();
 			transitionRoom();
 			break;
 
 			// MAP_DOOR_LOCKED
 		case 3:
-			if (keyCount > 0)
+			if (masterKey == true)
+			{
+				log.push_back(messages["USE_MASTERKEY"]);
+				currentRoom.setItemInt(highlight, 0);
+			}
+			else if (keyCount > 0)
 			{
 				log.push_back(messages["USE_KEY"]);
 				keyCount--;
@@ -366,6 +375,7 @@ void PlayingState::interact()
 				log.push_back(messages["DOOR_LOCKED"]);
 			}
 			break;
+
 			// FACE_PAINT
 		case 4:
 			log.push_back(currentRoom.itemIndex[4].getMPickup());
@@ -408,11 +418,33 @@ void PlayingState::interact()
 			currentRoom.setItemInt(highlight, 0);
 			break;
 
+			// PEN
 		case 11:
 			log.push_back(currentRoom.itemIndex[11].getMPickup());
 			player.pickUp(currentRoom.getItemStats(11));
 			currentRoom.setItemInt(highlight, 0);
 			break;
+
+			//PRINCIPAL_LOCKED_DOOR
+		case 12:
+			if (masterKey == true)
+			{
+				log.push_back(messages["USE_MASTERKEY"]);
+				currentRoom.setItemInt(highlight, 0);
+			}
+			else
+			{
+				snd::lockedDoor->play();
+				log.push_back(messages["DOOR_LOCKED"]);
+			}
+			break;
+
+			// MASTERKEY
+		case 13:
+			log.push_back(currentRoom.itemIndex[13].getMPickup());
+			masterKey = true;
+
+			currentRoom.setItemInt(highlight, 0);
 
 		default:
 			break;

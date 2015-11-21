@@ -76,7 +76,7 @@ passable:true
 HP:1
 EN:0
 STR:1
-mPickup:You found your backpack! You can't believe you just left it here!
+mPickup:You found your backpack! You can't believe you#just left it here!
 
 name:TEARS
 index:8
@@ -117,3 +117,23 @@ HP:0
 EN:0
 STR:1
 mPickup:You found a pen! The pen is mightier than the#sword afterall.
+
+name:PRINCIPLE_DOOR_LOCKED
+index:12
+symbol:'D'
+colour:12U // hiRed
+passable:false
+HP:0
+EN:0
+STR:0
+mPickup:0
+
+name:MASTER_KEY
+index:13
+symbol:'~'
+colour:4U // loRed
+passable:true
+HP:0
+EN:0
+STR:0
+mPickup:It's the Janitor's key!

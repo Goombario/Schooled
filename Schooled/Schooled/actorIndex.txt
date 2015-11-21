@@ -55,7 +55,7 @@ HP:8
 EN:2
 STR:1
 held item:0
-m_attack:We're the ones who hid your bag NERD!
+m_attack:You're not allowed here, Nerd!
 m_defend:You like to consider myself more of a dork, actually.
 
 name:TATTLETALE
@@ -549,3 +549,15 @@ STR:0
 held item:0
 m_attack:
 m_defend:?#I'm so late right now...
+
+name:GYM_TEACHER
+index:47
+symbol:'T'
+colout:12U // hiRed
+passable:false
+HP:8
+EN:2
+STR:3
+held item:BANDAID
+m_attack:What are you doing in my assembly?
+m_defend:Fighting you?
