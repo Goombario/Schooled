@@ -17,6 +17,7 @@ class Log
 public:
 	Log();
 	void push_back(string);
+	void push_back(string, WORD);
 
 	// Output the log
 	void display(HANDLE);
@@ -26,8 +27,9 @@ public:
 private:
 	vector<string> log;
 	vector<WORD> colours;
-	bool newLine;
+	vector<bool> newLines;
 	const int TEXT_START=15;
+	bool newLine;
 };
 
 static map<string, string> messages =

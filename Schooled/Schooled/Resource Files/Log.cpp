@@ -22,12 +22,22 @@ Log::Log()
 void Log::push_back(string s)
 {
 	log.push_back(s);
-	newLine = true;
+	colours.push_back(con::fgLoWhite);
+	newLines.push_back(true);
+}
+
+void Log::push_back(string s, WORD c)
+{
+	log.push_back(s);
+	colours.push_back(c);
+	newLines.push_back(true);
 }
 
 void Log::clear()
 {
 	log.clear();
+	colours.clear();
+	newLines.clear();
 }
 
 void Log::display(HANDLE hConsole)
@@ -121,21 +131,16 @@ void Log::display(Buffer& buffer, int row)
 		if (row < schooled::SCREEN_HEIGHT - SIZE) break;
 
 		// Change the colour based on how old the line is.
-		switch (grayscale)
+		if (newLines[i] || i == log.size() - iModifier)
 		{
-		case 0:
-			buffer.draw(log[i], con::fgHiWhite, row, col);
-			break;
-
-		case 1:
-			buffer.draw(log[i], con::fgLoWhite, row, col);
-			break;
-
-		default:
-			buffer.draw(log[i], con::fgGray, row, col);
-			break;
+			buffer.draw(log[i], colours[i] | FOREGROUND_INTENSITY, row, col);
+			newLines[i] = false;
 		}
-		grayscale++;
+		else
+		{
+			buffer.draw(log[i], colours[i], row, col);
+		}
+
 		row--;
 		col = TEXT_START;
 	}

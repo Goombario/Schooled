@@ -138,7 +138,7 @@ void MenuState::HandleEvents(GameEngine* game)
 	case CONSOLE_KEY_UP:
 	case CONSOLE_KEY_W:
 		if (selectingControl) break; // Don't move if changing controls
-		snd::menuHighlight->play();
+		//snd::menuHighlight->play();
 
 		if (selectingLevel)	// Choosing a level to play
 		{
@@ -166,7 +166,7 @@ void MenuState::HandleEvents(GameEngine* game)
 	case CONSOLE_KEY_DOWN:
 	case CONSOLE_KEY_S:
 		if (selectingControl) break; // Don't move if changing controls
-		snd::menuHighlight->play();
+		//snd::menuHighlight->play();
 		if (selectingLevel)	// Choosing a level to play
 		{
 			if (levelSelect < levelSelections.size() - 1)
@@ -192,7 +192,7 @@ void MenuState::HandleEvents(GameEngine* game)
 	case CONSOLE_KEY_LEFT:
 	case CONSOLE_KEY_A:
 		if (!selectingControl) break;
-		snd::menuHighlight->play();
+		//snd::menuHighlight->play();
 		if (selectedControl > 0)
 		{
 			selectedControl--;
@@ -206,7 +206,7 @@ void MenuState::HandleEvents(GameEngine* game)
 	case CONSOLE_KEY_RIGHT:
 	case CONSOLE_KEY_D:
 		if (!selectingControl) break;
-		snd::menuHighlight->play();
+		//snd::menuHighlight->play();
 		if (selectedControl < controlOptions.size() - 1)
 		{
 			selectedControl++;

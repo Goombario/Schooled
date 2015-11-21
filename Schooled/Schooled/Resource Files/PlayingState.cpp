@@ -26,8 +26,6 @@ void PlayingState::Init()
 	running = true;
 	loadRooms();
 
-	//snd::dungeonMusic->play();
-
 	log.clear();
 
 	player = Actor({ '8', con::fgHiWhite }, { 10, 2, 2 });
@@ -37,7 +35,7 @@ void PlayingState::Init()
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	scheme = schooled::getSetting("ControlScheme");
-	snd::dungeonMusic->play();
+	//snd::dungeonMusic->play();
 }
 
 void PlayingState::Cleanup()
@@ -240,11 +238,11 @@ void PlayingState::attack()
 		if (currentRoom.getActor(highlight).getTile().tileInt >= 13)	// If NPC?
 		{
 			snd::attack1->play();
-			log.push_back(a->getMDefend());
+			log.push_back(a->getMDefend(), con::fgLoCyan);
 		}
 		else
 		{
-			log.push_back(a->getMDefend() + " Deal " + to_string(player.getStats().STR) + " damage! Wow!");
+			log.push_back(a->getMDefend() + " Deal " + to_string(player.getStats().STR) + " damage! Wow!", con::fgLoCyan);
 		}
 
 		// If the actor died
@@ -278,7 +276,7 @@ void PlayingState::enemyTurn()
 			{
 				snd::attack2->play();
 				a.attack(player);
-				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
+				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!", con::fgLoRed);
 				a.setActed(true);
 			}
 			else
@@ -333,7 +331,7 @@ void PlayingState::interact()
 	{
 		if (currentRoom.getActor(highlight).getStats().STR == 0)
 		{
-			log.push_back(currentRoom.getActor(highlight).getMDefend());
+			log.push_back(currentRoom.getActor(highlight).getMDefend(), con::fgLoCyan);
 			if (currentRoom.getActor(highlight).holdItem())
 			{
 				int temp = currentRoom.getActor(highlight).dropItem();
@@ -395,8 +393,6 @@ void PlayingState::interact()
 			}
 			break;
 
-			// PEN
-
 			//PRINCIPAL_LOCKED_DOOR
 		case 12:
 			if (masterKey == true)
@@ -444,16 +440,16 @@ void PlayingState::getStartLocation()
 		highlight.Y = player.getY() - 1;
 		highlight.X = player.getX();
 	}
-	else if (north != empty)
-	{
-		player.setLocation({ north.X, north.Y + 1 });
-		highlight.Y = player.getY() + 1;
-		highlight.X = player.getX();
-	}
 	else if (south != empty)
 	{
 		player.setLocation({ south.X, south.Y - 1 });
 		highlight.Y = player.getY() - 1;
+		highlight.X = player.getX();
+	}
+	else if (north != empty)
+	{
+		player.setLocation({ north.X, north.Y + 1 });
+		highlight.Y = player.getY() + 1;
 		highlight.X = player.getX();
 	}
 	else if (east != empty)
