@@ -242,7 +242,7 @@ void Room::moveActors(COORD p, Actor& a)
 	{
 		moveCat(p, a);
 	}
-	else if (a.getTile().tileInt < 13 || a.getTile().tileInt == 47)
+	else if (a.getTile().tileInt < 13)
 	{
 		moveEnemy1(p, a);
 	}
@@ -531,7 +531,7 @@ void Room::moveMinion(Actor& minion)
 	{
 		for (int b = 0; b < schooled::MAP_WIDTH; b++)
 		{
-			if (getActorInt({ b, a }) == 2 || getActorInt({ b, a }) == 3)
+			if (getActorInt({ b, a }) == 2 || getActorInt({ b, a }) == 2)
 			{
 				bossDefeated = false;
 			}
