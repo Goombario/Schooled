@@ -28,7 +28,6 @@ void PlayingState::Init()
 	snd::dungeonMusic->play();
 
 	log.clear();
-	log.push_back(currentRoom.getMessage());
 
 	player = Actor({ '8', con::fgHiWhite }, { 10, 2, 2 });
 	getStartLocation();
@@ -234,10 +233,9 @@ void PlayingState::attack()
 		Actor *a = &currentRoom.getActor(highlight);
 		player.attack(currentRoom.getActor(highlight));
 		
-		if (currentRoom.getActor(highlight).getTile().tileInt >= 13)
+		if (currentRoom.getActor(highlight).getTile().tileInt >= 13)	// If NPC?
 		{
-		snd::attack1->play();
-
+			snd::attack1->play();
 			log.push_back(a->getMDefend());
 		}
 		else
@@ -277,6 +275,7 @@ void PlayingState::enemyTurn()
 				snd::attack2->play();
 				a.attack(player);
 				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
+				a.setActed(true);
 			}
 			else
 			{
@@ -352,9 +351,10 @@ void PlayingState::interact()
 		}
 		
 	}
-	else
+	else if (currentRoom.getItemInt(highlight) != 0)
 	{
-		switch (currentRoom.getItemInt(highlight))
+		int tempInt = currentRoom.getItemInt(highlight);
+		switch (tempInt)
 			//basically if the object is interactable
 		{
 			// KEY
@@ -385,55 +385,12 @@ void PlayingState::interact()
 				log.push_back(messages["DOOR_LOCKED"]);
 			}
 			break;
-			// FACE_PAINT
-		case 4:
-			log.push_back(currentRoom.itemIndex[4].getMPickup());
-			player.pickUp(currentRoom.getItemStats(4));
-			currentRoom.setItemInt(highlight, 0);
-			break;
 
-			// GOLDFISH
-		case 5:
-			log.push_back(currentRoom.itemIndex[5].getMPickup());
-			player.pickUp(currentRoom.getItemStats(5));
+			// ANY OTHER ITEM
+		default:	
+			log.push_back(Room::itemIndex[tempInt].getMPickup());
+			player.pickUp(currentRoom.getItemStats(tempInt));
 			currentRoom.setItemInt(highlight, 0);
-			break;
-
-			// GLASSES
-		case 6:
-			log.push_back(currentRoom.itemIndex[6].getMPickup());
-			player.pickUp(currentRoom.getItemStats(6));
-			currentRoom.setItemInt(highlight, 0);
-			break;
-
-			// BACKPACK
-		case 7:
-			log.push_back(currentRoom.itemIndex[7].getMPickup());
-			player.pickUp(currentRoom.getItemStats(7));
-			currentRoom.setItemInt(highlight, 0);
-			break;
-
-			// TEARS
-		case 8:
-			log.push_back(currentRoom.itemIndex[8].getMPickup());
-			player.pickUp(currentRoom.getItemStats(8));
-			currentRoom.setItemInt(highlight, 0);
-			break;
-
-			// BANDAID
-		case 9:
-			log.push_back(currentRoom.itemIndex[9].getMPickup());
-			player.pickUp(currentRoom.getItemStats(9));
-			currentRoom.setItemInt(highlight, 0);
-			break;
-
-		case 11:
-			log.push_back(currentRoom.itemIndex[11].getMPickup());
-			player.pickUp(currentRoom.getItemStats(11));
-			currentRoom.setItemInt(highlight, 0);
-			break;
-
-		default:
 			break;
 		}
 	}
@@ -446,16 +403,14 @@ void PlayingState::getStartLocation()
 	COORD south = currentRoom.getSouth();
 	COORD east = currentRoom.getEast();
 	COORD west = currentRoom.getWest();
-	int start = 1;
 	COORD empty = { 0, 0 };
 
 	// Check which doors the player can spawn at.
-	if (start == 1)
+	if (MenuState::levelSelected() == 0)
 	{
 		player.setLocation({ 29 , 12 });
-		highlight.Y = player.getY() + 1;
+		highlight.Y = player.getY() - 1;
 		highlight.X = player.getX();
-		start--;
 	}
 	else if (north != empty)
 	{
@@ -471,15 +426,15 @@ void PlayingState::getStartLocation()
 	}
 	else if (east != empty)
 	{
-		player.setLocation({ east.X + 1, east.Y });
+		player.setLocation({ east.X - 1, east.Y });
 		highlight.Y = player.getY();
-		highlight.X = player.getX() + 1;
+		highlight.X = player.getX() - 1;
 	}
 	else if (west != empty)
 	{
-		player.setLocation({ west.X - 1, west.Y });
+		player.setLocation({ west.X + 1, west.Y });
 		highlight.Y = player.getY();
-		highlight.X = player.getX() - 1;
+		highlight.X = player.getX() + 1;
 	}
 }
 
@@ -624,5 +579,4 @@ void PlayingState::transitionRoom()
 	
 
 	log.clear();
-	log.push_back(currentRoom.getMessage());
 }

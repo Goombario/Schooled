@@ -56,6 +56,7 @@ void MenuState::Init()
 	selectingLevel = false;
 	changedSettings = false;
 	selectingCredits = false;
+	startingGame = false;
 
 	// Get the level list
 	levelSelections = shared::getRoomNames();
@@ -97,6 +98,17 @@ void MenuState::Resume()
 void MenuState::HandleEvents(GameEngine* game)
 {
 	KEYPRESS sKeyPress = console.WaitForKeypress();
+
+	// If the game is starting and the controls are being shown
+	if (startingGame)
+	{
+		startingGame = false;
+		snd::title->stop();
+		snd::startGame->play();
+		game->PushState(PlayingState::Instance());
+		return;
+	}
+
 	switch (sKeyPress.eCode)
 	{
 	case CONSOLE_KEY_ESCAPE:
@@ -208,6 +220,7 @@ void MenuState::HandleEvents(GameEngine* game)
 	case CONSOLE_KEY_RETURN:
 	case CONSOLE_KEY_Z:
 	case CONSOLE_KEY_M:
+	case CONSOLE_KEY_SPACE:
 		handleMenu(game);
 		break;
 
@@ -231,7 +244,39 @@ void MenuState::Draw(GameEngine* game)
 	buffer.clear();
 
 	// Level select screen
-	if (selectingLevel)
+	if (startingGame)
+	{
+		int row = 4;
+		int col;
+		vector<string> tempScheme;
+		string temp = "Press any key to continue";
+		// Draw the "Press any key to continue"
+		buffer.draw(temp, con::fgHiWhite, 21, (30 - temp.size() / 2));
+
+		// Choose the correct scheme to display
+		switch (selectedControl)
+		{
+		case 0:
+			tempScheme = cScheme;
+			break;
+		case 1:
+			tempScheme = dScheme;
+			break;
+		case 2:
+			tempScheme = clScheme;
+			break;
+		case 3:
+			tempScheme = dlScheme;
+			break;
+		}
+		for (string s : tempScheme)
+		{
+			col = 30 - s.size() / 2;
+			buffer.draw(s, con::fgHiWhite, row, col);
+			row += 2;
+		}
+	}
+	else if (selectingLevel)
 	{
 		buffer.draw("Choose a level (ESC to go back)", con::fgHiWhite, 1, 20);
 		int row = 3;
@@ -353,9 +398,7 @@ void MenuState::handleMenu(GameEngine* game)
 	{
 	case 0:
 		// Start game
-		snd::title->stop();
-		snd::startGame->play();
-		game->PushState(PlayingState::Instance());
+		startingGame = true;
 		break;
 
 	case 1:

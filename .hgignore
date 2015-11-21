@@ -9,3 +9,5 @@ syntax: glob
 *.tlog
 *.idb
 *.pdb
+*.suo
+*.opensdf

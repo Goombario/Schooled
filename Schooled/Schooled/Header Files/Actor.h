@@ -57,6 +57,7 @@ public:
 	void setHeldItem(ItemPtr i) { item = i; }
 	void setIsFinished(bool b) { isFinished = b; }
 	void setActed(bool b) { acted = b; }
+	void setAggro(bool);
 
 	bool holdItem();
 	int dropItem();
@@ -74,6 +75,7 @@ private:
 	int minX, maxX, minY, maxY;
 	bool isFinished=false;
 	bool acted=false;
+	WORD colour;
 };
 
 typedef Actor* ActorPtr;

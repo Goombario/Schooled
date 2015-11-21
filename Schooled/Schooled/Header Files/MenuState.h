@@ -33,11 +33,10 @@ protected:
 private:
 	static MenuState m_MenuState;
 	string art;
-	int menuSelect, levelSelect;
+	int menuSelect, levelSelect, selectedControl;
 	vector<string> menuSelections, levelSelections, 
 		cScheme, dScheme, clScheme, dlScheme;
-	bool selectingControl, selectingLevel, selectingCredits, changedSettings;
-	int selectedControl;
+	bool selectingControl, selectingLevel, selectingCredits, changedSettings, startingGame;
 	static int lSelect;
 
 	void handleMenu(GameEngine* game);
