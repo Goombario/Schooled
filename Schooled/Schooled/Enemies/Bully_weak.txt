@@ -1,0 +1,2 @@
+X con::fgHiWhite false 1 
+{ 10, 2, 1 }
