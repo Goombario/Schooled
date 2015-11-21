@@ -22,6 +22,7 @@ void PlayingState::Init()
 	tCount = 0;
 	masterKey = false;
 	keyCount = 0;
+	bossCount = 0;
 	pTurn = true;
 	running = true;
 	loadRooms();
@@ -250,10 +251,52 @@ void PlayingState::attack()
 		// If the actor died
 		if (a->getStats().HP <= 0)
 		{
-			currentRoom.setActorInt(a->getLocation(), 0);
-			log.push_back(messages["ENEMY_DEATH"]);
-			currentRoom.setItemInt(a->getLocation(), a->dropItem());
-			currentRoom.removeActor(highlight);
+			if (a->getTile().tileInt == 3 || a->getTile().tileInt == 4 || a->getTile().tileInt == 11 || a->getTile().tileInt == 47)
+			{
+				bossCount++;
+				if (bossCount == 4)
+				{
+					currentRoom.setActorInt(a->getLocation(), 0);
+					log.push_back(messages["ENEMY_DEATH"]);
+					currentRoom.setItemInt(a->getLocation(), a->dropItem());
+					if (currentRoom.isPassable({a->getX() - 1, a->getY()}))
+					{
+						currentRoom.setItemInt({ a->getX() - 1, a->getY() }, 13);
+					}
+					else if (currentRoom.isPassable({ a->getX() + 1, a->getY() }))
+					{
+						currentRoom.setItemInt({ a->getX() + 1, a->getY() }, 13);
+					}
+					else if (currentRoom.isPassable({ a->getX(), a->getY() + 1 }))
+					{
+						currentRoom.setItemInt({ a->getX(), a->getY() + 1 }, 13);
+					}
+					else if (currentRoom.isPassable({ a->getX(), a->getY() - 1 }))
+					{
+						currentRoom.setItemInt({ a->getX(), a->getY() - 1}, 13);
+					}
+					else
+					{
+						currentRoom.setItemInt(a->getLocation(), 13);
+					}
+
+					currentRoom.removeActor(highlight);
+				}
+				else
+				{
+					currentRoom.setActorInt(a->getLocation(), 0);
+					log.push_back(messages["ENEMY_DEATH"]);
+					currentRoom.setItemInt(a->getLocation(), a->dropItem());
+					currentRoom.removeActor(highlight);
+				}
+			}
+			else
+			{
+				currentRoom.setActorInt(a->getLocation(), 0);
+				log.push_back(messages["ENEMY_DEATH"]);
+				currentRoom.setItemInt(a->getLocation(), a->dropItem());
+				currentRoom.removeActor(highlight);
+			}
 		}
 	}
 	else{
