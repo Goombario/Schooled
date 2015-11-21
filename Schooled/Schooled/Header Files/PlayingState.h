@@ -35,6 +35,7 @@ private:
 	Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 	int tCount, keyCount;
 	bool masterKey;
+	int bossCount;
 	string scheme;
 	bool pTurn, increment, running;
 	Actor player;
