@@ -29,7 +29,6 @@ void PlayingState::Init()
 	//snd::dungeonMusic->play();
 
 	log.clear();
-	log.push_back(currentRoom.getMessage());
 
 	player = Actor({ '8', con::fgHiWhite }, { 10, 2, 2 });
 	getStartLocation();
@@ -190,10 +189,10 @@ void PlayingState::Draw(GameEngine* game)
 	currentRoom.display(buffer);
 
 	// Display the character
-	buffer.draw('8', con::fgHiWhite, player.getY(), player.getX());
+	buffer.draw('8', con::fgHiWhite, player.getY()+1, player.getX());
 
 	// Display the highlight
-	buffer.draw(con::bgHiWhite, highlight.Y, highlight.X);
+	buffer.draw(con::bgHiWhite, highlight.Y+1, highlight.X);
 
 	// Display stats
 	if (masterKey == true)
@@ -203,7 +202,22 @@ void PlayingState::Draw(GameEngine* game)
 	//buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
 	//	+ to_string(player.getLocation().Y)), con::fgHiWhite, 24, 5);
 	string tempTurn = (pTurn) ? "Player" : "Enemy";
+	WORD turnColor;
+	if (tempTurn == "Player")
+	{
+		turnColor = con::fgHiBlue;
+	}
+	else
+	{
+		turnColor = con::fgHiRed;
+	}
+	buffer.draw("Turn: ", con::fgHiWhite, 0, 3);
+	buffer.draw(tempTurn, turnColor, 0, 9);
+
 	buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 21, 5);	// Player hitpoints
+
+	int tempCol = 30 - currentRoom.getMessage().length() / 2;
+	buffer.draw(currentRoom.getMessage(), con::fgHiWhite, 0, tempCol);
 	buffer.draw(("EN: " + to_string(player.getStats().EN)), con::fgHiWhite, 22, 5); // Player endurance
 	buffer.draw(("STR: " + to_string(player.getStats().STR)), con::fgHiWhite, 23, 5); //Player strength
 
@@ -223,10 +237,9 @@ void PlayingState::attack()
 		Actor *a = &currentRoom.getActor(highlight);
 		player.attack(currentRoom.getActor(highlight));
 		
-		if (currentRoom.getActor(highlight).getTile().tileInt >= 13)
+		if (currentRoom.getActor(highlight).getTile().tileInt >= 13)	// If NPC?
 		{
-		snd::attack1->play();
-
+			snd::attack1->play();
 			log.push_back(a->getMDefend());
 		}
 		else
@@ -266,13 +279,18 @@ void PlayingState::enemyTurn()
 				snd::attack2->play();
 				a.attack(player);
 				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!");
-				Sleep(200);
+				a.setActed(true);
 			}
 			else
 			{
 				currentRoom.moveActors(player.getLocation(), a);
 			}
 			
+		}
+		if (a.hasActed())
+		{
+			Sleep(300);
+			a.setActed(false);
 		}
 	}
 	
@@ -337,9 +355,10 @@ void PlayingState::interact()
 		}
 		
 	}
-	else
+	else if (currentRoom.getItemInt(highlight) != 0)
 	{
-		switch (currentRoom.getItemInt(highlight))
+		int tempInt = currentRoom.getItemInt(highlight);
+		switch (tempInt)
 			//basically if the object is interactable
 		{
 			// KEY
@@ -376,54 +395,7 @@ void PlayingState::interact()
 			}
 			break;
 
-			// FACE_PAINT
-		case 4:
-			log.push_back(currentRoom.itemIndex[4].getMPickup());
-			player.pickUp(currentRoom.getItemStats(4));
-			currentRoom.setItemInt(highlight, 0);
-			break;
-
-			// GOLDFISH
-		case 5:
-			log.push_back(currentRoom.itemIndex[5].getMPickup());
-			player.pickUp(currentRoom.getItemStats(5));
-			currentRoom.setItemInt(highlight, 0);
-			break;
-
-			// GLASSES
-		case 6:
-			log.push_back(currentRoom.itemIndex[6].getMPickup());
-			player.pickUp(currentRoom.getItemStats(6));
-			currentRoom.setItemInt(highlight, 0);
-			break;
-
-			// BACKPACK
-		case 7:
-			log.push_back(currentRoom.itemIndex[7].getMPickup());
-			player.pickUp(currentRoom.getItemStats(7));
-			currentRoom.setItemInt(highlight, 0);
-			break;
-
-			// TEARS
-		case 8:
-			log.push_back(currentRoom.itemIndex[8].getMPickup());
-			player.pickUp(currentRoom.getItemStats(8));
-			currentRoom.setItemInt(highlight, 0);
-			break;
-
-			// BANDAID
-		case 9:
-			log.push_back(currentRoom.itemIndex[9].getMPickup());
-			player.pickUp(currentRoom.getItemStats(9));
-			currentRoom.setItemInt(highlight, 0);
-			break;
-
 			// PEN
-		case 11:
-			log.push_back(currentRoom.itemIndex[11].getMPickup());
-			player.pickUp(currentRoom.getItemStats(11));
-			currentRoom.setItemInt(highlight, 0);
-			break;
 
 			//PRINCIPAL_LOCKED_DOOR
 		case 12:
@@ -446,7 +418,11 @@ void PlayingState::interact()
 
 			currentRoom.setItemInt(highlight, 0);
 
-		default:
+			// ANY OTHER ITEM
+		default:	
+			log.push_back(Room::itemIndex[tempInt].getMPickup());
+			player.pickUp(currentRoom.getItemStats(tempInt));
+			currentRoom.setItemInt(highlight, 0);
 			break;
 		}
 	}
@@ -459,16 +435,14 @@ void PlayingState::getStartLocation()
 	COORD south = currentRoom.getSouth();
 	COORD east = currentRoom.getEast();
 	COORD west = currentRoom.getWest();
-	int start = 1;
 	COORD empty = { 0, 0 };
 
 	// Check which doors the player can spawn at.
-	if (start == 1)
+	if (MenuState::levelSelected() == 0)
 	{
 		player.setLocation({ 29 , 12 });
-		highlight.Y = player.getY() + 1;
+		highlight.Y = player.getY() - 1;
 		highlight.X = player.getX();
-		start--;
 	}
 	else if (north != empty)
 	{
@@ -484,15 +458,15 @@ void PlayingState::getStartLocation()
 	}
 	else if (east != empty)
 	{
-		player.setLocation({ east.X + 1, east.Y });
+		player.setLocation({ east.X - 1, east.Y });
 		highlight.Y = player.getY();
-		highlight.X = player.getX() + 1;
+		highlight.X = player.getX() - 1;
 	}
 	else if (west != empty)
 	{
-		player.setLocation({ west.X - 1, west.Y });
+		player.setLocation({ west.X + 1, west.Y });
 		highlight.Y = player.getY();
-		highlight.X = player.getX() - 1;
+		highlight.X = player.getX() + 1;
 	}
 }
 
@@ -507,6 +481,7 @@ void PlayingState::loadRooms()
 		temp = Room(roomFileList[MenuState::levelSelected() - 1]);
 		temp.setLocation({ 1, 1 });
 		roomArray[1][1] = temp;
+		currentRoom = roomArray[1][1];
 	}
 	else
 	{	
@@ -529,10 +504,11 @@ void PlayingState::loadRooms()
 			roomArray[tempCoord.X][tempCoord.Y] = temp;
 		}
 		stream.close();
+		// Set first room
+		currentRoom = roomArray[3][7];
 	}
 
-	// Set first room
-	currentRoom = roomArray[3][7];
+
 }
 
 void PlayingState::moveHighlight(KEYCODE eCode)
@@ -635,5 +611,4 @@ void PlayingState::transitionRoom()
 	
 
 	log.clear();
-	log.push_back(currentRoom.getMessage());
 }

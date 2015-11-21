@@ -20,7 +20,7 @@ typedef Sound* SndPtr;
 namespace snd
 {
 	const SndPtr title = new Sound(L"Sounds/schooled64.wav", true);
-	const SndPtr startGame = new Sound(L"Sounds/pewpew.wav", false);
+	const SndPtr startGame = new Sound(L"Sounds/pewpew.wav", false, false);
 	const SndPtr dungeonMusic = new Sound(L"Sounds/background_1.wav", true);
 	const SndPtr pause = new Sound(L"Sounds/pause.wav", false);
 	const SndPtr unpause = new Sound(L"Sounds/unpause.wav", false);

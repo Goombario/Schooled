@@ -4,7 +4,11 @@
 #include "../Header Files/Schooled.h"
 #include "../Header Files/Actor.h"
 #include "../Header Files/Item.h"
+#include "../Header Files/Console_color.h"
+#include "../Header Files/Room.h"
 using std::string;
+
+namespace con = JadedHoboConsole;
 
 Actor::Actor(Tile t, Stats s, ItemPtr i, string atk, string def) : tile(t), stats(s), item(i) 
 {
@@ -65,4 +69,16 @@ void Actor::pickUp(ItemPtr pickUp){
 	stats.HP += pickUp->getStats().HP;
 	stats.EN += pickUp->getStats().EN;
 	stats.STR += pickUp->getStats().STR;
+}
+
+void Actor::setAggro(bool b)
+{
+	if (b == true)
+	{
+		tile.colorCode = con::fgHiRed;
+	}
+	else
+	{
+		tile.colorCode = Room::actorIndex[tile.tileInt].tile.colorCode;
+	}
 }

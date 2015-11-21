@@ -6,7 +6,7 @@
 void GameEngine::Init()
 {
 	console.SetTitle("Schooled V0.1");
-	//console.Resize(80,25);
+	//console.Resize(63,26);
 }
 
 void GameEngine::Cleanup()
