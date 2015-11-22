@@ -94,7 +94,7 @@ held item:0
 m_attack:YOU SHALL NOT PASS!
 m_defend:He is crazy!
 
-name:PRINCIPLE
+name:PRINCIPAL
 index:9
 symbol:'P'
 colour:4U // loRed
