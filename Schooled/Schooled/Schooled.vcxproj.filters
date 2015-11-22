@@ -66,6 +66,9 @@
     <ClCompile Include="Resource Files\ShareState.cpp">
       <Filter>Resource Files\States</Filter>
     </ClCompile>
+    <ClCompile Include="Resource Files\WinState.cpp">
+      <Filter>Resource Files\States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header Files\MenuState.h">
@@ -111,6 +114,9 @@
       <Filter>Header Files\States</Filter>
     </ClInclude>
     <ClInclude Include="Header Files\ShareState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\WinState.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
   </ItemGroup>
