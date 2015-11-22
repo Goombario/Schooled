@@ -1,0 +1,28 @@
+Level_10
+3 7
+Level_11
+3 6
+Level_12
+3 5
+Level_13
+3 4
+Level_14
+3 3
+Level_7
+3 2
+Level_5
+3 1
+Level_1
+3 0
+Level_3
+2 2
+Level_9
+1 2
+Level_6
+0 2
+Level_4
+4 2
+Level_2
+5 2
+Level_15
+2 1
