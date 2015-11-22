@@ -1,9 +1,10 @@
 #include "../Header Files/PlayingState.h"
 #include "../Header Files/GameOverState.h"
+#include "../Header Files/WinState.h"
 #include "../Header Files/MenuState.h"
 #include "../Header Files/ShareState.h"
-#include "../Header Files\Item.h"
-#include "../Header Files\Console_color.h"
+#include "../Header Files/Item.h"
+#include "../Header Files/Console_color.h"
 #include "../Header Files/sound_effects.h"
 
 #include <fstream>

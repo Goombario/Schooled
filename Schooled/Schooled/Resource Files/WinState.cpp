@@ -1,44 +1,44 @@
-#include "../Header Files/GameOverState.h"
+#include "../Header Files/WinState.h"
 #include "../Header Files/Console_color.h"
 #include <string>
 using std::string;
 
 namespace con = JadedHoboConsole;
 
-GameOverState GameOverState::m_GameOverState;
+WinState WinState::m_WinState;
 
-void GameOverState::Init()
+void WinState::Init()
 {
 
 }
 
-void GameOverState::Cleanup()
+void WinState::Cleanup()
 {
 
 }
 
-void GameOverState::Pause()
+void WinState::Pause()
 {
 
 }
 
-void GameOverState::Resume()
+void WinState::Resume()
 {
 
 }
 
-void GameOverState::HandleEvents(GameEngine* game)
+void WinState::HandleEvents(GameEngine* game)
 {
 	KEYPRESS sKeyPress = console.WaitForKeypress();
 	game->PopState();
 }
 
-void GameOverState::Update(GameEngine* game)
+void WinState::Update(GameEngine* game)
 {
 
 }
 
-void GameOverState::Draw(GameEngine* game)
+void WinState::Draw(GameEngine* game)
 {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -47,7 +47,7 @@ void GameOverState::Draw(GameEngine* game)
 
 	buffer.clear();
 
-	buffer.draw("Game Over", con::fgHiRed, 4, 20);
+	buffer.draw("Congraturations! A winner is you!", con::fgHiMagenta, 4, 20);
 	buffer.draw("Press any key to return to menu", con::fgHiWhite, 3, 20);
 
 	// Close the buffer

@@ -36,7 +36,7 @@ private:
 	int menuSelect, levelSelect, selectedControl;
 	vector<string> menuSelections, levelSelections, 
 		cScheme, dScheme, clScheme, dlScheme;
-	bool selectingControl, selectingLevel, selectingCredits, changedSettings, startingGame;
+	bool selectingControl, selectingLevel, selectingCredits, changedSettings, startingGame, showObjective;
 	static int lSelect;
 
 	void handleMenu(GameEngine* game);
