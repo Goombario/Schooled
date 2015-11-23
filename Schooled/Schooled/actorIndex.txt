@@ -31,7 +31,7 @@ HP:23
 EN:1
 STR:2
 held item:0
-m_attack:Naughty child, this is my playground.
+m_attack:Naughty child, this is my playground.#
 m_defend:Sharing is caring.
 
 name:DRAMA_TEACHER
@@ -55,7 +55,7 @@ HP:8
 EN:2
 STR:1
 held item:0
-m_attack:You're not allowed here, Nerd!
+m_attack:You're not allowed here, Nerd!#
 m_defend:You like to consider myself more of a dork,#actually.
 
 name:TATTLETALE
@@ -428,7 +428,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:You wanna battle the teacher!? But red enemies#are the strongest ones!
+m_defend:You wanna battle the teacher!? But dull red#enemies are the strongest ones!
 
 name:JANITOR
 index:37
@@ -584,7 +584,7 @@ EN:0
 STR:0
 held item:FACE_PAINT
 m_attack:
-m_defend:Wait! You can't go out looking like that, the Drama teacher will go crazy!
+m_defend:Wait! You can't go out looking like that, the#Drama teacher will go crazy!
 
 name:BACKSTAGE_NPC3
 index:50
