@@ -26,6 +26,7 @@ void PlayingState::Init()
 	bossCount = 0;
 	pTurn = true;
 	running = true;
+	winGame = false;
 	loadRooms();
 
 	log.clear();
@@ -144,6 +145,14 @@ void PlayingState::Update(GameEngine* game)
 	{
 		Pause();
 		game->ChangeState(GameOverState::Instance());
+		running = false;
+		return;
+	}
+
+	// If the principal is beaten, show the "Congrats" screen
+	if (winGame)
+	{
+		game->ChangeState(WinState::Instance());
 		running = false;
 		return;
 	}
@@ -291,6 +300,10 @@ void PlayingState::attack()
 			}
 			else
 			{
+				if (a->getTile().tileInt == 9)
+				{
+					winGame = true;
+				}
 				currentRoom.setActorInt(a->getLocation(), 0);
 				log.push_back(messages["ENEMY_DEATH"]);
 				currentRoom.setItemInt(a->getLocation(), a->dropItem());

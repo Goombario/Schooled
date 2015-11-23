@@ -47,10 +47,23 @@ void WinState::Draw(GameEngine* game)
 
 	buffer.clear();
 
-	buffer.draw("Congraturations! A winner is you!", con::fgHiMagenta, 4, 20);
-	buffer.draw("Press any key to return to menu", con::fgHiWhite, 3, 20);
+	// Draw congratulations text
+	string temp = "Congraturations! A winner is you!";
+	int tempCol = 30 - temp.length() / 2;
+	buffer.draw(temp, con::fgHiMagenta, 8, tempCol);
 
 	// Close the buffer
 	buffer.close(hConsole);
+	Sleep(2000);
+
+	// Draw return text
+	buffer.open(hConsole);
+	
+	temp = "Press any key to return to menu";
+	tempCol = 30 - temp.length() / 2;
+	buffer.draw(temp, con::fgHiWhite, 9, tempCol);
+
+	buffer.close(hConsole);
+	
 }
 

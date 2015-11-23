@@ -37,7 +37,7 @@ private:
 	bool masterKey;
 	int bossCount;
 	string scheme;
-	bool pTurn, increment, running;
+	bool pTurn, increment, running, winGame;
 	Actor player;
 	COORD highlight, delta;
 	Log log;
