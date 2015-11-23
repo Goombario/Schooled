@@ -32,6 +32,7 @@ public:
 
 	int findActor(COORD); // Find Actor in actorList
 	Actor& getActor(COORD);	// Get Actor in actorList
+	Actor& getActor(int);
 	void removeActor(COORD); // Remove actor from actorList
 	void moveActors(COORD, Actor&);	// Move all actors in actorList
 	vector<Actor>& getActorList(); // Getting the entire actor list

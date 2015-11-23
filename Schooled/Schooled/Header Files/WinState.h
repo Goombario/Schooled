@@ -1,9 +1,9 @@
-#ifndef GAMEOVERSTATE_H
-#define GAMEOVERSTATE_H
+#ifndef WINSTATE_H
+#define WINSTATE_H
 
 #include "GameState.h"
 
-class GameOverState : public GameState
+class WinState : public GameState
 {
 public:
 	void Init();
@@ -16,15 +16,15 @@ public:
 	void Update(GameEngine* game);
 	void Draw(GameEngine* game);
 
-	static GameOverState* Instance() {
-		return &m_GameOverState;
+	static WinState* Instance() {
+		return &m_WinState;
 	}
 
 protected:
-	GameOverState() { }
+	WinState() { }
 
 private:
-	static GameOverState m_GameOverState;
+	static WinState m_WinState;
 	bool firstTime = true;	// Only draw the text slowly the first time.
 };
 

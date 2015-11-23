@@ -58,6 +58,7 @@ public:
 	void setIsFinished(bool b) { isFinished = b; }
 	void setActed(bool b) { acted = b; }
 	void setAggro(bool);
+	void setActive(bool b);
 
 	bool holdItem();
 	int dropItem();
@@ -75,6 +76,7 @@ private:
 	int minX, maxX, minY, maxY;
 	bool isFinished=false;
 	bool acted=false;
+	bool aggro = false;
 	WORD colour;
 };
 
