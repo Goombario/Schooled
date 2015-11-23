@@ -56,7 +56,7 @@ passable:true
 HP:1
 EN:1
 STR:1
-mPickup:You found some Goldfish! Sweet! Your enemies won't be smiling back!
+mPickup:You found some Goldfish! Sweet! Your enemies#won't be smiling back!
 
 name:GLASSES
 index:6
