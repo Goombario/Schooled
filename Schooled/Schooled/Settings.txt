@@ -1,1 +1,1 @@
-ControlScheme: Double-Tap
+ControlScheme: Classic
