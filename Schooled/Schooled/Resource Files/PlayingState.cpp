@@ -20,13 +20,28 @@ PlayingState PlayingState::m_PlayingState;
 // State Handling
 void PlayingState::Init()
 {
+	// Setting variables
 	tCount = 0;
-	masterKey = false;
 	keyCount = 0;
 	bossCount = 0;
+	enemyIndex = 0;
+	enemyEN = 0;
 	pTurn = true;
 	running = true;
 	winGame = false;
+	masterKey = false;
+	enemiesMoved = false;
+	highlightColor = con::bgHiWhite;
+
+	pickupFlags = map<string, bool>
+	{
+		{ "KEY", false },
+		{ "HP", false },
+		{ "EN", false },
+		{ "STR", false },
+	};
+
+	// Loading all the rooms
 	loadRooms();
 
 	log.clear();
@@ -157,24 +172,74 @@ void PlayingState::Update(GameEngine* game)
 		return;
 	}
 
+	// Move the enemies
+	if (!pTurn)
+	{
+		Actor *a = &currentRoom.getActor(enemyIndex);
+		enemyTurn(*a);
+		if (enemyEN < a->getStats().EN - 1)
+		{
+			enemyEN++;
+			//a->setActive(true);
+		}
+		else
+		{
+			// Go to next enemy
+			if (enemyIndex < currentRoom.getActorList().size() - 1)
+			{
+				enemyIndex++;
+				//a->setActive(false);
+			}
+			else	// All enemies have moved
+			{
+				enemyIndex = 0;
+				pTurn = true;
+				/*tCount++;
+				increment = true;*/
+			}
+			enemyEN = 0;
+		}
+
+		/*// First enemy moved shouldn't pause the game (OPTIONAL, KINDA BROKEN)
+		if (a->hasActed() && !enemiesMoved)
+		{
+			enemiesMoved = true;
+		}
+		else*/ if (a->hasActed())
+		{
+			// If it acted, pause the game
+			Sleep(500);
+			a->setActed(false);	
+		}
+		a = nullptr;
+	}
+
 	// Check if a move action has been performed, and adjusts highlight
 	if (delta.X != 0 || delta.Y != 0)
 	{
 		highlight.X = player.getX() + delta.X;
 		highlight.Y = player.getY() + delta.Y;
 
+		// Set the highlight colour
+		if (currentRoom.getActorInt(highlight) != 0)
+		{
+			highlightColor = (currentRoom.getActor(highlight).getStats().EN == 0)	// If NPC, choose cyan, else red
+				? con::bgHiCyan : con::bgHiRed;
+		}
+		else if (currentRoom.getItemInt(highlight) != 0)
+		{
+			highlightColor = (currentRoom.getItemInt(highlight) == 3 && keyCount == 0)	// If over locked door with no key
+				? con::bgHiRed : con::bgHiGreen;
+		}
+		else
+		{
+			highlightColor = con::bgHiWhite;
+		}
 	}
+
 	// Reset the delta
 	delta.X = 0;
 	delta.Y = 0;
-
-	// Move the enemies
-	if (!pTurn)
-	{
-		enemyTurn();
-		tCount++;
-		increment = true;
-	}
 
 	// If the turn counter was incremented
 	if (increment)
@@ -201,32 +266,52 @@ void PlayingState::Draw(GameEngine* game)
 	buffer.draw('8', con::fgHiWhite, player.getY()+1, player.getX());
 
 	// Display the highlight
-	buffer.draw(con::bgHiWhite, highlight.Y+1, highlight.X);
+	buffer.draw(highlightColor, highlight.Y+1, highlight.X);
 
-	// Display stats
+	// Display keys
 	if (masterKey == true)
-		buffer.draw("JAN. KEY", con::fgHiRed, 24, 5);					// Masterkey in effect
+	{
+		// Masterkey in effect
+		buffer.draw("JAN. KEY", con::fgHiRed, 24, 5);
+	}
 	else
-		buffer.draw("Keys: " + to_string(keyCount), con::fgHiWhite, 24, 5);	// Key count
-	//buffer.draw((to_string(player.getLocation().X) + ","		// Player coordinates
-	//	+ to_string(player.getLocation().Y)), con::fgHiWhite, 24, 5);
+	{
+		WORD keyCol = con::fgHiWhite;
+		if (pickupFlags["KEY"])
+		{
+			keyCol = con::fgHiGreen;
+			pickupFlags["KEY"] = false;
+		}
+		buffer.draw("Keys: " + to_string(keyCount), keyCol, 24, 5);	// Key count
+	}
+
+	// Draw the current turn counter
 	string tempTurn = (pTurn) ? "Player" : "Enemy";
 	WORD turnColor;
-	if (tempTurn == "Player")
-	{
-		turnColor = con::fgHiBlue;
-	}
-	else
-	{
-		turnColor = con::fgHiRed;
-	}
+	turnColor = (tempTurn == "Player") ? con::fgHiBlue : con::fgHiRed;
 	buffer.draw("Turn: ", con::fgHiWhite, 0, 3);
 	buffer.draw(tempTurn, turnColor, 0, 9);
 
-	buffer.draw(("HP: " + to_string(player.getStats().HP)), con::fgHiWhite, 21, 5);	// Player hitpoints
-
+	// Draw the current message
 	int tempCol = 30 - currentRoom.getMessage().length() / 2;
 	buffer.draw(currentRoom.getMessage(), con::fgHiWhite, 0, tempCol);
+
+	// Draw the HP
+	WORD HPCol;
+	if (player.getStats().HP < 5)
+	{
+		HPCol = con::fgHiRed;
+	}
+	else if (player.getStats().HP < 10)
+	{
+		HPCol = con::fgHiYellow;
+	}
+	else
+	{
+		HPCol = con::fgHiWhite;
+	}
+	buffer.draw(("HP: " + to_string(player.getStats().HP)), HPCol, 21, 5);	// Player hitpoints
+
 	buffer.draw(("EN: " + to_string(player.getStats().EN)), con::fgHiWhite, 22, 5); // Player endurance
 	buffer.draw(("STR: " + to_string(player.getStats().STR)), con::fgHiWhite, 23, 5); //Player strength
 
@@ -320,36 +405,27 @@ void PlayingState::changeRoom(Room& cRoom, COORD change)
 {
 	roomArray[cRoom.getX()][cRoom.getY()] = cRoom;
 	cRoom = roomArray[cRoom.getX() + change.X][cRoom.getY() + change.Y];
-
+	tCount = 0;
+	enemyIndex = 0;
+	highlightColor = con::bgHiWhite;
 }
 
-void PlayingState::enemyTurn()
+void PlayingState::enemyTurn(Actor& a)
 {
-	for (Actor& a : currentRoom.getActorList())
+	if (a.getStats().EN > tCount)
 	{
-		if (a.getStats().EN > tCount)
+		if (currentRoom.isAdjacent(player.getLocation(), a) && a.getTile().tileInt != 13 && a.getTile().tileInt != 20)
 		{
-			if (currentRoom.isAdjacent(player.getLocation(), a) && a.getTile().tileInt != 13 && a.getTile().tileInt != 20)
-			{
-				snd::attack2->play();
-				a.attack(player);
-				log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!", con::fgLoRed);
-				a.setActed(true);
-			}
-			else
-			{
-				currentRoom.moveActors(player.getLocation(), a);
-			}
-			
+			snd::attack2->play();
+			a.attack(player);
+			log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!", con::fgLoRed);
+			a.setActed(true);
 		}
-		if (a.hasActed())
+		else
 		{
-			Sleep(300);
-			a.setActed(false);
-		}
+			currentRoom.moveActors(player.getLocation(), a);
+		}	
 	}
-	
-
 }
 
 void PlayingState::incrementTurn()
@@ -360,8 +436,24 @@ void PlayingState::incrementTurn()
 	{
 		tCount = 0;
 		pTurn = false;
+		enemiesMoved = false;
+		// Check if there are any enemies to move
+		bool areEnemies = false;
+		for (Actor a : currentRoom.getActorList())
+		{
+			if (currentRoom.lineOfSight(player.getLocation(), a) && a.getStats().EN > 0)
+			{
+				areEnemies = true;
+			}
+		}
+
+		// If there are no enemies, return to player turn
+		if (!areEnemies)
+		{
+			pTurn = true;
+		}
 	}
-	// If it is the enemies' turn
+	// If it is the enemies' turn	// UNUSED
 	else if (!pTurn)
 	{
 		// Find the highest EN stat
@@ -396,6 +488,7 @@ void PlayingState::interact()
 				{
 					log.push_back(messages["RECIEVE_KEY"]);
 					keyCount++;
+					pickupFlags["KEY"] = true;
 				}
 				else
 				{
@@ -421,6 +514,7 @@ void PlayingState::interact()
 			snd::key->play();
 			log.push_back(messages["GET_KEY"]);
 			keyCount++;
+			pickupFlags["KEY"] = true;
 			currentRoom.setItemInt(highlight, 0);
 			break;
 

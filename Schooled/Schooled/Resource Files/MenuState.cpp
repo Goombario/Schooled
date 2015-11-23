@@ -310,7 +310,7 @@ void MenuState::Draw(GameEngine* game)
 			}
 			else
 			{
-				colour = con::fgLoWhite;
+				colour = con::fgGray;
 			}
 			buffer.draw(levelSelections[i], colour, row, col);
 			row ++;
@@ -359,7 +359,7 @@ void MenuState::Draw(GameEngine* game)
 	}
 	else
 	{
-		buffer.draw(art, con::fgHiWhite, 1, 3);
+		buffer.draw(art, con::fgHiYellow, 1, 3);
 
 		// Draw the menu options to the screen
 		int row = 16;
@@ -376,7 +376,7 @@ void MenuState::Draw(GameEngine* game)
 			}
 			else
 			{
-				colour = con::fgLoWhite;
+				colour = con::fgGray;
 			}
 			buffer.draw(menuSelections[i], colour, row, col);
 			row += 2;
