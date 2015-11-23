@@ -16,6 +16,7 @@ namespace schooled
 	int const FLOOR_WIDTH = 6;
 	int const FLOOR_HEIGHT = 8;
 	int const ITEM_INDEX_SIZE = 2;
+	int const OFFSET = 1;
 	const vector<string> controlOptions = { "Classic", "Double-Tap", "Classic Lefty", "Double-Tap Lefty" };
 
 	// Return the setting that the key is attached to

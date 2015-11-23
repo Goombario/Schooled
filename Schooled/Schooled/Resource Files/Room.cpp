@@ -165,19 +165,19 @@ void Room::display(Buffer& buffer){
 			{
 				tile = actorArray[a][b];
 				tempA = &getActor({ b, a });
-				buffer.draw(tempA->getTile().character, tempA->getTile().colorCode, a+1, b);
+				buffer.draw(tempA->getTile().character, tempA->getTile().colorCode, a+ schooled::OFFSET, b);
 			}
 			else if (itemArray[a][b] > 0)
 			{
 				tile = itemArray[a][b];
 				tempI = &itemIndex[tile];
-				buffer.draw(tempI->getTile().character, tempI->getTile().colorCode, a+1, b);
+				buffer.draw(tempI->getTile().character, tempI->getTile().colorCode, a + schooled::OFFSET, b);
 
 			}
 			else
 			{
 				tile = tileArray[a][b];
-				buffer.draw(tileIndex[tile].character, tileIndex[tile].colorCode, a+1, b);
+				buffer.draw(tileIndex[tile].character, tileIndex[tile].colorCode, a + schooled::OFFSET, b);
 			}
 		}
 	}

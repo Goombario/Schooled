@@ -31,6 +31,8 @@ void PlayingState::Init()
 	winGame = false;
 	masterKey = false;
 	enemiesMoved = false;
+	attack_animation = false;
+	defend_animation = false;
 	highlightColor = con::bgHiWhite;
 
 	pickupFlags = map<string, bool>
@@ -219,27 +221,27 @@ void PlayingState::Update(GameEngine* game)
 	{
 		highlight.X = player.getX() + delta.X;
 		highlight.Y = player.getY() + delta.Y;
-
-		// Set the highlight colour
-		if (currentRoom.getActorInt(highlight) != 0)
-		{
-			highlightColor = (currentRoom.getActor(highlight).getStats().EN == 0)	// If NPC, choose cyan, else red
-				? con::bgHiCyan : con::bgHiRed;
-		}
-		else if (currentRoom.getItemInt(highlight) != 0)
-		{
-			highlightColor = (currentRoom.getItemInt(highlight) == 3 && keyCount == 0)	// If over locked door with no key
-				? con::bgHiRed : con::bgHiGreen;
-		}
-		else
-		{
-			highlightColor = con::bgHiWhite;
-		}
 	}
 
 	// Reset the delta
 	delta.X = 0;
 	delta.Y = 0;
+
+	// Set the highlight colour
+	if (currentRoom.getActorInt(highlight) != 0)
+	{
+		highlightColor = (currentRoom.getActor(highlight).getStats().EN == 0)	// If NPC, choose cyan, else red
+			? con::bgHiCyan : con::bgHiRed;
+	}
+	else if (currentRoom.getItemInt(highlight) != 0)
+	{
+		highlightColor = (currentRoom.getItemInt(highlight) == 3 && keyCount == 0)	// If over locked door with no key
+			? con::bgHiRed : con::bgHiGreen;
+	}
+	else
+	{
+		highlightColor = con::bgHiWhite;
+	}
 
 	// If the turn counter was incremented
 	if (increment)
@@ -259,67 +261,17 @@ void PlayingState::Draw(GameEngine* game)
 	// Clear the buffer
 	buffer.clear();
 
-	// Draw the map
-	currentRoom.display(buffer);
-
-	// Display the character
-	buffer.draw('8', con::fgHiWhite, player.getY()+1, player.getX());
-
-	// Display the highlight
-	buffer.draw(highlightColor, highlight.Y+1, highlight.X);
-
-	// Display keys
-	if (masterKey == true)
-	{
-		// Masterkey in effect
-		buffer.draw("JAN. KEY", con::fgHiRed, 24, 5);
-	}
-	else
-	{
-		WORD keyCol = con::fgHiWhite;
-		if (pickupFlags["KEY"])
-		{
-			keyCol = con::fgHiGreen;
-			pickupFlags["KEY"] = false;
-		}
-		buffer.draw("Keys: " + to_string(keyCount), keyCol, 24, 5);	// Key count
-	}
-
-	// Draw the current turn counter
-	string tempTurn = (pTurn) ? "Player" : "Enemy";
-	WORD turnColor;
-	turnColor = (tempTurn == "Player") ? con::fgHiBlue : con::fgHiRed;
-	buffer.draw("Turn: ", con::fgHiWhite, 0, 3);
-	buffer.draw(tempTurn, turnColor, 0, 9);
-
-	// Draw the current message
-	int tempCol = 30 - currentRoom.getMessage().length() / 2;
-	buffer.draw(currentRoom.getMessage(), con::fgHiWhite, 0, tempCol);
-
-	// Draw the HP
-	WORD HPCol;
-	if (player.getStats().HP < 5)
-	{
-		HPCol = con::fgHiRed;
-	}
-	else if (player.getStats().HP < 10)
-	{
-		HPCol = con::fgHiYellow;
-	}
-	else
-	{
-		HPCol = con::fgHiWhite;
-	}
-	buffer.draw(("HP: " + to_string(player.getStats().HP)), HPCol, 21, 5);	// Player hitpoints
-
-	buffer.draw(("EN: " + to_string(player.getStats().EN)), con::fgHiWhite, 22, 5); // Player endurance
-	buffer.draw(("STR: " + to_string(player.getStats().STR)), con::fgHiWhite, 23, 5); //Player strength
-
-	// Display the messages
-	log.display(buffer);
+	drawBase();
 
 	// Close the buffer
 	buffer.close(hConsole);
+
+	drawVFX(hConsole);
+
+	pickupFlags["KEY"] = false;
+	pickupFlags["HP"] = false;
+	pickupFlags["EN"] = false;
+	pickupFlags["STR"] = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -339,6 +291,7 @@ void PlayingState::attack()
 		else
 		{
 			log.push_back(a->getMDefend() + " Deal " + to_string(player.getStats().STR) + " damage! Wow!", con::fgLoCyan);
+			attack_animation = true;
 		}
 
 		// If the actor died
@@ -410,6 +363,109 @@ void PlayingState::changeRoom(Room& cRoom, COORD change)
 	highlightColor = con::bgHiWhite;
 }
 
+void PlayingState::drawBase()
+{
+	// Draw the map
+	currentRoom.display(buffer);
+
+	// Display the character
+	buffer.draw('8', con::fgHiWhite, player.getY() + schooled::OFFSET, player.getX());
+
+	// Display the highlight
+	buffer.draw(highlightColor, highlight.Y + schooled::OFFSET, highlight.X);
+
+	// Display keys
+	if (masterKey == true)
+	{
+		// Masterkey in effect
+		buffer.draw("JAN. KEY", con::fgHiRed, 24, 5);
+	}
+	else
+	{
+		WORD keyCol = con::fgHiWhite;
+		if (pickupFlags["KEY"])
+		{
+			keyCol = con::fgHiGreen;
+			pickupFlags["KEY"] = false;
+		}
+		buffer.draw("Keys: " + to_string(keyCount), keyCol, 24, 5);	// Key count
+	}
+
+	// Draw the current turn counter
+	string tempTurn = (pTurn) ? "Player" : "Enemy";
+	WORD turnColor;
+	turnColor = (tempTurn == "Player") ? con::fgHiBlue : con::fgHiRed;
+	buffer.draw("Turn: ", con::fgHiWhite, 0, 3);
+	buffer.draw(tempTurn, turnColor, 0, 9);
+
+	// Draw the current message
+	int tempCol = 30 - currentRoom.getMessage().length() / 2;
+	buffer.draw(currentRoom.getMessage(), con::fgHiWhite, 0, tempCol);
+
+	// Draw the HP
+	WORD HPCol;
+	if (pickupFlags["HP"])
+	{
+		HPCol = con::fgHiGreen;
+	}
+	else if (player.getStats().HP < 5)
+	{
+		HPCol = con::fgHiRed;
+	}
+	else if (player.getStats().HP < 10)
+	{
+		HPCol = con::fgHiYellow;
+	}
+	else
+	{
+		HPCol = con::fgHiWhite;
+	}
+	buffer.draw(("HP: " + to_string(player.getStats().HP)), HPCol, 21, 5);	// Player hitpoints
+
+	// Draw the EN stat
+	tempCol = (pickupFlags["EN"]) ? con::fgHiGreen : con::fgHiWhite;
+	buffer.draw(("EN: " + to_string(player.getStats().EN)), tempCol, 22, 5); // Player endurance
+
+	// Draw the STR stat
+	tempCol = (pickupFlags["STR"]) ? con::fgHiGreen : con::fgHiWhite;
+	buffer.draw(("STR: " + to_string(player.getStats().STR)), tempCol, 23, 5); //Player strength
+
+	// Display the messages
+	log.display(buffer);
+}
+
+void PlayingState::drawVFX(HANDLE hConsole)
+{
+	if (attack_animation)
+	{
+		buffer.open(hConsole);
+		buffer.draw(con::bgHiYellow, highlight.Y + schooled::OFFSET, highlight.X);
+		buffer.close(hConsole);
+
+		Sleep(100);
+
+		buffer.open(hConsole);
+		buffer.draw(highlightColor, highlight.Y + schooled::OFFSET, highlight.X);
+		buffer.close(hConsole);
+
+		attack_animation = false;
+	}
+	else if (defend_animation)
+	{
+		buffer.open(hConsole);
+		buffer.draw('8', con::bgHiYellow, player.getY() + schooled::OFFSET, player.getX());
+		buffer.close(hConsole);
+
+		Sleep(100);
+
+		buffer.open(hConsole);
+		buffer.draw('8', con::bgBlack, highlight.Y + schooled::OFFSET, highlight.X);
+		buffer.close(hConsole);
+
+		defend_animation = false;
+	}
+}
+
 void PlayingState::enemyTurn(Actor& a)
 {
 	if (a.getStats().EN > tCount)
@@ -419,6 +475,7 @@ void PlayingState::enemyTurn(Actor& a)
 			snd::attack2->play();
 			a.attack(player);
 			log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!", con::fgLoRed);
+			defend_animation = true;
 			a.setActed(true);
 		}
 		else
@@ -568,8 +625,22 @@ void PlayingState::interact()
 			// ANY OTHER ITEM
 		default:	
 			log.push_back(Room::itemIndex[tempInt].getMPickup());
-			player.pickUp(currentRoom.getItemStats(tempInt));
+			ItemPtr tempPtr = currentRoom.getItemStats(tempInt);
+			player.pickUp(tempPtr);
 			currentRoom.setItemInt(highlight, 0);
+
+			if (tempPtr->getStats().HP > 0)
+			{
+				pickupFlags["HP"] = true;
+			}
+			if (tempPtr->getStats().EN > 0)
+			{
+				pickupFlags["EN"] = true;
+			}
+			if (tempPtr->getStats().STR > 0)
+			{
+				pickupFlags["STR"] = true;
+			}
 			break;
 		}
 	}
