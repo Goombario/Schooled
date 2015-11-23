@@ -454,8 +454,8 @@ void PlayingState::interact()
 		case 13:
 			log.push_back(currentRoom.itemIndex[13].getMPickup());
 			masterKey = true;
-
 			currentRoom.setItemInt(highlight, 0);
+			break;
 
 			// ANY OTHER ITEM
 		default:	
