@@ -76,6 +76,24 @@ void Actor::setAggro(bool b)
 	if (b == true)
 	{
 		tile.colorCode = con::fgHiRed;
+		aggro = true;
+	}
+	else
+	{
+		tile.colorCode = Room::actorIndex[tile.tileInt].tile.colorCode;
+		aggro = false;
+	}
+}
+
+void Actor::setActive(bool isActive)
+{
+	if (isActive)
+	{
+		tile.colorCode = con::fgHiMagenta;
+	}
+	else if (aggro)
+	{
+		tile.colorCode = con::fgHiRed;
 	}
 	else
 	{

@@ -221,7 +221,11 @@ Actor& Room::getActor(COORD c)
 	int i = findActor(c);
 	assert(i >= 0);
 	return actorList[i];
+}
 
+Actor& Room::getActor(int i)
+{
+	return actorList[i];
 }
 
 vector<Actor>& Room::getActorList()
