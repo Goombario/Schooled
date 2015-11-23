@@ -36,6 +36,7 @@ private:
 	Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
 	int tCount, keyCount, bossCount, enemyIndex, enemyEN;
 	bool pTurn, increment, running, winGame, masterKey, enemiesMoved;
+	bool attack_animation, defend_animation;
 	map<string, bool> pickupFlags;
 	WORD highlightColor;
 	string scheme;
@@ -51,6 +52,12 @@ private:
 
 	// Changes the current room to the number of the one given.
 	void changeRoom(Room&, COORD);
+
+	// Draw the unchanging base of the buffer
+	void drawBase();
+
+	// Draw temporary effects upon the buffer
+	void drawVFX(HANDLE);
 
 	// The enemies take their turn
 	void enemyTurn(Actor&);
