@@ -21,7 +21,7 @@ mPickup:It's a key! You picked it up.
 name:DOOR_TO_NEW_ROOM
 index:2
 symbol:'D'
-colour:1U //loBlue
+colour:9U // hiBlue
 passable:false
 HP:0
 EN:0
@@ -131,7 +131,7 @@ mPickup:0
 name:MASTER_KEY
 index:13
 symbol:'~'
-colour:4U // loRed
+colour:12U // hiRed
 passable:true
 HP:0
 EN:0

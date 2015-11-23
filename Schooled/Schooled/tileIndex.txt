@@ -12,8 +12,8 @@ passable:false
 
 name:MAP_DOOR
 index:2
-symbol:'D'
-colour:9U // hiBlue
+symbol:' '
+colour:15U // black
 passable:true
 
 name:MAP_WALL_TOP

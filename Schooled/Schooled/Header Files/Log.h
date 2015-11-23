@@ -37,6 +37,7 @@ static map<string, string> messages =
 	{ "Q_RANDOM", "Random: What do you want ?" },
 	{ "GET_KEY", "It's a key! You picked it up." },
 	{ "DOOR_LOCKED", "The door is locked, you need a key." },
+	{ "P_DOOR_LOCKED", "You need the Janitor's key to get through here." },
 	{ "USE_KEY", "You used a key!" },
 	{ "USE_MASTERKEY", "You used the Janitor's Keys!" },
 	{ "RECIEVE_KEY", "You got a key!" },

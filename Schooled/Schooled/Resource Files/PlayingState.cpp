@@ -446,7 +446,7 @@ void PlayingState::interact()
 			else
 			{
 				snd::lockedDoor->play();
-				log.push_back(messages["DOOR_LOCKED"]);
+				log.push_back(messages["P_DOOR_LOCKED"]);
 			}
 			break;
 
