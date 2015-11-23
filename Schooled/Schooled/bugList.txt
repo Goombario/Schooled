@@ -1,0 +1,6 @@
+-attack sound effect not working well
+-flashes between player and enemy turn when a button is held down
+-slow down combat
+-East Hall/Central Gymnasium LOS is messed
+-says it's the Janitor's key twice
+-enemy in west hall didn't turn red before moving
