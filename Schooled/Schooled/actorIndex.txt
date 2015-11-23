@@ -22,7 +22,7 @@ held item:KEY
 m_attack:He punches you.
 m_defend:You tickle him. Hehe.
 
-name:LUNCH_LADY
+name:LUNCH_MONITOR
 index:3
 symbol:'L'
 colour:4U // loRed
@@ -320,7 +320,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:The guy in there stole the teachers key! Be#careful, if he sees you he’ll attack!
+m_defend:The guy in there stole the teachers key! Be#careful, if he sees you he'll attack!
 
 name:TUT_ROOM3_NPC3
 index:28
@@ -344,7 +344,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Don’t be afraid to defend yourself from bullies! <Press X or N to attack>
+m_defend:Don't be afraid to defend yourself from bullies!#<Press X or N to attack>
 
 name:TUT_ROOM3_NPC5
 index:30
@@ -428,7 +428,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:It’s not only the principal, some of the teachers have#gone crazy too!
+m_defend:It's not only the principal, some of the teachers#have gone crazy too!
 
 name:JANITOR
 index:37
@@ -452,7 +452,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:The Principal? Nah, he locked himself in his#office this morning. Only way to get in there is#with the janitor's key.
+m_defend:The Principal locked himself in his office this#morning. I miss him. The only way to get in#there is with the Janitor's key.
 
 name:MAIN_HALL_NPC1
 index:39
@@ -474,7 +474,7 @@ passable:false
 HP:4000
 EN:0
 STR:0
-held item:0
+held item:SUPPORT
 m_attack:
 m_defend:Goin' after the Principal? You got a lot of guts.#And organs, probably. And blood...
 
@@ -668,7 +668,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:The Lunchlady has been locking everyone away#somewhere! Oh gods, what if she gets me too?
+m_defend:The Lunch Monitor has been locking everyone#away somewhere! Oh gods, what if she gets me too?
 
 name:BACKYARD_NPC2
 index:57
@@ -704,7 +704,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:The Lunchlady put us all in detention, I didn't#know she could do that...
+m_defend:The Lunch Monitor put us all in detention,#I didn't know she could do that...
 
 name:BACKYARD_NPC5
 index:60
@@ -718,7 +718,7 @@ held item:0
 m_attack:
 m_defend:We were just playing tag!
 
-name:Librarian
+name:LIBRARIAN
 index:61
 symbol:'L'
 colout:11U // hiCyan
@@ -728,7 +728,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:The Scarlet Letter is our book of the month!#Students seem to be afraid of it for some reason….
+m_defend:The Scarlet Letter is our book of the month!#Students seem to be afraid of it for some#reason...
 
 name:TUT_ROOM1_NPC3
 index:62
@@ -752,7 +752,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Head to the Schoolyard! They need your help#up ahead! <Hit space on blue doors to enter new areas>
+m_defend:Head to the Schoolyard! They need your help#up ahead! <Hit space on blue doors to enter new#areas>
 
 name:TUT_ROOM2_NPC4
 index:64
@@ -764,7 +764,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Should be around here somewhere….
+m_defend:Should be around here somewhere...
 
 name:TUT_ROOM5_NPC4
 index:65
@@ -788,4 +788,28 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Nate maybe you can talk some sense into the Principal?
+m_defend:Nate maybe you can talk some sense into#the Principal?
+
+name:WEST_HALL_NPC2
+index:67
+symbol:'O'
+colour:11U // hiCyan
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:You have to talk to the secretary to book a#meeting with the Principal.
+
+name:WEST_HALL_NPC3
+index:68
+symbol:'0'
+colour:11U // hiCyan
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:Ugh, performing arts students are so dramatic..
