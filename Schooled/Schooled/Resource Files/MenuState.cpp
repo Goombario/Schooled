@@ -57,6 +57,7 @@ void MenuState::Init()
 	changedSettings = false;
 	selectingCredits = false;
 	startingGame = false;
+	showObjective = false;
 
 	// Get the level list
 	levelSelections = shared::getRoomNames();
@@ -103,6 +104,12 @@ void MenuState::HandleEvents(GameEngine* game)
 	if (startingGame)
 	{
 		startingGame = false;
+		showObjective = true;
+		return;
+	}
+	else if (showObjective)
+	{
+		showObjective = false;
 		snd::title->stop();
 		snd::startGame->play();
 		game->PushState(PlayingState::Instance());
@@ -243,8 +250,17 @@ void MenuState::Draw(GameEngine* game)
 
 	buffer.clear();
 
-	// Level select screen
-	if (startingGame)
+	if (showObjective)
+	{
+		// Show the objective
+		string temp = "Defeat the principal!";
+		buffer.draw(temp, con::fgHiWhite, 13, (30 - temp.size() / 2));
+
+		// Draw the "Press any key to continue"
+		temp = "Press any key to continue";
+		buffer.draw(temp, con::fgHiWhite, 15, (30 - temp.size() / 2));
+	}
+	else if (startingGame)
 	{
 		int row = 4;
 		int col;
@@ -276,6 +292,7 @@ void MenuState::Draw(GameEngine* game)
 			row += 2;
 		}
 	}
+	// Level select screen
 	else if (selectingLevel)
 	{
 		buffer.draw("Choose a level (ESC to go back)", con::fgHiWhite, 1, 20);
@@ -293,7 +310,7 @@ void MenuState::Draw(GameEngine* game)
 			}
 			else
 			{
-				colour = con::fgLoWhite;
+				colour = con::fgGray;
 			}
 			buffer.draw(levelSelections[i], colour, row, col);
 			row ++;
@@ -342,7 +359,7 @@ void MenuState::Draw(GameEngine* game)
 	}
 	else
 	{
-		buffer.draw(art, con::fgHiWhite, 1, 3);
+		buffer.draw(art, con::fgHiYellow, 1, 3);
 
 		// Draw the menu options to the screen
 		int row = 16;
@@ -359,7 +376,7 @@ void MenuState::Draw(GameEngine* game)
 			}
 			else
 			{
-				colour = con::fgLoWhite;
+				colour = con::fgGray;
 			}
 			buffer.draw(menuSelections[i], colour, row, col);
 			row += 2;

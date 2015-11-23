@@ -92,6 +92,7 @@
     <ClCompile Include="Resource Files\Schooled.cpp" />
     <ClCompile Include="Resource Files\ShareState.cpp" />
     <ClCompile Include="Resource Files\sound_effects.cpp" />
+    <ClCompile Include="Resource Files\WinState.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +111,7 @@
     <ClInclude Include="Header Files\Schooled.h" />
     <ClInclude Include="Header Files\ShareState.h" />
     <ClInclude Include="Header Files\sound_effects.h" />
+    <ClInclude Include="Header Files\WinState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

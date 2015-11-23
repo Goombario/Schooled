@@ -7,6 +7,7 @@
 #include "Actor.h"
 #include "Schooled.h"
 #include <Windows.h>
+#include <map>
 
 class PlayingState : public GameState
 {
@@ -33,11 +34,12 @@ private:
 
 	// Variables
 	Room roomArray[schooled::FLOOR_HEIGHT][schooled::FLOOR_WIDTH];
-	int tCount, keyCount;
-	bool masterKey;
-	int bossCount;
+	int tCount, keyCount, bossCount, enemyIndex, enemyEN;
+	bool pTurn, increment, running, winGame, masterKey, enemiesMoved;
+	bool attack_animation, defend_animation;
+	map<string, bool> pickupFlags;
+	WORD highlightColor;
 	string scheme;
-	bool pTurn, increment, running;
 	Actor player;
 	COORD highlight, delta;
 	Log log;
@@ -51,8 +53,14 @@ private:
 	// Changes the current room to the number of the one given.
 	void changeRoom(Room&, COORD);
 
+	// Draw the unchanging base of the buffer
+	void drawBase();
+
+	// Draw temporary effects upon the buffer
+	void drawVFX(HANDLE);
+
 	// The enemies take their turn
-	void enemyTurn();
+	void enemyTurn(Actor&);
 
 	// Increment the turn counter. If out of turns, switch pTurn;
 	void incrementTurn();

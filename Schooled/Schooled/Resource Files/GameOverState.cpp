@@ -1,5 +1,7 @@
 #include "../Header Files/GameOverState.h"
 #include "../Header Files/Console_color.h"
+#include <string>
+using std::string;
 
 namespace con = JadedHoboConsole;
 
