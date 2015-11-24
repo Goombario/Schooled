@@ -167,6 +167,8 @@ void PlayingState::Update(GameEngine* game)
 	// If the player is dead, quit the game
 	if (player.getStats().HP <= 0 && running)
 	{
+		snd::playerDeath->play();
+		Sleep(700);
 		Pause();
 		game->ChangeState(GameOverState::Instance());
 		running = false;
@@ -299,6 +301,7 @@ void PlayingState::attack()
 		}
 		else	// Play battle sound and text
 		{
+			snd::attack1->play();
 			log.push_back(a->getMDefend() + " Deal " + 
 				to_string(player.getStats().STR) + " damage! Wow!", con::fgLoCyan);
 			attack_animation = true;
