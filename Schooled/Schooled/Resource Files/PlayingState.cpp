@@ -22,7 +22,7 @@ void PlayingState::Init()
 {
 	// Setting variables
 	tCount = 0;
-	keyCount = 0;
+	keyCount = 2;
 	bossCount = 0;
 	enemyIndex = 0;
 	enemyEN = 0;
@@ -459,7 +459,7 @@ void PlayingState::drawVFX(HANDLE hConsole)
 		Sleep(100);
 
 		buffer.open(hConsole);
-		buffer.draw('8', con::bgBlack, highlight.Y + schooled::OFFSET, highlight.X);
+		buffer.draw('8', con::bgBlack, player.getY() + schooled::OFFSET, player.getX());
 		buffer.close(hConsole);
 
 		defend_animation = false;
@@ -498,9 +498,9 @@ void PlayingState::incrementTurn()
 		bool areEnemies = false;
 		for (Actor a : currentRoom.getActorList())
 		{
-			if (currentRoom.lineOfSight(player.getLocation(), a) && a.getStats().EN > 0)
+			if (a.getStats().EN > 0)
 			{
-				areEnemies = true;
+				if (currentRoom.lineOfSight(player.getLocation(), a)) areEnemies = true;
 			}
 		}
 

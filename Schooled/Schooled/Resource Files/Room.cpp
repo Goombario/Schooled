@@ -600,7 +600,7 @@ bool Room::lineOfSight(COORD playerPos, Actor& enemy)
 	{
 		counter++;
 	}
-	enemy.setMaxY(enemy.getY() - counter);
+	enemy.setMinY(enemy.getY() - counter);
 	counter = 1;
 
 	// Check the boundary to the down
