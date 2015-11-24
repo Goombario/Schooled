@@ -22,7 +22,7 @@ void PlayingState::Init()
 {
 	// Setting variables
 	tCount = 0;
-	keyCount = 2;
+	keyCount = 0;
 	bossCount = 0;
 	enemyIndex = 0;
 	enemyEN = 0;
@@ -160,6 +160,8 @@ void PlayingState::Update(GameEngine* game)
 	// If the player is dead, quit the game
 	if (player.getStats().HP <= 0 && running)
 	{
+		snd::playerDeath->play();
+		Sleep(700);
 		Pause();
 		game->ChangeState(GameOverState::Instance());
 		running = false;
@@ -290,6 +292,7 @@ void PlayingState::attack()
 		}
 		else
 		{
+			snd::attack1->play();
 			log.push_back(a->getMDefend() + " Deal " + to_string(player.getStats().STR) + " damage! Wow!", con::fgLoCyan);
 			attack_animation = true;
 		}
