@@ -16,11 +16,11 @@ Sound::Sound(LPCTSTR file, bool l, bool a)
 
 void Sound::play()
 {
-	if (loop && async)
+	if (loop && async)	// Looping and playing asynchronously 
 	{
 		PlaySound(fileLocation, NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 	}
-	else if (async)
+	else if (async)		// Playing asynchronously 
 	{
 		PlaySound(fileLocation, NULL, SND_FILENAME | SND_ASYNC);
 	}
@@ -32,6 +32,7 @@ void Sound::play()
 
 void Sound::stop()
 {
+	// Play a null sound
 	PlaySound(NULL, 0, SND_ASYNC);
 }
 

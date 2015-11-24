@@ -161,20 +161,20 @@ void Room::display(Buffer& buffer){
 	ItemPtr tempI;
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++){
 		for (int b = 0; b < schooled::MAP_WIDTH; b++){
-			if (actorArray[a][b] > 0)
+			if (actorArray[a][b] > 0)		// If actor at position, draw
 			{
 				tile = actorArray[a][b];
 				tempA = &getActor({ b, a });
 				buffer.draw(tempA->getTile().character, tempA->getTile().colorCode, a+ schooled::OFFSET, b);
 			}
-			else if (itemArray[a][b] > 0)
+			else if (itemArray[a][b] > 0)	// If item at position, draw
 			{
 				tile = itemArray[a][b];
 				tempI = &itemIndex[tile];
 				buffer.draw(tempI->getTile().character, tempI->getTile().colorCode, a + schooled::OFFSET, b);
 
 			}
-			else
+			else	// Draw tile otherwise
 			{
 				tile = tileArray[a][b];
 				buffer.draw(tileIndex[tile].character, tileIndex[tile].colorCode, a + schooled::OFFSET, b);
@@ -185,16 +185,16 @@ void Room::display(Buffer& buffer){
 
 ItemPtr Room::getItemStats(int a)
 {
-	return &itemIndex[a];
+	return &itemIndex[a];		// Do the thing
 }
 
-int Room::randomItem()
+int Room::randomItem()		//Unused at the moment
 {
 	int random = rand() % (itemIndex.size() - 4) + 4;
 	return random;
 }
 
-ItemPtr Room::getItemStats(string s)
+ItemPtr Room::getItemStats(string s)	// Return item stats based on Item name
 {
 	for (unsigned int i = 0; i < itemIndex.size(); i++)
 	{
@@ -206,7 +206,7 @@ ItemPtr Room::getItemStats(string s)
 	return nullptr;
 }
 
-int Room::findActor(COORD c)
+int Room::findActor(COORD c)		// Does the other thing (finds actor in actor list)
 {
 	for (unsigned int i = 0; i < actorList.size(); i++)
 	{
@@ -216,6 +216,7 @@ int Room::findActor(COORD c)
 	return -1;
 }
 
+// Function definitions
 Actor& Room::getActor(COORD c)
 {
 	int i = findActor(c);
@@ -240,20 +241,21 @@ void Room::removeActor(COORD c)
 	actorList.erase(actorList.begin() + i);
 }
 
+//Enemy AIs
 void Room::moveActors(COORD p, Actor& a)
 {
-	if (a.getTile().tileInt == 13)
+	if (a.getTile().tileInt == 13) // If Cat, move Cat
 	{
 		moveCat(p, a);
 	}
-	else if (a.getTile().tileInt < 13)
+	else if (a.getTile().tileInt < 13) // If Enemy, move Enemy
 	{
 		moveEnemy1(p, a);
 	}
-	else if (a.getTile().tileInt == 20)
+	else if (a.getTile().tileInt == 20)	// If Minion, move Minion
 	{
 		moveMinion(a);
-		if (a.getIsFinished())
+		if (a.getIsFinished())	// When Minion is finished moving
 		{
 			COORD tempLocation = a.getLocation();
 			a = actorIndex[22];
@@ -265,14 +267,14 @@ void Room::moveActors(COORD p, Actor& a)
 bool Room::isPassable(COORD tile){
 	int mapX = tile.X;
 	int mapY = tile.Y;
-	if (mapX < 0 || mapX >= schooled::MAP_WIDTH || mapY < 0 || mapY >= schooled::MAP_HEIGHT)
+	if (mapX < 0 || mapX >= schooled::MAP_WIDTH || mapY < 0 || mapY >= schooled::MAP_HEIGHT)	// If out of bounds, return false
 		return false;
 
 	int tileValue = tileArray[mapY][mapX];
 	int itemValue = itemArray[mapY][mapX];
 	int actorValue = actorArray[mapY][mapX];
 	ItemPtr tempI = &itemIndex[itemValue];
-	if (tileIndex[tileValue].isPassable && actorValue == 0 && tempI->getTile().isPassable)
+	if (tileIndex[tileValue].isPassable && actorValue == 0 && tempI->getTile().isPassable)		// If nothing is in the way, return true
 		return true;
 	return false;
 }
@@ -281,6 +283,7 @@ Room::Room() {}
 
 Room::Room(string fileName)
 {
+	// Open file for input
 	std::ifstream stream;
 	stream.open(fileName);
 
@@ -331,6 +334,7 @@ Room::Room(string fileName)
 	}
 	stream.close();
 
+	// Add transition doors to the map
 	COORD temp = { 0, 0 };
 	for (COORD c : entrances)
 	{
@@ -394,6 +398,7 @@ void Room::save(string fileName)
 
 void Room::moveEnemy1(COORD playerPos, Actor& enemy)
 {
+	// Initializing variables
 	int differenceX, differenceY, deltaX, deltaY;
 	int enemyX = enemy.getX();
 	int enemyY = enemy.getY();
@@ -403,18 +408,22 @@ void Room::moveEnemy1(COORD playerPos, Actor& enemy)
 	deltaY = 0;
 	differenceX = enemyX - playerX;
 	differenceY = enemyY - playerY;
+	// Initializing range for attacking distance
 	bool inRange = differenceX > -4 && differenceX < 4 && differenceY > -4 && differenceY < 4;
 
+	// If line of sight equals true, or inRange is true but out of line of sight, move
 	if (lineOfSight(playerPos, enemy) == true || inRange && lineOfSight(playerPos, enemy) == false)
 	{
+		// If within attacking range, stop moving
 		if (differenceX > -2 && differenceX < 2 && differenceY == 0 ||
 			differenceY > -2 && differenceY < 2 && differenceX == 0)
 		{
 			deltaX = 0;
 			deltaY = 0;
 		}
-		else
+		else // Move towards the player
 		{
+			// Chooses best route
 			if (abs(differenceX) > abs(differenceY))
 			{
 				deltaX = (enemyX > playerX) ? -1 : 1;
@@ -435,12 +444,13 @@ void Room::moveEnemy1(COORD playerPos, Actor& enemy)
 			}
 		}
 	}
-	else{
+	else // If out of sight and out of range, stop moving
+	{
 		deltaX = 0;
 		deltaY = 0;
 	}
 
-	if (isPassable({ enemyX + deltaX, enemyY + deltaY }))
+	if (isPassable({ enemyX + deltaX, enemyY + deltaY }))	//checks if anticipated move is legal, if true redraw the actor
 	{
 		setActorInt(enemy.getLocation(), 0);
 		enemy.setLocation({ enemyX + deltaX, enemyY + deltaY });
@@ -449,7 +459,8 @@ void Room::moveEnemy1(COORD playerPos, Actor& enemy)
 	}
 }
 
-void Room::moveCat(COORD playerPos, Actor& enemy)
+// Same as move enemy, but dumber (without the inRange effect, if it can't see you, you aren't there)
+void Room::moveCat(COORD playerPos, Actor& enemy)	
 {
 	int differenceX, differenceY, deltaX, deltaY;
 	int enemyX = enemy.getX();
@@ -526,11 +537,14 @@ void Room::moveCat(COORD playerPos, Actor& enemy)
 
 void Room::moveMinion(Actor& minion)
 {
+	// Initializing variables
 	int enemyX = minion.getX();
 	int enemyY = minion.getY();
 	int deltaX = 0;
 	int deltaY = 0;
 	bool bossDefeated = true;
+
+	// Checks for if the associated enemy is defeated or not
 	for (int a = 0; a < schooled::MAP_HEIGHT; a++)
 	{
 		for (int b = 0; b < schooled::MAP_WIDTH; b++)
@@ -541,6 +555,8 @@ void Room::moveMinion(Actor& minion)
 			}
 		}
 	}
+
+	// If the enemy is defeated, move Minion one tile away from the door
 	if (bossDefeated == true)
 	{
 		if (isPassable({ enemyX, enemyY - 1 }) && getTileInt({ enemyX, enemyY - 1 }) != 2)
@@ -563,12 +579,13 @@ void Room::moveMinion(Actor& minion)
 			deltaX = 1;
 			deltaY = 0;
 		}
+		// Checks if anticipated move is legal, if it is, move Minion
 		if (isPassable({ enemyX + deltaX, enemyY + deltaY }))
 		{
 			setActorInt(minion.getLocation(), 0);
 			minion.setLocation({ enemyX + deltaX, enemyY + deltaY });
 			setActorInt(minion.getLocation(), 22);
-			minion.setActed(true);
+			minion.setActed(true);			// Resets the Minion actor to the SCARED_MINION actor so it won't move again
 			minion.setIsFinished(true);
 		}
 	}
@@ -621,6 +638,7 @@ bool Room::lineOfSight(COORD playerPos, Actor& enemy)
 	return false;
 }
 
+// Checks if enemy is adjacent to player
 bool Room::isAdjacent(COORD playerPos, Actor& enemy){
 	if (enemy.getX() == playerPos.X && enemy.getY() == playerPos.Y - 1 || 
 		enemy.getX() == playerPos.X && enemy.getY() == playerPos.Y + 1 || 

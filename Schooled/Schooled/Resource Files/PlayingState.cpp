@@ -12,6 +12,7 @@
 using std::string;
 using std::to_string;
 
+// Colour namespace
 namespace con = JadedHoboConsole;
 
 PlayingState PlayingState::m_PlayingState;
@@ -22,7 +23,7 @@ void PlayingState::Init()
 {
 	// Setting variables
 	tCount = 0;
-	keyCount = 2;
+	keyCount = 0;
 	bossCount = 0;
 	enemyIndex = 0;
 	enemyEN = 0;
@@ -35,6 +36,7 @@ void PlayingState::Init()
 	defend_animation = false;
 	highlightColor = con::bgHiWhite;
 
+	// Initialize the pickup flags
 	pickupFlags = map<string, bool>
 	{
 		{ "KEY", false },
@@ -46,14 +48,18 @@ void PlayingState::Init()
 	// Loading all the rooms
 	loadRooms();
 
+	// Clear the log
 	log.clear();
 
+	// Setting the player
 	player = Actor({ '8', con::fgHiWhite }, { 10, 2, 2 });
 	getStartLocation();
 	delta = { 0, 0 };
 	
+	// Get handle to output
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
+	
+	// Set the control scheme
 	scheme = schooled::getSetting("ControlScheme");
 	//snd::dungeonMusic->play();
 }
@@ -78,8 +84,9 @@ void PlayingState::Resume()
 
 void PlayingState::HandleEvents(GameEngine* game)
 {
-	if (!pTurn) return;
+	if (!pTurn) return;	// If it isn't the player's turn, end
 	
+	// Get the keypress
 	KEYPRESS sKeyPress = console.WaitForKeypress();
 	switch (sKeyPress.eCode)
 	{
@@ -95,7 +102,7 @@ void PlayingState::HandleEvents(GameEngine* game)
 		moveHighlight(sKeyPress.eCode);
 		break;
 
-		
+		// Attack key pressed
 	case CONSOLE_KEY_X:
 	case CONSOLE_KEY_N:
 		// Check control schemes
@@ -253,8 +260,6 @@ void PlayingState::Update(GameEngine* game)
 
 void PlayingState::Draw(GameEngine* game)
 {
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
 	// Open the buffer for writing
 	buffer.open(hConsole);
 
@@ -266,8 +271,10 @@ void PlayingState::Draw(GameEngine* game)
 	// Close the buffer
 	buffer.close(hConsole);
 
+	// Draw special effects
 	drawVFX(hConsole);
 
+	// Reset the flags
 	pickupFlags["KEY"] = false;
 	pickupFlags["HP"] = false;
 	pickupFlags["EN"] = false;
@@ -279,83 +286,62 @@ void PlayingState::Draw(GameEngine* game)
 
 void PlayingState::attack()
 {
-	if (currentRoom.getActorInt(highlight) > 0){
-		Actor *a = &currentRoom.getActor(highlight);
-		player.attack(currentRoom.getActor(highlight));
+	if (currentRoom.getActorInt(highlight) > 0) // If there's an actor
+	{
+		Actor *a = &currentRoom.getActor(highlight);	// Create pointer to actor
+		player.attack(currentRoom.getActor(highlight));	//Attack it
 		
-		if (currentRoom.getActor(highlight).getTile().tileInt >= 13)	// If NPC?
+		// If NPC, play their respective text and hit sound
+		if (currentRoom.getActor(highlight).getTile().tileInt >= 13)	
 		{
 			snd::attack1->play();
 			log.push_back(a->getMDefend(), con::fgLoCyan);
 		}
-		else
+		else	// Play battle sound and text
 		{
-			log.push_back(a->getMDefend() + " Deal " + to_string(player.getStats().STR) + " damage! Wow!", con::fgLoCyan);
+			log.push_back(a->getMDefend() + " Deal " + 
+				to_string(player.getStats().STR) + " damage! Wow!", con::fgLoCyan);
 			attack_animation = true;
 		}
 
 		// If the actor died
 		if (a->getStats().HP <= 0)
 		{
-			if (a->getTile().tileInt == 3 || a->getTile().tileInt == 4 || a->getTile().tileInt == 11 || a->getTile().tileInt == 47)
+			// Remove actor, play death message, drop item if they have one
+			currentRoom.setActorInt(a->getLocation(), 0);
+			log.push_back(messages["ENEMY_DEATH"]);
+			currentRoom.setItemInt(a->getLocation(), a->dropItem());
+
+			// If it's a boss enemy
+			if (a->getTile().tileInt == 3 || a->getTile().tileInt == 4 || 
+				a->getTile().tileInt == 11 || a->getTile().tileInt == 47)
 			{
+				// Increase the count of sub-bosses defeated
 				bossCount++;
 				if (bossCount == 4)
 				{
-					currentRoom.setActorInt(a->getLocation(), 0);
-					log.push_back(messages["ENEMY_DEATH"]);
-					currentRoom.setItemInt(a->getLocation(), a->dropItem());
-					if (currentRoom.isPassable({a->getX() - 1, a->getY()}))
-					{
-						currentRoom.setItemInt({ a->getX() - 1, a->getY() }, 13);
-					}
-					else if (currentRoom.isPassable({ a->getX() + 1, a->getY() }))
-					{
-						currentRoom.setItemInt({ a->getX() + 1, a->getY() }, 13);
-					}
-					else if (currentRoom.isPassable({ a->getX(), a->getY() + 1 }))
-					{
-						currentRoom.setItemInt({ a->getX(), a->getY() + 1 }, 13);
-					}
-					else if (currentRoom.isPassable({ a->getX(), a->getY() - 1 }))
-					{
-						currentRoom.setItemInt({ a->getX(), a->getY() - 1}, 13);
-					}
-					else
-					{
-						currentRoom.setItemInt(a->getLocation(), 13);
-					}
-
-					currentRoom.removeActor(highlight);
-				}
-				else
-				{
-					currentRoom.setActorInt(a->getLocation(), 0);
-					log.push_back(messages["ENEMY_DEATH"]);
-					currentRoom.setItemInt(a->getLocation(), a->dropItem());
-					currentRoom.removeActor(highlight);
+					// If all sub-bosses are defeated, drop masterkey
+					dropMasterKey(a);
 				}
 			}
-			else
+			// If the principal died, set win condition to true
+			else if (a->getTile().tileInt == 9)
 			{
-				if (a->getTile().tileInt == 9)
-				{
-					winGame = true;
-				}
-				currentRoom.setActorInt(a->getLocation(), 0);
-				log.push_back(messages["ENEMY_DEATH"]);
-				currentRoom.setItemInt(a->getLocation(), a->dropItem());
-				currentRoom.removeActor(highlight);
+				winGame = true;	
 			}
+			currentRoom.removeActor(highlight); // Remove dead body
 		}
+		a = nullptr;	// Set pointer to null. They never existed.
 	}
-	else{
+	else
+	{
 		log.push_back(messages["UNATTACKABLE"]);
 	}
 }
 
 void PlayingState::changeRoom(Room& cRoom, COORD change)
 {
+	// Change selected room and reset counters
 	roomArray[cRoom.getX()][cRoom.getY()] = cRoom;
 	cRoom = roomArray[cRoom.getX() + change.X][cRoom.getY() + change.Y];
 	tCount = 0;
@@ -436,7 +422,7 @@ void PlayingState::drawBase()
 
 void PlayingState::drawVFX(HANDLE hConsole)
 {
-	if (attack_animation)
+	if (attack_animation)	// Open and close buffer to simulate flashing
 	{
 		buffer.open(hConsole);
 		buffer.draw(con::bgHiYellow, highlight.Y + schooled::OFFSET, highlight.X);
@@ -450,7 +436,7 @@ void PlayingState::drawVFX(HANDLE hConsole)
 
 		attack_animation = false;
 	}
-	else if (defend_animation)
+	else if (defend_animation)	// Open and close buffer to simulate flashing
 	{
 		buffer.open(hConsole);
 		buffer.draw('8', con::bgHiYellow, player.getY() + schooled::OFFSET, player.getX());
@@ -459,7 +445,7 @@ void PlayingState::drawVFX(HANDLE hConsole)
 		Sleep(100);
 
 		buffer.open(hConsole);
-		buffer.draw('8', con::bgBlack, player.getY() + schooled::OFFSET, player.getX());
+		buffer.draw('8', con::bgBlack | con::fgHiWhite, player.getY() + schooled::OFFSET, player.getX());
 		buffer.close(hConsole);
 
 		defend_animation = false;
@@ -468,17 +454,20 @@ void PlayingState::drawVFX(HANDLE hConsole)
 
 void PlayingState::enemyTurn(Actor& a)
 {
+	// If the enemy has Endurance, move it
 	if (a.getStats().EN > tCount)
 	{
+		// If the actor is an enemy and is in range, they will attack
 		if (currentRoom.isAdjacent(player.getLocation(), a) && a.getTile().tileInt != 13 && a.getTile().tileInt != 20)
 		{
+			// Play sound effect, attack, output message, play animation, and complete turn
 			snd::attack2->play();
 			a.attack(player);
 			log.push_back(a.getMAttack() + " Take " + to_string(a.getStats().STR) + " damage! Ouch!", con::fgLoRed);
 			defend_animation = true;
 			a.setActed(true);
 		}
-		else
+		else // If not in range, move enemy
 		{
 			currentRoom.moveActors(player.getLocation(), a);
 		}	
@@ -533,38 +522,43 @@ void PlayingState::incrementTurn()
 
 void PlayingState::interact()
 {
-	if (currentRoom.getActorInt(highlight) != 0)
+	if (currentRoom.getActorInt(highlight) != 0) // If the player is highlighting an actor
 	{
-		if (currentRoom.getActor(highlight).getStats().STR == 0)
+		if (currentRoom.getActor(highlight).getStats().STR == 0) // If the actor is an NPC
 		{
+			// Talk to NPC
 			log.push_back(currentRoom.getActor(highlight).getMDefend(), con::fgLoCyan);
+
+			// Check if they're holding an item
 			if (currentRoom.getActor(highlight).holdItem())
 			{
+				// Get their item type
 				int temp = currentRoom.getActor(highlight).dropItem();
-				if (temp == 1)
+				if (temp == 1) // If the item is a key
 				{
 					log.push_back(messages["RECIEVE_KEY"]);
 					keyCount++;
 					pickupFlags["KEY"] = true;
 				}
-				else
+				else // If the item is not a key
 				{
 					log.push_back(currentRoom.itemIndex[temp].getMPickup());
 					player.pickUp(currentRoom.getItemStats(temp));
 				}
 			}
 		}
-		else
+		else 
 		{
+			// The enemy just wants to fight, but you can try to talk to them
+			// This isn't Undertale
 			log.push_back(messages["ENEMY_INTERACT"]);
 		}
 		
 	}
-	else if (currentRoom.getItemInt(highlight) != 0)
+	else if (currentRoom.getItemInt(highlight) != 0) // If it's an item
 	{
 		int tempInt = currentRoom.getItemInt(highlight);
 		switch (tempInt)
-			//basically if the object is interactable
 		{
 			// KEY
 		case 1:
@@ -575,26 +569,26 @@ void PlayingState::interact()
 			currentRoom.setItemInt(highlight, 0);
 			break;
 
+			// ROOM_TRANSITION
 		case 2:
-			//room transition
 			snd::nextRoom->play();
 			transitionRoom();
 			break;
 
 			// MAP_DOOR_LOCKED
 		case 3:
-			if (masterKey == true)
+			if (masterKey == true) // If you have the masterkey, you can open all the things
 			{
 				log.push_back(messages["USE_MASTERKEY"]);
 				currentRoom.setItemInt(highlight, 0);
 			}
-			else if (keyCount > 0)
+			else if (keyCount > 0) // You know what this does, right? (Use a key)
 			{
 				log.push_back(messages["USE_KEY"]);
 				keyCount--;
 				currentRoom.setItemInt(highlight, 0);
 			}
-			else
+			else // The door is locked and you have no keys. You are in a dark room. Suddenly, Shia Labeouf.
 			{
 			snd::lockedDoor->play();
 				log.push_back(messages["DOOR_LOCKED"]);
@@ -603,7 +597,7 @@ void PlayingState::interact()
 
 			//PRINCIPAL_LOCKED_DOOR
 		case 12:
-			if (masterKey == true)
+			if (masterKey == true) // Can only be opened by masterkey
 			{
 				log.push_back(messages["USE_MASTERKEY"]);
 				currentRoom.setItemInt(highlight, 0);
@@ -629,6 +623,7 @@ void PlayingState::interact()
 			player.pickUp(tempPtr);
 			currentRoom.setItemInt(highlight, 0);
 
+			// Set pickup flags
 			if (tempPtr->getStats().HP > 0)
 			{
 				pickupFlags["HP"] = true;
@@ -649,6 +644,7 @@ void PlayingState::interact()
 
 void PlayingState::getStartLocation()
 {
+	// Get the coordinates of the current room entrances and exits
 	COORD north = currentRoom.getNorth();
 	COORD south = currentRoom.getSouth();
 	COORD east = currentRoom.getEast();
@@ -664,24 +660,28 @@ void PlayingState::getStartLocation()
 	}
 	else if (south != empty)
 	{
+		// There is a door here
 		player.setLocation({ south.X, south.Y - 1 });
 		highlight.Y = player.getY() - 1;
 		highlight.X = player.getX();
 	}
 	else if (north != empty)
 	{
+		// There is a door here
 		player.setLocation({ north.X, north.Y + 1 });
 		highlight.Y = player.getY() + 1;
 		highlight.X = player.getX();
 	}
 	else if (east != empty)
 	{
+		// There is a door here
 		player.setLocation({ east.X - 1, east.Y });
 		highlight.Y = player.getY();
 		highlight.X = player.getX() - 1;
 	}
 	else if (west != empty)
 	{
+		// There is a door here
 		player.setLocation({ west.X + 1, west.Y });
 		highlight.Y = player.getY();
 		highlight.X = player.getX() + 1;
@@ -691,6 +691,8 @@ void PlayingState::getStartLocation()
 void PlayingState::loadRooms()
 {
 	Room temp;
+
+	// Get the list of room files
 	vector<string> roomFileList = shared::getRoomNames();
 	
 	// If the level selector has chosen a level
@@ -713,6 +715,7 @@ void PlayingState::loadRooms()
 		string line;
 		COORD tempCoord;
 
+		// Read the rooms from the floor file
 		while (stream.good())
 		{
 			stream >> line;
@@ -762,6 +765,7 @@ void PlayingState::moveHighlight(KEYCODE eCode)
 		break;
 	}
 
+	// If the scheme is Double-Tap
 	if (eCode < 88 && scheme == "Double-Tap Lefty" ||
 		eCode > 49663 && scheme == "Double-Tap")
 	{
@@ -775,6 +779,7 @@ void PlayingState::moveHighlight(KEYCODE eCode)
 			increment = true;
 		}
 	}
+	// If the player presses the directional keys of the wrong scheme, don't move
 	else if ((scheme == "Classic" || scheme == "Double-Tap") && eCode < 88 ||
 		(scheme == "Classic Lefty" || scheme == "Double-Tap Lefty") && eCode > 49663)
 	{
@@ -784,16 +789,20 @@ void PlayingState::moveHighlight(KEYCODE eCode)
 
 void PlayingState::transitionRoom()
 {
+	// If you were playing a level from the level select, return to menu
 	if (MenuState::levelSelected() != 0)
 	{
 		running = false;
 		return;
 	}
+
+	// Get the current room entrances and exits
 	COORD north = currentRoom.getNorth();
 	COORD south = currentRoom.getSouth();
 	COORD east = currentRoom.getEast();
 	COORD west = currentRoom.getWest();
 
+	// Change the room in the proper direction
 	if (highlight == north)			// Going up
 	{
 		changeRoom(currentRoom, { 0, -1 });
@@ -827,6 +836,31 @@ void PlayingState::transitionRoom()
 		highlight.X = player.getX() -1;
 	}
 	
-
+	// Clear the log
 	log.clear();
+}
+
+void PlayingState::dropMasterKey(ActorPtr a)
+{
+	// Checking which tile is available for a dropped item
+	if (currentRoom.isPassable({ a->getX() - 1, a->getY() }))
+	{
+		currentRoom.setItemInt({ a->getX() - 1, a->getY() }, 13);
+	}
+	else if (currentRoom.isPassable({ a->getX() + 1, a->getY() }))
+	{
+		currentRoom.setItemInt({ a->getX() + 1, a->getY() }, 13);
+	}
+	else if (currentRoom.isPassable({ a->getX(), a->getY() + 1 }))
+	{
+		currentRoom.setItemInt({ a->getX(), a->getY() + 1 }, 13);
+	}
+	else if (currentRoom.isPassable({ a->getX(), a->getY() - 1 }))
+	{
+		currentRoom.setItemInt({ a->getX(), a->getY() - 1 }, 13);
+	}
+	else
+	{
+		currentRoom.setItemInt(a->getLocation(), 13);
+	}
 }

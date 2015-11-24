@@ -78,11 +78,13 @@ void MenuState::Init()
 
 void MenuState::Cleanup()
 {
+	// Stop the main music
 	snd::title->stop();
 }
 
 void MenuState::Pause()
 {
+	// Stop the main music and if settings changed, save settings
 	snd::title->stop();
 	if (changedSettings)
 	{
@@ -92,7 +94,7 @@ void MenuState::Pause()
 
 void MenuState::Resume()
 {
-	// Play the music
+	// Play the main music
 	snd::title->play();
 }
 
@@ -107,10 +109,11 @@ void MenuState::HandleEvents(GameEngine* game)
 		showObjective = true;
 		return;
 	}
+	// Showing the objective
 	else if (showObjective)
 	{
 		showObjective = false;
-		snd::title->stop();
+		//snd::title->stop();
 		snd::startGame->play();
 		game->PushState(PlayingState::Instance());
 		return;
@@ -118,30 +121,35 @@ void MenuState::HandleEvents(GameEngine* game)
 
 	switch (sKeyPress.eCode)
 	{
+		//Escape key
 	case CONSOLE_KEY_ESCAPE:
-		if (!selectingControl && !selectingLevel && !selectingCredits)
+		// If not in submenu, quit
+		if (!selectingControl && !selectingLevel && !selectingCredits)	
 		{
 			game->Quit();
 		}
+		// No break so it can be used as a "back" key
+
 	case CONSOLE_KEY_X:
 	case CONSOLE_KEY_N:
-		if (selectingControl)
+		if (selectingControl)	// Controls menu
 		{
 			selectingControl = false;
 			changedSettings = false;
 		}
-		else if (selectingLevel)
+		else if (selectingLevel)	// level select menu
 		{
 			selectingLevel = false;
 			lSelect = 0;
 			levelSelect = 0;
 		}
-		else if (selectingCredits)
+		else if (selectingCredits)	// credits menu
 		{
 			selectingCredits = false;
 		}
 		break;
 		
+		// Going up
 	case CONSOLE_KEY_UP:
 	case CONSOLE_KEY_W:
 		if (selectingControl) break; // Don't move if changing controls
@@ -149,81 +157,47 @@ void MenuState::HandleEvents(GameEngine* game)
 
 		if (selectingLevel)	// Choosing a level to play
 		{
-			if (levelSelect > 0)
-			{
-				levelSelect--;
-			}
-			else
-			{
-				levelSelect = levelSelections.size() - 1;
-			}
+			// Change the level select highlight
+			levelSelect = (levelSelect > 0) ? levelSelect - 1 : levelSelections.size() - 1;
 			break;
 		}
-
-		if (menuSelect > 0)
-		{
-			menuSelect--;
-		}
-		else
-		{
-			menuSelect = menuSelections.size() - 1;
-		}
+		// Change the main menu highlight
+		menuSelect = (menuSelect > 0) ? menuSelect - 1 : menuSelections.size() - 1;
 		break;
 
+		// Going down
 	case CONSOLE_KEY_DOWN:
 	case CONSOLE_KEY_S:
 		if (selectingControl) break; // Don't move if changing controls
 		//snd::menuHighlight->play();
 		if (selectingLevel)	// Choosing a level to play
 		{
-			if (levelSelect < levelSelections.size() - 1)
-			{
-				levelSelect++;
-			}
-			else
-			{
-				levelSelect = 0;
-			}
+			// Change the level select highlight
+			levelSelect = (levelSelect < levelSelections.size() - 1) ? levelSelect + 1 : 0;
 			break;
 		}
-		if (menuSelect < menuSelections.size() - 1)
-		{
-			menuSelect++;
-		}
-		else
-		{
-			menuSelect = 0;
-		}
+		// Change the main menu highlight
+		menuSelect = (menuSelect < menuSelections.size() - 1) ? menuSelect + 1 : 0;
 		break;
 
+		// Going left
 	case CONSOLE_KEY_LEFT:
 	case CONSOLE_KEY_A:
-		if (!selectingControl) break;
+		if (!selectingControl) break;	// If not selecting controls, break
 		//snd::menuHighlight->play();
-		if (selectedControl > 0)
-		{
-			selectedControl--;
-		}
-		else
-		{
-			selectedControl = controlOptions.size() - 1;
-		}
+
+		selectedControl = (selectedControl > 0) ? selectedControl - 1 : controlOptions.size() - 1;
 		break;
 
 	case CONSOLE_KEY_RIGHT:
 	case CONSOLE_KEY_D:
-		if (!selectingControl) break;
+		if (!selectingControl) break;	// If not selecting controls, break
 		//snd::menuHighlight->play();
-		if (selectedControl < controlOptions.size() - 1)
-		{
-			selectedControl++;
-		}
-		else
-		{
-			selectedControl = 0;
-		}
+
+		selectedControl = (selectedControl < controlOptions.size() - 1) ? selectedControl + 1 : 0;
 		break;
 
+		// "Enter" key
 	case CONSOLE_KEY_RETURN:
 	case CONSOLE_KEY_Z:
 	case CONSOLE_KEY_M:
@@ -243,11 +217,13 @@ void MenuState::Update(GameEngine* game)
 
 void MenuState::Draw(GameEngine* game)
 {
+	// Get the current handle
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	// Open the buffer for writing
 	buffer.open(hConsole);
 
+	// Clear the buffer
 	buffer.clear();
 
 	if (showObjective)
@@ -352,6 +328,7 @@ void MenuState::Draw(GameEngine* game)
 	}
 	else if (selectingCredits)
 	{
+		// Display the credits
 		string temp = "Robbie Savaglio\nRebecca Joly\nSam \"Lili\" Bouffard\nPavlo Salimon\nGraham Watson";
 		buffer.draw(art, con::fgHiWhite, 1, 3);
 		buffer.draw(temp, con::fgHiMagenta, 16, 23);
@@ -359,6 +336,7 @@ void MenuState::Draw(GameEngine* game)
 	}
 	else
 	{
+		// Draw the main menu
 		buffer.draw(art, con::fgHiYellow, 1, 3);
 
 		// Draw the menu options to the screen
@@ -470,15 +448,19 @@ void MenuState::handleMenu(GameEngine* game)
 
 void MenuState::saveSetting(string a_key, string change)
 {
+	// Open the files for input/output
 	std::ifstream inStream("Settings.txt");
 	std::ofstream outStream("temp.txt");
 	string line;
 
+	// If there is an error with the files, error
 	if (!inStream || !outStream)
 	{
 		std::cout << "File open failed.\n";
 		exit(1);
 	}
+
+	// Check for changes and put the information in the other file
 	while (std::getline(inStream, line))
 	{
 		if (line.substr(0, line.find(':')) == a_key)
@@ -492,7 +474,7 @@ void MenuState::saveSetting(string a_key, string change)
 	inStream.close();
 	outStream.close();
 
-	
+	// Error checking and renaming
 	if (remove("Settings.txt") != 0)
 		perror("Error deleting file");
 	else
@@ -507,13 +489,14 @@ void MenuState::saveSetting(string a_key, string change)
 
 void MenuState::initSettings()
 {
+	// Open the file for output
 	std::ofstream stream("Settings.txt");
 	if (!stream)
 	{
 		std::cout << "File open failed.\n";
 		exit(1);
 	}
-	stream << "ControlScheme: Classic" << std::endl;
+	stream << "ControlScheme: Double-Tap" << std::endl;
 	stream.close();
 }
 
