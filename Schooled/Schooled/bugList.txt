@@ -1,0 +1,3 @@
+-attack sound effect not working well
+-East Hall/Central Gymnasium LOS is messed
+-enemy in west hall didn't turn red before moving
