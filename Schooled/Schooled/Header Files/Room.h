@@ -52,7 +52,6 @@ public:
 
 	// Get functions
 	static ItemPtr getItemStats(int);
-	int randomItem();					// Random function option
 	string randomLog();		// Generates random number between 1 and 10
 	static ItemPtr getItemStats(string);
 	int getTileInt(COORD c) { return tileArray[c.Y][c.X]; }

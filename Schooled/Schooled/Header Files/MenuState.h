@@ -40,7 +40,7 @@ protected:
 
 private:
 	static MenuState m_MenuState;
-	string art;
+	string art, introText;
 	int menuSelect, levelSelect, selectedControl;
 	vector<string> menuSelections, levelSelections, 
 		cScheme, dScheme, clScheme, dlScheme;
@@ -51,8 +51,8 @@ private:
 	void saveSetting(string, string);
 	void initSettings();
 
-	//Gets file contents (NEEDS REMOVAL)
-	string getFileContents(std::ifstream&);
+	//Gets a line with newline characters
+	string getTextBlock(string);
 
 	// Sets up the scheme displays
 	void setSchemes();

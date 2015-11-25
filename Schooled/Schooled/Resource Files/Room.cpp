@@ -188,8 +188,6 @@ ItemPtr Room::getItemStats(int a)
 	return &itemIndex[a];		// Do the thing
 }
 
-int Room::randomItem()		//Unused at the moment
-
 // Randomizes a number, outputs it to string
 string Room::randomLog()
 {

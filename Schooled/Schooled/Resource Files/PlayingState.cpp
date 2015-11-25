@@ -384,7 +384,7 @@ void PlayingState::drawBase()
 	// Draw the current turn counter
 	string tempTurn = (pTurn) ? "Player" : "Enemy";
 	WORD turnColor;
-	turnColor = (tempTurn == "Player") ? con::fgHiBlue : con::fgHiRed;
+	turnColor = (tempTurn == "Player") ? con::fgHiCyan : con::fgHiRed;
 	buffer.draw("Turn: ", con::fgHiWhite, 0, 3);
 	buffer.draw(tempTurn, turnColor, 0, 9);
 

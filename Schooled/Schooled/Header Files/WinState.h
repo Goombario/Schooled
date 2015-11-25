@@ -33,6 +33,11 @@ protected:
 private:
 	static WinState m_WinState;
 	bool firstTime = true;	// Only draw the text slowly the first time.
+	string winText;
+
+	//Gets a line with newline characters
+	string getTextBlock(string);
+
 };
 
 #endif

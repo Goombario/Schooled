@@ -24,10 +24,9 @@ void MenuState::Init()
 	buffer.clear();
 	buffer.close(hConsole);
 
-	// Get the artwork
-	std::ifstream Reader("title.txt");	//Open file
-	art = getFileContents(Reader);			//Get file
-	Reader.close();							//Close file
+	// Get the artwork and intro text
+	art = getTextBlock("title.txt");
+	introText = getTextBlock("intro.txt");
 
 	// Check if settings file exists.
 	if (!std::ifstream("Settings.txt"))
@@ -212,6 +211,11 @@ void MenuState::HandleEvents(GameEngine* game)
 
 void MenuState::Update(GameEngine* game)
 {
+	if (showObjective)
+	{
+		snd::title->stop();
+		snd::dungeonMusic->play();
+	}
 
 }
 
@@ -229,12 +233,11 @@ void MenuState::Draw(GameEngine* game)
 	if (showObjective)
 	{
 		// Show the objective
-		string temp = "Defeat the principal!";
-		buffer.draw(temp, con::fgHiWhite, 13, (30 - temp.size() / 2));
+		buffer.draw(introText, con::fgHiWhite, 5, 0);
 
 		// Draw the "Press any key to continue"
-		temp = "Press any key to continue";
-		buffer.draw(temp, con::fgHiWhite, 15, (30 - temp.size() / 2));
+		string temp = "Press any key to continue";
+		buffer.draw(temp, con::fgHiCyan, 21, (30 - temp.size() / 2));
 	}
 	else if (startingGame)
 	{
@@ -243,7 +246,7 @@ void MenuState::Draw(GameEngine* game)
 		vector<string> tempScheme;
 		string temp = "Press any key to continue";
 		// Draw the "Press any key to continue"
-		buffer.draw(temp, con::fgHiWhite, 21, (30 - temp.size() / 2));
+		buffer.draw(temp, con::fgHiCyan, 21, (30 - temp.size() / 2));
 
 		// Choose the correct scheme to display
 		switch (selectedControl)
@@ -365,26 +368,23 @@ void MenuState::Draw(GameEngine* game)
 	buffer.close(hConsole);
 }
 
-string MenuState::getFileContents(std::ifstream& File)
+string MenuState::getTextBlock(string filename)
 {
-	string Lines = "";        //All lines
-
-	if (File)                      //Check if everything is good
+	string tempLine, fullLine;
+	std::ifstream stream(filename);
+	if (!stream)
 	{
-		while (File.good())
-		{
-			string TempLine;                  //Temp line
-			getline(File, TempLine);        //Get temp line
-			TempLine += "\n";                      //Add newline character
+		perror("File failed to load");
+		exit(1);
+	}
 
-			Lines += TempLine;                     //Add newline
-		}
-		return Lines;
-	}
-	else                           //Return error
+	while (getline(stream, tempLine))
 	{
-		return "ERROR File does not exist.";
+		fullLine += tempLine + "#";
 	}
+
+	stream.close();
+	return fullLine;
 }
 
 void MenuState::handleMenu(GameEngine* game)
