@@ -28,10 +28,10 @@ public:
 	void close(HANDLE);
 
 private:
-	CHAR_INFO buffer[schooled::SCREEN_HEIGHT][schooled::SCREEN_WIDTH];
-	COORD dwBufferSize;
-	COORD dwBufferCoord;
-	SMALL_RECT rcRegion;
+	CHAR_INFO buffer[schooled::SCREEN_HEIGHT][schooled::SCREEN_WIDTH];	// Array of CHAR_INFO that is the main buffer
+	COORD dwBufferSize;	// The size of the buffer
+	COORD dwBufferCoord; // The location of buffer on the screen
+	SMALL_RECT rcRegion;	// The region of the buffer
 };
 
 

@@ -4,6 +4,7 @@
 #include "GameEngine.h"
 #include "Buffer.h"
 
+// Abstract class for the states
 class GameState
 {
 public:
