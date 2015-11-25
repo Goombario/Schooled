@@ -29,6 +29,7 @@ public:
 	// Attack another Actor
 	void attack(Actor&);
 
+	// Get member variables
 	COORD getLocation() { return location; }
 	int getX() { return location.X; }
 	int getY() { return location.Y; }
@@ -44,6 +45,7 @@ public:
 	bool getIsFinished() { return isFinished; }
 	bool hasActed() { return acted; }
 
+	// Set member variables
 	void setTile(Tile t) { tile = t; }
 	void setStats(Stats s) { stats = s; }
 	void setLocation(COORD c) { location = c; }
@@ -60,17 +62,19 @@ public:
 	void setAggro(bool);
 	void setActive(bool b);
 
+	// Manipulate held item
 	bool holdItem();
 	int dropItem();
 	int giveItem();
 	void pickUp(ItemPtr);
 
 private:
+	// Member variables
 	COORD location;
 	Stats stats;
 	Tile tile;
 	ItemPtr item;
-	std::string m_attack = "";
+	std::string m_attack = "";	// To be read in
 	std::string m_defend = "";
 	std::string name = "";
 	int minX, maxX, minY, maxY;
@@ -80,6 +84,7 @@ private:
 	WORD colour;
 };
 
+// Pointer to an Actor object
 typedef Actor* ActorPtr;
 
 #endif

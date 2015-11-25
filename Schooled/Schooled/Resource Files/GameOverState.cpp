@@ -45,6 +45,7 @@ void GameOverState::Draw(GameEngine* game)
 	// Open the buffer for writing
 	buffer.open(hConsole);
 
+	// Clear the buffer
 	buffer.clear();
 
 	buffer.draw("Game Over", con::fgHiRed, 4, 20);

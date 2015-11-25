@@ -24,6 +24,7 @@ int main()
 	// Load the main menu
 	game.ChangeState(MenuState::Instance());
 
+	// Main game loop
 	while (game.Running())
 	{
 		game.Update();
