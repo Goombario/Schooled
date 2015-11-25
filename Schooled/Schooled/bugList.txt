@@ -1,0 +1,2 @@
+-attack sound effect not working well
+-player seems to dissappear while being attacked
