@@ -46,7 +46,7 @@ passable:true
 HP:0
 EN:0
 STR:1
-mPickup:You found face paint! You are no longer Nate.#You are now...Nate the Great!
+mPickup:You found face paint! You are no longer Nate.#You are now...Nate the Great! +1 Strength!
 
 name:GOLDFISH
 index:5
@@ -56,7 +56,7 @@ passable:true
 HP:1
 EN:1
 STR:1
-mPickup:You found some Goldfish! Sweet! Your enemies#won't be smiling back!
+mPickup:You found some Goldfish! Sweet! Your enemies#won't be smiling back! +1 All Stats!
 
 name:GLASSES
 index:6
@@ -66,7 +66,7 @@ passable:true
 HP:0
 EN:0
 STR:1
-mPickup:You found glasses! These make you smarter, right? +1 Fashion.
+mPickup:You found glasses! These make you smarter, right?# +1 Fashion, +1 Strength!
 
 name:BACKPACK
 index:7
@@ -76,7 +76,7 @@ passable:true
 HP:1
 EN:0
 STR:1
-mPickup:You found your backpack! You can't believe you#just left it here!
+mPickup:You found your backpack! You can't believe you#just left it here! +1 HP, +1 Strength!
 
 name:TEARS
 index:8
@@ -86,7 +86,7 @@ passable:true
 HP:0
 EN:0
 STR:2
-mPickup:You found tears. Oh no. Math class.
+mPickup:You found tears. Oh no. Math class. +2 Strength!
 
 name:BANDAID
 index:9
@@ -96,7 +96,7 @@ passable:true
 HP:5
 EN:0
 STR:0
-mPickup:You found a bandaid! Unused too!
+mPickup:You found a bandaid! Unused too! +5 HP!
 
 name:SUPPORT
 index:10
@@ -106,17 +106,17 @@ passable:true
 HP:2
 EN:0
 STR:0
-mPickup:You recieved support! You feel less alone now.
+mPickup:You recieved support! You feel less alone now.#+2 HP!
 
-name:PEN
+name:RUNNING_SHOES
 index:11
 symbol:'!'
 colour:7U // loWhite
 passable:true
 HP:0
-EN:0
-STR:1
-mPickup:You found a pen! The pen is mightier than the#sword afterall.
+EN:1
+STR:0
+mPickup:You found running shoes! They're a perfect fit!#+1 Endurance!
 
 name:PRINCIPLE_DOOR_LOCKED
 index:12

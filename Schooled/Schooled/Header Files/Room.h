@@ -43,7 +43,7 @@ public:
 	bool lineOfSight(COORD, Actor&);	// Determines if actor can see coordinate
 
 	static ItemPtr getItemStats(int);
-	int randomItem();
+	string randomLog();		// Generates random number between 1 and 10
 	static ItemPtr getItemStats(string);
 	int getTileInt(COORD c) { return tileArray[c.Y][c.X]; }
 	int getItemInt(COORD c) { return itemArray[c.Y][c.X]; }

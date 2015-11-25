@@ -356,7 +356,7 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:The bully attacked me so I used a bandaid to#cover my wounds.
+m_defend:My Mom bought me these shoes, but they're#way too tight...
 
 name:TUT_ROOM4_NPC1
 index:31
@@ -812,4 +812,16 @@ EN:0
 STR:0
 held item:0
 m_attack:
-m_defend:Ugh, performing arts students are so dramatic..
+m_defend:Ugh, performing arts students are so dramatic...
+
+name:HIGHLIGHT_NPC
+index:69
+symbol:'0'
+colour:11U // hiCyan
+passable:false
+HP:5000
+EN:0
+STR:0
+held item:0
+m_attack:
+m_defend:Dad always taught me to keep my eyes on the#prize! <Highlight items, enemies, or doors with#the direction keys>

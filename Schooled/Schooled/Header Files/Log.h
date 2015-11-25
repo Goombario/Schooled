@@ -51,7 +51,20 @@ static map<string, string> messages =
 	{"ENEMY_INTERACT", "What d'you think this is? The Talk? Fight me!"}
 };
 
-
+// Used for idle attacks
+static map<string, string> messagesLog =
+{
+	{ "1", "You hit air! You did 0 damage!" },
+	{ "2", "You swung at nothing." },
+	{ "3", "You stared angrily at the ground." },
+	{ "4", "You danced in place. You really have to pee." },
+	{ "5", "You missed. You are filled with determination." },
+	{ "6", "You sighed dramatically. This is hard." },
+	{ "7", "You decided not to attack." },
+	{ "8", "You missed, maybe open your eyes next time." },
+	{ "9", "There was a squirrel, you get distracted easily." },
+	{ "10", "You swung at nothing. The voices lied to you." }
+};
 
 
 #endif

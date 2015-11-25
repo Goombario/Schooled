@@ -48,7 +48,7 @@ void PlayingState::Init()
 
 	log.clear();
 
-	player = Actor({ '8', con::fgHiWhite }, { 10, 2, 2 });
+	player = Actor({ '8', con::fgHiWhite }, { 12, 1, 3 });
 	getStartLocation();
 	delta = { 0, 0 };
 	
@@ -352,8 +352,10 @@ void PlayingState::attack()
 			}
 		}
 	}
-	else{
-		log.push_back(messages["UNATTACKABLE"]);
+	else
+	{
+		// Outputs a random idle attack message
+		log.push_back(messagesLog[currentRoom.randomLog()]);
 	}
 }
 
@@ -588,18 +590,20 @@ void PlayingState::interact()
 		case 3:
 			if (masterKey == true)
 			{
+				snd::nextRoom->play();
 				log.push_back(messages["USE_MASTERKEY"]);
 				currentRoom.setItemInt(highlight, 0);
 			}
 			else if (keyCount > 0)
 			{
+				snd::nextRoom->play();
 				log.push_back(messages["USE_KEY"]);
 				keyCount--;
 				currentRoom.setItemInt(highlight, 0);
 			}
 			else
 			{
-			snd::lockedDoor->play();
+				snd::lockedDoor->play();
 				log.push_back(messages["DOOR_LOCKED"]);
 			}
 			break;

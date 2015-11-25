@@ -188,10 +188,12 @@ ItemPtr Room::getItemStats(int a)
 	return &itemIndex[a];
 }
 
-int Room::randomItem()
+// Randomizes a number, outputs it to string
+string Room::randomLog()
 {
-	int random = rand() % (itemIndex.size() - 4) + 4;
-	return random;
+	int random = rand() % (10) + 1;
+	string logNum = std::to_string(random);
+	return logNum;
 }
 
 ItemPtr Room::getItemStats(string s)
