@@ -40,6 +40,7 @@ void Log::clear()
 	newLines.clear();
 }
 
+// UNUSED
 void Log::display(HANDLE hConsole)
 {
 	int max = (log.size() >= 3) ? (log.size() - 3) : 0;	// determines the number of lines to display
@@ -96,6 +97,7 @@ void Log::display(HANDLE hConsole)
 void Log::display(Buffer& buffer, int row)
 {
 	const int SIZE = 4;
+
 	// determines the number of lines to display
 	int max = (log.size() >= SIZE) ? (log.size() - SIZE) : 0;	
 

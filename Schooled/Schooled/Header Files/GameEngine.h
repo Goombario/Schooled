@@ -10,13 +10,18 @@ class GameState;
 class GameEngine
 {
 public:
+	// Initialize the engine
 	void Init();
+
+	// Cleanup the engine before exiting
 	void Cleanup();
 
+	// Manipulate the states
 	void ChangeState(GameState* state);
 	void PushState(GameState* state);
 	void PopState();
 
+	// Tell the state to call its own functions
 	void HandleEvents();
 	void Update();
 	void Draw();

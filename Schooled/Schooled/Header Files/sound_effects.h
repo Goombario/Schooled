@@ -2,6 +2,7 @@
 #define SOUND_EFFECTS_H
 #include <windows.h>
 
+// Contains a sound file and methods for manipulating it
 class Sound
 {
 private:
@@ -9,14 +10,23 @@ private:
 	bool loop;
 	bool async;
 public:
+	// Create an empty Sound object
 	Sound();
+
+	// Create a Sound object containing a .wav file
 	Sound(LPCTSTR, bool, bool=true);
+
+	// Play the sound
 	void play();
+
+	// Stop the sound
 	void stop();
 };
 
+// Pointer to Sound object
 typedef Sound* SndPtr;
 
+// Sound effects and music
 namespace snd
 {
 	const SndPtr title = new Sound(L"Sounds/schooled64.wav", true);

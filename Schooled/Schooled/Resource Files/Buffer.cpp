@@ -20,18 +20,20 @@ int Buffer::draw(std::string s, WORD w, int row, int col)
 	int startCol = col, startRow = row;
 	std::string temp;
 
+	// go through the string
 	for (unsigned int i = 0; i < s.size(); i++)
 	{
-		if (s[i] == '\n' || s[i] == '#')
+		if (s[i] == '\n' || s[i] == '#')	// Newline symbol
 		{
-			col = startCol;
-			row++;
+			col = startCol;	// set column back to original
+			row++;			// Increment row
 		}
 		else
 		{
+			// Set buffer information
 			buffer[row][col].Char.AsciiChar = s[i];
 			buffer[row][col].Attributes = w;
-			if (col < schooled::SCREEN_WIDTH - 1)
+			if (col < schooled::SCREEN_WIDTH - 1)	// If less than width of screen
 			{
 				col++;
 			}
@@ -47,12 +49,14 @@ int Buffer::draw(std::string s, WORD w, int row, int col)
 
 void Buffer::draw(char c, WORD w, int row, int col)
 {
+	// Set buffer characteristics
 	buffer[row][col].Char.AsciiChar = c;
 	buffer[row][col].Attributes = w;
 }
 
 void Buffer::draw(WORD w, int row, int col)
 {
+	// Set buffer colour
 	buffer[row][col].Attributes = w;
 }
 
@@ -72,13 +76,14 @@ void Buffer::clear()
 {
 	for (int a = 0; a < schooled::SCREEN_HEIGHT; a++){
 		for (int b = 0; b < schooled::SCREEN_WIDTH; b++){
-			buffer[a][b].Char.AsciiChar = 32;
-			buffer[a][b].Char.UnicodeChar = 32;
+			buffer[a][b].Char.AsciiChar = 32;	// Set to empty space
+			buffer[a][b].Char.UnicodeChar = 32;	// Set to empty space
 			buffer[a][b].Attributes = con::fgBlack | con::bgBlack;
 		}
 	}
 }
 
+// UNUSED
 void Buffer::type(std::string s, WORD w, int row, int col, HANDLE hConsole)
 {
 	int startCol = col, startRow = row;

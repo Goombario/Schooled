@@ -27,6 +27,7 @@ COORD operator -(COORD a, COORD b)
 
 string schooled::getSetting(string a_key)
 {
+	// Load settings from the file
 	std::ifstream stream("Settings.txt");
 	string line;
 
@@ -36,6 +37,7 @@ string schooled::getSetting(string a_key)
 		exit(1);
 	}
 
+	// Go through the file, if it finds the matching key return its value
 	while (std::getline(stream, line))
 	{
 		if (line.substr(0, line.find(':')) == a_key)

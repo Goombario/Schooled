@@ -9,6 +9,7 @@ using std::vector;
 
 namespace schooled
 {
+	// Constant variables
 	int const MAP_WIDTH = 60;
 	int const MAP_HEIGHT = 20;
 	int const SCREEN_WIDTH = 80;
@@ -23,6 +24,7 @@ namespace schooled
 	string getSetting(string);
 }
 
+// Structures
 struct Tile
 {
 	char character;
@@ -31,12 +33,14 @@ struct Tile
 	int tileInt;
 };
 
-struct Stats{
-	int HP;
-	int EN;
-	int STR;
+struct Stats
+{
+	int HP; //hit points
+	int EN;	//endurance
+	int STR; //strength
 };
 
+// Operators for manipulating COORDS
 bool operator ==(COORD a, COORD b);
 bool operator !=(COORD a, COORD b);
 COORD operator +(COORD a, COORD b);
