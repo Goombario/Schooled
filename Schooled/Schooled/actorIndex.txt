@@ -43,7 +43,7 @@ HP:7
 EN:5
 STR:1
 held item:KEY
-m_attack:And you have the role of Death. So. Stop BREATHING.
+m_attack:And you have the role of Death.#So. Stop BREATHING.
 m_defend:Should've taken music.
 
 name:THIEF_BULLIES
@@ -103,7 +103,7 @@ HP:30
 EN:3
 STR:3
 held item:0
-m_attack:Welcome Nate! You've come to stop me?
+m_attack:Welcome Nate! You've come to stop me?#
 m_defend:This ends today!
 
 name:MATH_TEACHER
