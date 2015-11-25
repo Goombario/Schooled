@@ -15,23 +15,29 @@ class Buffer;
 class Log
 {
 public:
+	// Create an empty Log object
 	Log();
+
+	// Add a string to the log (colour optional)
 	void push_back(string);
 	void push_back(string, WORD);
 
 	// Output the log
 	void display(HANDLE);
 	void display(Buffer&, int row=0);
+
+	// Clear the log
 	void clear();
 
 private:
-	vector<string> log;
-	vector<WORD> colours;
-	vector<bool> newLines;
+	vector<string> log;		// The log containing the phrases
+	vector<WORD> colours;	// Contains the colours
+	vector<bool> newLines;	// If the line is new or not
 	const int TEXT_START=15;
 	bool newLine;
 };
 
+//generic global messages to be reused
 static map<string, string> messages =
 {
 	{ "Q_RANDOM", "Random: What do you want ?" },

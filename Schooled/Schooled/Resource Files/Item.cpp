@@ -4,6 +4,7 @@ Item::Item(Tile t, Stats s) : tile(t), stats(s) {}
 
 Item::Item() {}
 
+// Function definitions
 Tile Item::getTile() { return tile; }
 
 Stats Item::getStats() { return stats; }
