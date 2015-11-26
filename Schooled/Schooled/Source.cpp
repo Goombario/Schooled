@@ -1,4 +1,6 @@
-﻿#include "Header Files\GameEngine.h"
+﻿//(C) Fissure Studios 2015
+
+#include "Header Files\GameEngine.h"
 #include "Header Files\MenuState.h"
 #include "Header Files\Room.h"
 #include <ctime>
